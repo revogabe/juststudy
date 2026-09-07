@@ -200,6 +200,76 @@ never changed. A randomization response includes the selected catalog data and a
 History is ordered newest first. `limit` defaults to 20 and accepts up to 100; pass the returned
 opaque `next_cursor` to continue from the next item.
 
+### Focus
+
+| Method | Route | Access | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/v1/focus/sessions` | Session | Start a timed focus session for a pending randomization. |
+| `GET` | `/v1/focus/sessions/active` | Session | Read and reconcile the user's active focus session. |
+| `GET` | `/v1/focus/sessions/history` | Session | Read session durations and studied topics. |
+| `POST` | `/v1/focus/sessions/:session_id/heartbeat` | Session | Confirm that the study tab is still present. |
+| `POST` | `/v1/focus/sessions/:session_id/complete` | Session | Complete a focus session, including before its deadline. |
+| `POST` | `/v1/focus/sessions/:session_id/abandon` | Session | Abandon a focus session. |
+
+Start focus with the randomization returned by `POST /v1/randomize/topic`. Duration is expressed in
+seconds and accepts values from 60 through 14400:
+
+```json
+{
+  "randomization_id": "01992442-fb47-7c15-a796-e3906b65d20d",
+  "duration_seconds": 3600
+}
+```
+
+```json
+{
+  "id": "01992443-1697-788c-9d7f-664ba62e3670",
+  "randomization_id": "01992442-fb47-7c15-a796-e3906b65d20d",
+  "duration_seconds": 3600,
+  "status": "active",
+  "started_at": "2026-09-07T12:00:00.000Z",
+  "ends_at": "2026-09-07T13:00:00.000Z",
+  "last_seen_at": "2026-09-07T12:00:00.000Z",
+  "finished_at": null,
+  "updated_at": "2026-09-07T12:00:00.000Z"
+}
+```
+
+Focus history is ordered newest first. `limit` defaults to 20 and accepts up to 100; use the opaque
+`next_cursor` to fetch another page. Every item includes the planned `duration_seconds` and the
+subject/topic resolved from its randomization:
+
+```json
+{
+  "sessions": [
+    {
+      "id": "01992443-1697-788c-9d7f-664ba62e3670",
+      "randomization_id": "01992442-fb47-7c15-a796-e3906b65d20d",
+      "duration_seconds": 3600,
+      "status": "completed",
+      "subject": { "slug": "mathematics", "name": "Mathematics" },
+      "topic": {
+        "slug": "linear-equations",
+        "name": "Linear Equations",
+        "level": "beginner"
+      },
+      "started_at": "2026-09-07T12:00:00.000Z",
+      "ends_at": "2026-09-07T13:00:00.000Z",
+      "last_seen_at": "2026-09-07T12:59:30.000Z",
+      "finished_at": "2026-09-07T13:00:00.000Z",
+      "updated_at": "2026-09-07T13:00:00.000Z"
+    }
+  ],
+  "next_cursor": null
+}
+```
+
+The web client should send a heartbeat every 30 seconds. A session is abandoned after 120 seconds
+without communication. Reaching `ends_at` completes it; when both deadlines have passed, the one
+that occurred first determines the outcome. A worker reconciles persisted deadlines every minute,
+and focus endpoints reconcile them immediately before acting. Completion and abandonment also set
+the related randomization to `completed` or `abandoned` respectively.
+
 ## Error contract
 
 Errors use `application/problem+json` and follow the RFC 9457 shape:
@@ -228,6 +298,12 @@ Known codes currently include:
 | `KNOWLEDGE_CATALOG_UNBALANCED` | `422` | A catalog update violates grouping or level distribution rules. |
 | `RANDOMIZE_SUBJECT_NOT_FOUND` | `404` | The requested subject is absent from the knowledge catalog. |
 | `RANDOMIZE_TOPIC_UNAVAILABLE` | `409` | The requested scope has no eligible topic for the user. |
+| `FOCUS_DURATION_INVALID` | `422` | Focus duration is outside the 60-to-14400-second range. |
+| `FOCUS_RANDOMIZATION_NOT_FOUND` | `404` | The randomization does not belong to the current user. |
+| `FOCUS_RANDOMIZATION_UNAVAILABLE` | `409` | The randomization cannot start a focus session. |
+| `FOCUS_SESSION_ACTIVE` | `409` | The user already has an active focus session. |
+| `FOCUS_SESSION_NOT_FOUND` | `404` | The focus session does not belong to the current user. |
+| `FOCUS_SESSION_STATE_CONFLICT` | `409` | The session finished with another terminal status. |
 | `REQUEST_VALIDATION_FAILED` | `422` | Request data did not satisfy the route schema. |
 | `INTERNAL_SERVER_ERROR` | `500` | An unexpected error was hidden from the client. |
 
@@ -258,6 +334,9 @@ curl --cookie .cookies http://127.0.0.1:3000/v1/billing/summary
 curl http://127.0.0.1:3000/v1/knowledge/subjects
 curl --cookie .cookies -H 'content-type: application/json' -d '{}' http://127.0.0.1:3000/v1/randomize/topic
 curl --cookie .cookies http://127.0.0.1:3000/v1/randomize/history
+curl --cookie .cookies -H 'content-type: application/json' -d '{"randomization_id":"<id>","duration_seconds":3600}' http://127.0.0.1:3000/v1/focus/sessions
+curl --cookie .cookies http://127.0.0.1:3000/v1/focus/sessions/history
+curl --cookie .cookies -X POST http://127.0.0.1:3000/v1/focus/sessions/<session_id>/heartbeat
 ```
 
 Postman keeps the session cookie automatically. Import both files from `postman/`, select the local

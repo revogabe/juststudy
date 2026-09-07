@@ -78,12 +78,32 @@ function randomizationRecord(
 }
 
 function createStore(input?: {
+  attempts?: TopicRandomizationRecord[];
   blockedTopics?: KnowledgeTopicReference[];
   blockedSearch?: RandomizeStore["blockedTopic"]["search"];
   create?: RandomizeStore["randomization"]["create"];
   history?: RandomizeHistoryRecordPage;
 }): RandomizeStore {
   return {
+    attempt: {
+      async get(query) {
+        return (
+          input?.attempts?.find(
+            (attempt) => attempt.id === query.id && attempt.user_id === query.user_id,
+          ) ?? null
+        );
+      },
+      async search(query) {
+        return (
+          input?.attempts?.filter(
+            (attempt) => attempt.user_id === query.user_id && query.ids.includes(attempt.id),
+          ) ?? []
+        );
+      },
+      async update() {
+        return null;
+      },
+    },
     blockedTopic: {
       search: input?.blockedSearch ?? (async () => input?.blockedTopics ?? []),
     },
@@ -175,7 +195,9 @@ describe("randomize service", () => {
 
     await expect(
       service.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).resolves.toMatchObject({ topic: { slug: "geometry" } });
+    ).resolves.toMatchObject({
+      topic: { slug: "geometry" },
+    });
     expect(blockingStatuses).toEqual(["pending", "completed"]);
   });
 
@@ -201,7 +223,9 @@ describe("randomize service", () => {
 
     await expect(
       service.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).resolves.toMatchObject({ topic: { slug: "geometry" } });
+    ).resolves.toMatchObject({
+      topic: { slug: "geometry" },
+    });
     expect(attemptedTopics).toEqual(["algebra", "geometry"]);
   });
 
@@ -224,13 +248,22 @@ describe("randomize service", () => {
 
     await expect(
       missingSubjectService.topic.create({ user_id: "user-1", subject_slug: "unknown" }),
-    ).rejects.toMatchObject({ code: "RANDOMIZE_SUBJECT_NOT_FOUND", status: 404 });
+    ).rejects.toMatchObject({
+      code: "RANDOMIZE_SUBJECT_NOT_FOUND",
+      status: 404,
+    });
     await expect(
       exhaustedService.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).rejects.toMatchObject({ code: "RANDOMIZE_TOPIC_UNAVAILABLE", status: 409 });
+    ).rejects.toMatchObject({
+      code: "RANDOMIZE_TOPIC_UNAVAILABLE",
+      status: 409,
+    });
     await expect(
       emptySubjectService.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).rejects.toMatchObject({ code: "RANDOMIZE_TOPIC_UNAVAILABLE", status: 409 });
+    ).rejects.toMatchObject({
+      code: "RANDOMIZE_TOPIC_UNAVAILABLE",
+      status: 409,
+    });
   });
 
   it("enriches a cursor page without changing its timeline order", async () => {
@@ -273,5 +306,36 @@ describe("randomize service", () => {
       ],
       next_cursor: second.id,
     });
+  });
+
+  it("enriches selected attempts for another module", async () => {
+    const mathematics = knowledgeTopic("mathematics", "algebra");
+    const attempt: TopicRandomizationRecord = {
+      ...randomizationRecord({
+        user_id: "user-1",
+        subject_slug: "mathematics",
+        topic_slug: "algebra",
+        status: "pending",
+      }),
+      status: "completed",
+    };
+    const service = createRandomizeService({
+      knowledge: createKnowledge([mathematics]),
+      store: createStore({ attempts: [attempt] }),
+    });
+
+    await expect(service.attempt.search({ user_id: "user-1", ids: [attempt.id] })).resolves.toEqual(
+      [
+        expect.objectContaining({
+          id: attempt.id,
+          subject: mathematics.subject,
+          topic: mathematics.topic,
+          status: "completed",
+        }),
+      ],
+    );
+    await expect(service.attempt.search({ user_id: "user-2", ids: [attempt.id] })).resolves.toEqual(
+      [],
+    );
   });
 });

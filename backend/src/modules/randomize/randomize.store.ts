@@ -2,6 +2,9 @@ import { and, desc, eq, inArray, lt, or, type SQL } from "drizzle-orm";
 import type { DatabaseClient } from "@/infrastructure/database";
 import type { KnowledgeTopicReference } from "@/modules/knowledge";
 import type {
+  RandomizationAttemptQuery,
+  RandomizationAttemptSearchQuery,
+  RandomizationAttemptUpdate,
   RandomizationStatus,
   RandomizeHistoryQuery,
   RandomizeHistoryRecordPage,
@@ -12,6 +15,61 @@ import { topic_randomizations } from "./randomize.model";
 
 export function createRandomizeStore(database: DatabaseClient) {
   return {
+    attempt: {
+      async get(input: RandomizationAttemptQuery): Promise<TopicRandomizationRecord | null> {
+        const [attempt] = await database
+          .select()
+          .from(topic_randomizations)
+          .where(
+            and(
+              eq(topic_randomizations.id, input.id),
+              eq(topic_randomizations.user_id, input.user_id),
+            ),
+          );
+
+        return attempt ?? null;
+      },
+      search(input: RandomizationAttemptSearchQuery): Promise<TopicRandomizationRecord[]> {
+        if (input.ids.length === 0) return Promise.resolve([]);
+
+        return database
+          .select()
+          .from(topic_randomizations)
+          .where(
+            and(
+              eq(topic_randomizations.user_id, input.user_id),
+              inArray(topic_randomizations.id, input.ids),
+            ),
+          );
+      },
+      async update(input: RandomizationAttemptUpdate): Promise<TopicRandomizationRecord | null> {
+        const [attempt] = await database
+          .update(topic_randomizations)
+          .set({ status: input.status, updated_at: input.updated_at })
+          .where(
+            and(
+              eq(topic_randomizations.id, input.id),
+              eq(topic_randomizations.user_id, input.user_id),
+              eq(topic_randomizations.status, "pending"),
+            ),
+          )
+          .returning();
+
+        if (attempt) return attempt;
+
+        const [current] = await database
+          .select()
+          .from(topic_randomizations)
+          .where(
+            and(
+              eq(topic_randomizations.id, input.id),
+              eq(topic_randomizations.user_id, input.user_id),
+            ),
+          );
+
+        return current ?? null;
+      },
+    },
     blockedTopic: {
       async search(
         userId: string,

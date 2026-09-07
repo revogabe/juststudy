@@ -3,6 +3,7 @@ import { createOpenApiModule } from "@/infrastructure/http/openapi";
 import { createProblemModule } from "@/infrastructure/http/problem";
 import { createAuthenticationModule } from "@/modules/authentication";
 import { createBillingModule } from "@/modules/billing";
+import { createFocusModule } from "@/modules/focus";
 import { createKnowledgeModule } from "@/modules/knowledge";
 import { createRandomizeModule } from "@/modules/randomize";
 import type { Dependencies } from "./dependencies";
@@ -31,6 +32,11 @@ export function createApplication(input: ApplicationInput) {
     authentication: authentication.service,
     knowledge: knowledge.service,
   });
+  const focus = createFocusModule({
+    database: input.dependencies.database.client,
+    authentication: authentication.service,
+    randomize: randomize.service,
+  });
 
   return new Elysia({ name: "juststudy" })
     .use(createProblemModule())
@@ -46,7 +52,10 @@ export function createApplication(input: ApplicationInput) {
     .use(authentication.plugin)
     .use(billing.plugin)
     .use(knowledge.plugin)
-    .use(randomize.plugin);
+    .use(randomize.plugin)
+    .use(focus.plugin)
+    .setup(() => focus.worker.start())
+    .cleanup(() => focus.worker.stop());
 }
 
 export type Application = ReturnType<typeof createApplication>;

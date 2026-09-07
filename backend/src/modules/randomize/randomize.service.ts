@@ -6,6 +6,9 @@ import type {
 import { RANDOMIZE_BLOCKING_STATUSES } from "./randomize.constant";
 import type {
   PendingTopicRandomization,
+  RandomizationAttemptQuery,
+  RandomizationAttemptSearchQuery,
+  RandomizationAttemptUpdate,
   RandomizeHistoryPage,
   RandomizeHistoryQuery,
   RandomizeTopicCommand,
@@ -31,6 +34,19 @@ export function createRandomizeService(input: RandomizeServiceInput) {
   const random = input.random ?? Math.random;
 
   return {
+    attempt: {
+      get(query: RandomizationAttemptQuery): Promise<TopicRandomizationRecord | null> {
+        return input.store.attempt.get(query);
+      },
+      async search(query: RandomizationAttemptSearchQuery): Promise<TopicRandomization[]> {
+        const randomizations = await input.store.attempt.search(query);
+
+        return enrichRandomizations(input.knowledge, randomizations);
+      },
+      update(command: RandomizationAttemptUpdate): Promise<TopicRandomizationRecord | null> {
+        return input.store.attempt.update(command);
+      },
+    },
     topic: {
       async create(command: RandomizeTopicCommand): Promise<PendingTopicRandomization> {
         if (command.subject_slug && !(await input.knowledge.subject.exists(command.subject_slug)))
@@ -67,19 +83,7 @@ export function createRandomizeService(input: RandomizeServiceInput) {
     history: {
       async search(query: RandomizeHistoryQuery): Promise<RandomizeHistoryPage> {
         const history = await input.store.history.search(query);
-        const references = uniqueTopicReferences(history.randomizations);
-        const topics = await input.knowledge.topic.get(references);
-        const topicsByReference = indexTopicsByReference(topics);
-        const randomizations = history.randomizations.map((randomization) => {
-          const topic = topicsByReference
-            .get(randomization.subject_slug)
-            ?.get(randomization.topic_slug);
-
-          if (!topic)
-            throw new Error(`Knowledge topic missing for randomization ${randomization.id}.`);
-
-          return toTopicRandomization(randomization, topic);
-        });
+        const randomizations = await enrichRandomizations(input.knowledge, history.randomizations);
 
         return {
           randomizations,
@@ -88,6 +92,23 @@ export function createRandomizeService(input: RandomizeServiceInput) {
       },
     },
   };
+}
+
+async function enrichRandomizations(
+  knowledge: RandomizeKnowledge,
+  records: TopicRandomizationRecord[],
+): Promise<TopicRandomization[]> {
+  const references = uniqueTopicReferences(records);
+  const topics = await knowledge.topic.get(references);
+  const topicsByReference = indexTopicsByReference(topics);
+
+  return records.map((randomization) => {
+    const topic = topicsByReference.get(randomization.subject_slug)?.get(randomization.topic_slug);
+
+    if (!topic) throw new Error(`Knowledge topic missing for randomization ${randomization.id}.`);
+
+    return toTopicRandomization(randomization, topic);
+  });
 }
 
 function uniqueTopicReferences(

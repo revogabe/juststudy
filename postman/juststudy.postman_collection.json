@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "5b5be322-fdf5-4092-b1a1-43b9dc9dfd87",
     "name": "JustStudy API",
-    "description": "Authentication, billing, knowledge, and topic randomization requests. Postman keeps the Better Auth session cookie automatically.",
+    "description": "Authentication, billing, knowledge, topic randomization, and focus session requests. Postman keeps the Better Auth session cookie automatically.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -149,6 +149,55 @@
           "request": {
             "method": "GET",
             "url": "{{base_url}}/v1/randomize/history?limit=20"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Focus",
+      "item": [
+        {
+          "name": "Start focus session",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"randomization_id\": \"{{randomization_id}}\",\n  \"duration_seconds\": 3600\n}"
+            },
+            "url": "{{base_url}}/v1/focus/sessions"
+          }
+        },
+        {
+          "name": "Get active focus session",
+          "request": { "method": "GET", "url": "{{base_url}}/v1/focus/sessions/active" }
+        },
+        {
+          "name": "Get focus session history",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/v1/focus/sessions/history?limit=20"
+          }
+        },
+        {
+          "name": "Focus heartbeat",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/v1/focus/sessions/{{focus_session_id}}/heartbeat"
+          }
+        },
+        {
+          "name": "Complete focus session",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/v1/focus/sessions/{{focus_session_id}}/complete"
+          }
+        },
+        {
+          "name": "Abandon focus session",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/v1/focus/sessions/{{focus_session_id}}/abandon"
           }
         }
       ]

@@ -15,6 +15,7 @@ import {
   verifications,
 } from "@/modules/authentication/authentication.model";
 import { payment_events, subscriptions } from "@/modules/billing/billing.model";
+import { focus_sessions } from "@/modules/focus/focus.model";
 import type {
   KnowledgeCatalogUpdate,
   KnowledgeLevel,
@@ -204,6 +205,20 @@ function randomizeTopic(cookie: string, body: { subject_slug?: string } = {}) {
   });
 }
 
+function startFocusSession(
+  cookie: string,
+  body: { randomization_id: string; duration_seconds: number },
+) {
+  return request("/v1/focus/sessions", {
+    method: "POST",
+    headers: {
+      cookie,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
 async function cleanKnowledgeTestData(): Promise<void> {
   await database.client
     .delete(knowledge_topics)
@@ -214,6 +229,7 @@ async function cleanKnowledgeTestData(): Promise<void> {
 }
 
 async function cleanDatabase(): Promise<void> {
+  await database.client.delete(focus_sessions);
   await database.client.delete(topic_randomizations);
   await cleanKnowledgeTestData();
   await database.client.delete(payment_events);
@@ -439,7 +455,9 @@ databaseDescribe("JustStudy HTTP API", () => {
     };
     const secondHistory = await request(
       `/v1/randomize/history?limit=1&cursor=${firstHistoryBody.next_cursor}`,
-      { headers: { cookie: firstCookie } },
+      {
+        headers: { cookie: firstCookie },
+      },
     );
     const secondUserHistory = await request("/v1/randomize/history", {
       headers: { cookie: secondCookie },
@@ -515,6 +533,167 @@ databaseDescribe("JustStudy HTTP API", () => {
     expect(retriedBody.topic.slug).toBe(firstBody.topic.slug);
     expect(exhausted.status).toBe(409);
     expect(await exhausted.json()).toMatchObject({ code: "RANDOMIZE_TOPIC_UNAVAILABLE" });
+  });
+
+  it("starts, resumes, heartbeats, and completes an isolated focus session", async () => {
+    const authentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const otherAuthentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const cookie = sessionCookie(authentication);
+    const otherCookie = sessionCookie(otherAuthentication);
+    const randomization = await randomizeTopic(cookie, { subject_slug: "physics" });
+    const randomizationBody = (await randomization.json()) as {
+      id: string;
+      subject: { slug: string; name: string };
+      topic: { slug: string; name: string; level: string };
+    };
+    const command = {
+      randomization_id: randomizationBody.id,
+      duration_seconds: 3600,
+    };
+    const creation = await startFocusSession(cookie, command);
+    const creationBody = (await creation.json()) as {
+      id: string;
+      randomization_id: string;
+      duration_seconds: number;
+      status: string;
+      last_seen_at: string;
+      finished_at: string | null;
+    };
+    const retry = await startFocusSession(cookie, command);
+    const active = await request("/v1/focus/sessions/active", { headers: { cookie } });
+    const otherUserHeartbeat = await request(`/v1/focus/sessions/${creationBody.id}/heartbeat`, {
+      method: "POST",
+      headers: { cookie: otherCookie },
+    });
+    const heartbeat = await request(`/v1/focus/sessions/${creationBody.id}/heartbeat`, {
+      method: "POST",
+      headers: { cookie },
+    });
+    const completion = await request(`/v1/focus/sessions/${creationBody.id}/complete`, {
+      method: "POST",
+      headers: { cookie },
+    });
+    const completionBody = (await completion.json()) as {
+      id: string;
+      status: string;
+      finished_at: string | null;
+    };
+    const conflictingAbandonment = await request(`/v1/focus/sessions/${creationBody.id}/abandon`, {
+      method: "POST",
+      headers: { cookie },
+    });
+    const noLongerActive = await request("/v1/focus/sessions/active", {
+      headers: { cookie },
+    });
+    const history = await request("/v1/focus/sessions/history?limit=1", {
+      headers: { cookie },
+    });
+    const historyBody = (await history.json()) as {
+      sessions: Array<{
+        id: string;
+        duration_seconds: number;
+        subject: { slug: string; name: string };
+        topic: { slug: string; name: string; level: string };
+      }>;
+      next_cursor: string | null;
+    };
+    const otherUserHistory = await request("/v1/focus/sessions/history", {
+      headers: { cookie: otherCookie },
+    });
+    const [storedRandomization] = await database.client
+      .select({ status: topic_randomizations.status })
+      .from(topic_randomizations)
+      .where(eq(topic_randomizations.id, randomizationBody.id));
+
+    expect(creation.status).toBe(200);
+    expect(creationBody).toMatchObject({
+      randomization_id: randomizationBody.id,
+      duration_seconds: 3600,
+      status: "active",
+      finished_at: null,
+    });
+    expect(await retry.json()).toMatchObject({ id: creationBody.id, status: "active" });
+    expect(await active.json()).toMatchObject({
+      session: { id: creationBody.id, status: "active" },
+    });
+    expect(otherUserHeartbeat.status).toBe(404);
+    expect(heartbeat.status).toBe(200);
+    expect(completionBody).toMatchObject({
+      id: creationBody.id,
+      status: "completed",
+      finished_at: expect.any(String),
+    });
+    expect(storedRandomization?.status).toBe("completed");
+    expect(conflictingAbandonment.status).toBe(409);
+    expect(await noLongerActive.json()).toEqual({ session: null });
+    expect(history.status).toBe(200);
+    expect(historyBody).toEqual({
+      sessions: [
+        expect.objectContaining({
+          id: creationBody.id,
+          duration_seconds: 3600,
+          subject: randomizationBody.subject,
+          topic: randomizationBody.topic,
+        }),
+      ],
+      next_cursor: null,
+    });
+    expect(await otherUserHistory.json()).toEqual({ sessions: [], next_cursor: null });
+  });
+
+  it("reconciles focus completion and inactivity through heartbeat", async () => {
+    const completionAuthentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const abandonmentAuthentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const completionCookie = sessionCookie(completionAuthentication);
+    const abandonmentCookie = sessionCookie(abandonmentAuthentication);
+    const completionRandomization = await randomizeTopic(completionCookie, {
+      subject_slug: "chemistry",
+    });
+    const abandonmentRandomization = await randomizeTopic(abandonmentCookie, {
+      subject_slug: "biology",
+    });
+    const completionRandomizationBody = (await completionRandomization.json()) as { id: string };
+    const abandonmentRandomizationBody = (await abandonmentRandomization.json()) as { id: string };
+    const completion = await startFocusSession(completionCookie, {
+      randomization_id: completionRandomizationBody.id,
+      duration_seconds: 60,
+    });
+    const abandonment = await startFocusSession(abandonmentCookie, {
+      randomization_id: abandonmentRandomizationBody.id,
+      duration_seconds: 3600,
+    });
+    const completionBody = (await completion.json()) as { id: string };
+    const abandonmentBody = (await abandonment.json()) as { id: string };
+    const currentTime = new Date();
+    const completionStartedAt = new Date(currentTime.getTime() - 61_000);
+    const completionEndsAt = new Date(currentTime.getTime() - 1_000);
+    const abandonedLastSeenAt = new Date(currentTime.getTime() - 121_000);
+
+    await database.client
+      .update(focus_sessions)
+      .set({
+        started_at: completionStartedAt,
+        ends_at: completionEndsAt,
+        last_seen_at: completionStartedAt,
+        updated_at: completionStartedAt,
+      })
+      .where(eq(focus_sessions.id, completionBody.id));
+    await database.client
+      .update(focus_sessions)
+      .set({ last_seen_at: abandonedLastSeenAt, updated_at: abandonedLastSeenAt })
+      .where(eq(focus_sessions.id, abandonmentBody.id));
+
+    const completedHeartbeat = await request(`/v1/focus/sessions/${completionBody.id}/heartbeat`, {
+      method: "POST",
+      headers: { cookie: completionCookie },
+    });
+    const abandonedHeartbeat = await request(`/v1/focus/sessions/${abandonmentBody.id}/heartbeat`, {
+      method: "POST",
+      headers: { cookie: abandonmentCookie },
+    });
+
+    expect(await completedHeartbeat.json()).toMatchObject({ status: "completed" });
+    expect(await abandonedHeartbeat.json()).toMatchObject({ status: "abandoned" });
   });
 
   it("mirrors a signed payment event idempotently", async () => {

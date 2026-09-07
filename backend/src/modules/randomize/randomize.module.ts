@@ -19,6 +19,7 @@ export function createRandomizeModule(input: RandomizeModuleInput) {
   });
 
   return {
+    service,
     plugin: createRandomizeRoutes(service, input.authentication),
   };
 }

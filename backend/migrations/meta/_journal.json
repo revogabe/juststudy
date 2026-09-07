@@ -22,6 +22,13 @@
       "when": 1788751147872,
       "tag": "0002_zippy_northstar",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788756764362,
+      "tag": "0003_fantastic_stepford_cuckoos",
+      "breakpoints": true
     }
   ]
 }

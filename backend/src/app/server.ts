@@ -22,7 +22,7 @@ console.log(
 );
 
 async function close(): Promise<void> {
-  application.stop();
+  await application.stop();
   await dependencies.database.connection.close();
 }
 

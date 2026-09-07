@@ -53,3 +53,18 @@ export type RandomizeHistoryRecordPage = {
   randomizations: TopicRandomizationRecord[];
   next_cursor: string | null;
 };
+
+export type RandomizationAttemptQuery = {
+  id: string;
+  user_id: string;
+};
+
+export type RandomizationAttemptSearchQuery = {
+  ids: string[];
+  user_id: string;
+};
+
+export type RandomizationAttemptUpdate = RandomizationAttemptQuery & {
+  status: Extract<RandomizationStatus, "abandoned" | "completed">;
+  updated_at: Date;
+};

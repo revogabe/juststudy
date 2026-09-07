@@ -24,7 +24,10 @@ backend/src/
 ├── app/                 # Environment, dependency wiring, application and process entrypoints
 ├── modules/             # Product capabilities and business language
 │   ├── authentication/
-│   └── billing/
+│   ├── billing/
+│   ├── focus/
+│   ├── knowledge/
+│   └── randomize/
 ├── integrations/        # External service contracts and provider adapters
 │   ├── email/
 │   ├── identity/
@@ -129,6 +132,12 @@ redelivery idempotent.
 Randomize depends on the public Knowledge service for catalog reads and owns only per-user topic
 attempts. It selects subjects and topics, excludes active or completed assignments, and exposes the
 user's history without changing the global catalog.
+
+### Focus
+
+Focus owns timed study sessions and browser-presence tracking. It depends on the public Randomize
+service to validate an assigned topic and synchronize terminal outcomes without querying or writing
+Randomize tables. Unsynchronized outcomes remain persisted for idempotent worker reconciliation.
 
 ## Adding a module
 
