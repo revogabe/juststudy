@@ -8,9 +8,7 @@ type MagicLinkTemplateInput = {
 function createIdempotencyKey(url: string): string {
   const token = new URL(url).searchParams.get("token");
 
-  if (token) {
-    return `authentication.magic_link/${token}`;
-  }
+  if (token) return `authentication.magic_link/${token}`;
 
   return `authentication.magic_link/${Bun.hash(url).toString(36)}`;
 }

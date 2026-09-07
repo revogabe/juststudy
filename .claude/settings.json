@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun \"$CLAUDE_PROJECT_DIR/.agents/hooks/require-module-skill.ts\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -17,6 +17,14 @@ type PolarAdapterInput = {
   return_url: string;
 };
 
+function eventId(headers: Headers): string {
+  const id = headers.get("webhook-id");
+
+  if (!id) throw new InvalidPaymentEventError();
+
+  return id;
+}
+
 function toHeaders(headers: Headers): Record<string, string> {
   return Object.fromEntries(headers.entries());
 }
@@ -40,16 +48,6 @@ function toPaymentMeter(meter: { creditedUnits: number; consumedUnits: number })
     credited_units: meter.creditedUnits,
     consumed_units: meter.consumedUnits,
   };
-}
-
-function eventId(headers: Headers): string {
-  const id = headers.get("webhook-id");
-
-  if (!id) {
-    throw new InvalidPaymentEventError();
-  }
-
-  return id;
 }
 
 function toPaymentEvent(body: string, headers: Headers, secret: string): PaymentEvent {
@@ -78,9 +76,7 @@ function toPaymentEvent(body: string, headers: Headers, secret: string): Payment
       payload: JSON.parse(body) as unknown,
     };
   } catch (error) {
-    if (error instanceof InvalidPaymentEventError) {
-      throw error;
-    }
+    if (error instanceof InvalidPaymentEventError) throw error;
 
     throw new InvalidPaymentEventError(error);
   }

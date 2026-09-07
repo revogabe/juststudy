@@ -1,0 +1,18 @@
+{
+  "description": "Load the backend module workflow when a request changes product modules.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun \"$(git rev-parse --show-toplevel)/.agents/hooks/require-module-skill.ts\"",
+            "timeout": 5,
+            "statusMessage": "Checking module workflow",
+            "additionalContextLimit": 500
+          }
+        ]
+      }
+    ]
+  }
+}

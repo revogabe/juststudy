@@ -16,9 +16,7 @@ export function createBillingStore(database: DatabaseClient) {
           .from(subscriptions)
           .where(eq(subscriptions.user_id, userId));
 
-        if (!subscription) {
-          return null;
-        }
+        if (!subscription) return null;
 
         return subscription;
       },
@@ -36,13 +34,9 @@ export function createBillingStore(database: DatabaseClient) {
             .onConflictDoNothing({ target: payment_events.event_id })
             .returning({ event_id: payment_events.event_id });
 
-          if (!event) {
-            return "duplicate";
-          }
+          if (!event) return "duplicate";
 
-          if (!input.subscription) {
-            return "ignored";
-          }
+          if (!input.subscription) return "ignored";
 
           await transaction.insert(subscriptions).values(input.subscription).onConflictDoUpdate({
             target: subscriptions.user_id,

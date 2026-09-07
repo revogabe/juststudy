@@ -130,9 +130,10 @@ DATABASE_URL=postgres://juststudy:juststudy@127.0.0.1:5432/juststudy_test \
 bun run test
 ```
 
-Read the [architecture](docs/architecture.md) before adding a module and the [API guide](docs/api.md)
-before changing an HTTP contract. Public JSON and database model properties use `snake_case`;
-TypeScript functions and variables use `camelCase`.
+Read the [architecture](docs/architecture.md) and [code patterns](docs/code-patterns.md) before adding
+a module, and the [API guide](docs/api.md) before changing an HTTP contract. AI coding agents can use
+the repository's `create-backend-module` skill under `.agents/skills`; Claude receives the same
+source of truth through `.claude/skills`.
 
 ## License
 

@@ -8,9 +8,7 @@ export function createAuthenticationMacro(service: AuthenticationService) {
     auth(level: AuthenticationLevel) {
       return {
         async derive({ request }: { request: Request }) {
-          if (level === "identified") {
-            return service.session.identify(request.headers);
-          }
+          if (level === "identified") return service.session.identify(request.headers);
 
           return service.session.get(request.headers);
         },

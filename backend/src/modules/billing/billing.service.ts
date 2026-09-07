@@ -44,13 +44,9 @@ function subscriptionSummary(subscription: SubscriptionSnapshot): BillingSummary
 }
 
 function toSubscription(event: PaymentEvent, productId: string): SubscriptionSnapshot | null {
-  if (event.event_type !== "customer.state_changed") {
-    return null;
-  }
+  if (event.event_type !== "customer.state_changed") return null;
 
-  if (!event.user_id || !event.customer_id) {
-    throw billingError.unlinkedCustomer();
-  }
+  if (!event.user_id || !event.customer_id) throw billingError.unlinkedCustomer();
 
   const paidSubscription = event.subscriptions.find(
     (subscription) => subscription.product_id === productId,
@@ -64,9 +60,7 @@ function toSubscription(event: PaymentEvent, productId: string): SubscriptionSna
   );
   let plan: BillingPlan = "free";
 
-  if (paidSubscription) {
-    plan = "student";
-  }
+  if (paidSubscription) plan = "student";
 
   return {
     user_id: event.user_id,
@@ -94,9 +88,7 @@ export function createBillingService(input: BillingServiceInput) {
       async get(userId: string): Promise<BillingSummary> {
         const subscription = await input.store.subscription.get(userId);
 
-        if (!subscription) {
-          return freeSummary(userId, input.free_credits);
-        }
+        if (!subscription) return freeSummary(userId, input.free_credits);
 
         return subscriptionSummary(subscription);
       },
@@ -131,9 +123,7 @@ export function createBillingService(input: BillingServiceInput) {
             subscription: toSubscription(event, input.product_id),
           });
         } catch (error) {
-          if (error instanceof InvalidPaymentEventError) {
-            throw billingError.invalidEvent();
-          }
+          if (error instanceof InvalidPaymentEventError) throw billingError.invalidEvent();
 
           throw error;
         }

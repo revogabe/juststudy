@@ -31,9 +31,7 @@ const environmentSchema = z
     POLAR_RETURN_URL: z.url().default("http://localhost:3001/settings/billing"),
   })
   .superRefine((environment, context) => {
-    if (environment.APP_ENV !== "production") {
-      return;
-    }
+    if (environment.APP_ENV !== "production") return;
 
     const required: Array<[string, string]> = [
       ["GOOGLE_CLIENT_ID", environment.GOOGLE_CLIENT_ID],
@@ -48,9 +46,7 @@ const environmentSchema = z
     }
 
     for (const [key, value] of required) {
-      if (value) {
-        continue;
-      }
+      if (value) continue;
 
       context.addIssue({
         code: "custom",

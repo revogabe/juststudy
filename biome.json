@@ -21,6 +21,7 @@
         "noExplicitAny": "error"
       },
       "style": {
+        "useBlockStatements": "off",
         "useConst": "error",
         "useNamingConvention": {
           "level": "off"

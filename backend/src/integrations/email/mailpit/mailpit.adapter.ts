@@ -23,9 +23,7 @@ export function createMailpitAdapter(input: MailpitAdapterInput): EmailTransport
           }),
         });
 
-        if (!response.ok) {
-          throw new EmailDeliveryError();
-        }
+        if (!response.ok) throw new EmailDeliveryError();
 
         return {
           delivery_id: response.headers.get("x-message-id") ?? Bun.randomUUIDv7(),

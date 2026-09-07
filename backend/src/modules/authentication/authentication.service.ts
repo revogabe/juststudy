@@ -11,22 +11,16 @@ export function createAuthenticationService(identity: Identity) {
       async get(headers: Headers) {
         const session = await identity.session.get(headers);
 
-        if (!session) {
-          throw authenticationError.unauthenticated();
-        }
+        if (!session) throw authenticationError.unauthenticated();
 
         return session;
       },
       async identify(headers: Headers) {
         const session = await identity.session.get(headers);
 
-        if (!session) {
-          throw authenticationError.unauthenticated();
-        }
+        if (!session) throw authenticationError.unauthenticated();
 
-        if (session.user.is_anonymous) {
-          throw authenticationError.identifiedUserRequired();
-        }
+        if (session.user.is_anonymous) throw authenticationError.identifiedUserRequired();
 
         return session;
       },

@@ -64,13 +64,9 @@ export const problemError = {
 
 export function createProblemModule() {
   return new Elysia({ name: "infrastructure.http.problem" }).error("global", ({ error }) => {
-    if (error instanceof ValidationError) {
-      return validationProblem(error);
-    }
+    if (error instanceof ValidationError) return validationProblem(error);
 
-    if (error instanceof ProblemError) {
-      return knownProblem(error);
-    }
+    if (error instanceof ProblemError) return knownProblem(error);
 
     console.error(error);
 

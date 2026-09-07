@@ -20,9 +20,7 @@ export function createMemoryAdapter(): MemoryEmailAdapter {
         };
       },
       search(input) {
-        if (!input?.recipient) {
-          return [...messages];
-        }
+        if (!input?.recipient) return [...messages];
 
         return messages.filter((message) => message.recipient === input.recipient);
       },

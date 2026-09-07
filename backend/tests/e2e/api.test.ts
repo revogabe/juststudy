@@ -18,9 +18,7 @@ import { payment_events, subscriptions } from "@/modules/billing/billing.model";
 const runDatabaseTests = process.env.RUN_DATABASE_TESTS === "true";
 
 function databaseSuite() {
-  if (runDatabaseTests) {
-    return describe;
-  }
+  if (runDatabaseTests) return describe;
 
   return describe.skip;
 }
@@ -73,9 +71,7 @@ function request(path: string, init?: RequestInit): Promise<Response> {
 function sessionCookie(response: Response): string {
   const cookie = response.headers.get("set-cookie")?.split(";")[0];
 
-  if (!cookie) {
-    throw new Error("Authentication response did not set a session cookie.");
-  }
+  if (!cookie) throw new Error("Authentication response did not set a session cookie.");
 
   return cookie;
 }

@@ -1,53 +1,129 @@
-# Architecture
+# Backend architecture
 
-The backend is a modular monolith with one-way composition:
+JustStudy is a modular monolith. Product behavior stays in modules, provider code stays in
+integrations, shared technical mechanisms stay in infrastructure, and `app` composes the process.
+
+```text
+HTTP request
+    |
+    v
+route -> service -> store -> PostgreSQL
+             |
+             +------> integration contract -> provider adapter
+
+app ------------------------------------------------^ composition only
+```
+
+The goal is a small dependency graph that is easy to replace and test. A new abstraction is added
+only when it protects a real boundary or removes demonstrated duplication.
+
+## Repository layout
+
+```text
+backend/src/
+├── app/                 # Environment, dependency wiring, application and process entrypoints
+├── modules/             # Product capabilities and business language
+│   ├── authentication/
+│   └── billing/
+├── integrations/        # External service contracts and provider adapters
+│   ├── email/
+│   ├── identity/
+│   └── payments/
+└── infrastructure/      # Shared technical mechanisms
+    ├── database/
+    └── http/
+```
+
+- `app` is the composition root. It is the only layer that chooses concrete adapters.
+- `modules` owns routes, decisions, domain contracts, product errors, schemas, and product tables.
+- `integrations` translates provider APIs into small JustStudy-owned contracts.
+- `infrastructure` owns provider-neutral process mechanisms such as PostgreSQL and HTTP errors.
+
+Email delivery is an integration because modules should not know Resend or Mailpit. Templates live
+under `integrations/email/templates/<domain>` so delivery remains centralized while content remains
+discoverable by the product domain that uses it.
+
+## Dependency rules
+
+Allowed dependencies flow inward:
 
 ```text
 app -> modules -> integration contracts
-  \       \----> infrastructure contracts
-   \-----------> concrete integrations and infrastructure
+ |       |
+ |       +----> infrastructure contracts
+ +------------> concrete adapters and infrastructure
 ```
 
-## Directories
+- A module never imports a concrete provider adapter.
+- An adapter never imports a product service, route, store, or model.
+- A route calls its service; it does not query Drizzle or call provider SDKs.
+- A service owns decisions and coordinates stores and integration contracts.
+- A store owns queries and transactions, but not HTTP or provider behavior.
+- Cross-module dependencies use the owning module's public `index.ts`.
+- Avoid global `shared`, `utils`, generic repositories, event buses, and dependency containers.
 
-- `app` is the composition root. It selects adapters, creates modules, and starts the process.
-- `modules` owns product language, routes, rules, schemas, and product tables.
-- `integrations` translates external providers into small JustStudy contracts.
-- `infrastructure` owns mechanisms shared by the process, currently database and HTTP concerns.
+## Module anatomy
 
-Email templates live in `integrations/email/templates/<domain>` because delivery is centralized,
-while their names and content remain organized by the product domain that uses them.
-
-## Module flow
+A module uses only the files its behavior needs:
 
 ```text
-HTTP route -> service -> store -> PostgreSQL
-                   \---> integration contract -> provider adapter
+modules/example/
+├── example.contract.ts  # Domain types shared inside or intentionally exported by the module
+├── example.error.ts     # Product errors expressed as RFC 9457 problem details
+├── example.model.ts     # Drizzle tables owned by the module
+├── example.schema.ts    # Elysia request and response schemas
+├── example.store.ts     # Database access and transaction boundaries
+├── example.service.ts   # Business rules and orchestration
+├── example.routes.ts    # HTTP transport
+├── example.module.ts    # Creates the module's service, store, and Elysia plugin
+└── index.ts              # Deliberate public API
 ```
 
-Routes validate HTTP input and serialize output. Services own decisions. Stores own Drizzle and
-transactions. Adapters own provider SDK types and casing. There is no generic repository, event bus,
-result tuple, dependency injection container, or global utilities folder.
+Do not create empty layers. A read-only module without persistence does not need a store or model;
+a module without HTTP does not need routes or schemas.
 
-## Authentication
+`<name>.module.ts` is the local composition boundary. It receives concrete dependencies from `app`,
+creates the store and service, and returns only what another module or the application needs:
 
-The Authentication module depends on the neutral `Identity` contract. The Better Auth adapter owns
-provider field names and maps users and sessions to `snake_case`. Its callback surface is mounted
-under `/v1/auth/provider/*`; application routes remain stable if the provider changes.
+```ts
+return {
+  service,
+  plugin: createExampleRoutes(service),
+};
+```
 
-## Billing
+## Request lifecycle
 
-The Billing module depends on the neutral `Payments` contract. Checkout and portal calls go to
-Polar, while reads always use the local subscription mirror. A webhook is verified before entering
-the module. The payment event and subscription mirror are written in one database transaction.
-`payment_events.event_id` makes redelivery idempotent.
+1. Elysia validates path, query, body, headers, and response schemas in the route.
+2. Authentication macros resolve a session or identified user before the handler runs.
+3. The route converts transport-only values, then calls one service operation.
+4. The service applies product rules and coordinates its store or integration contract.
+5. Stores commit related writes in one transaction; provider adapters translate external shapes.
+6. Known errors become `application/problem+json`; unknown errors become a generic `500` response.
 
-## Naming
+The provider callback path `/v1/auth/provider/*` is the sole exception to application-owned routes:
+it is hidden from OpenAPI and delegated directly to Better Auth because the provider owns that
+protocol.
 
-- Files: `kebab-case` with a role suffix such as `.service.ts` or `.adapter.ts`.
-- Functions and local variables: `camelCase`.
-- Types: `PascalCase`.
-- Constants: `UPPER_SNAKE_CASE`.
-- JSON, schema fields, and database model properties: `snake_case`.
-- Public operations: resource then action, for example `billing.checkout.create()` and
-  `payments.event.create()`.
+## Current modules
+
+### Authentication
+
+Authentication depends on the neutral `Identity` contract. Better Auth owns provider field names
+and maps them to JustStudy `snake_case` contracts. Anonymous accounts can browse the product and are
+upgraded through email or Google. The authentication macro exposes two levels: `session` and
+`identified`.
+
+### Billing
+
+Billing depends on the neutral `Payments` contract. Checkout and portal calls use Polar, but reads
+use the local subscription mirror. Signed webhooks are converted to a provider-neutral event and
+stored with the subscription update in one database transaction. `payment_events.event_id` makes a
+redelivery idempotent.
+
+## Adding a module
+
+Use the repository skill at `.agents/skills/create-backend-module/SKILL.md`. It routes the work
+through these boundaries, the [code patterns](code-patterns.md), and the [API conventions](api.md).
+Codex and Claude project hooks add this skill reminder when a prompt creates or substantially changes
+a module; the skill remains the workflow and the hook only performs narrow discovery.

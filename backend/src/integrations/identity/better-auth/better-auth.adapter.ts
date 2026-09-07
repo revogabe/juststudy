@@ -190,9 +190,7 @@ export function createBetterAuthAdapter(input: BetterAuthAdapterInput): Identity
           returnHeaders: true,
         });
 
-        if (!result.response.url) {
-          throw new Error("Google sign-in did not return a redirect URL.");
-        }
+        if (!result.response.url) throw new Error("Google sign-in did not return a redirect URL.");
 
         return {
           body: { redirect_url: result.response.url },
@@ -204,9 +202,7 @@ export function createBetterAuthAdapter(input: BetterAuthAdapterInput): Identity
       async get(headers) {
         const result = await auth.api.getSession({ headers });
 
-        if (!result) {
-          return null;
-        }
+        if (!result) return null;
 
         return toIdentitySessionContext(result);
       },

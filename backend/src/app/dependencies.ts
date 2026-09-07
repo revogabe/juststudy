@@ -12,9 +12,7 @@ import { authenticationSchema } from "@/modules/authentication";
 import type { Environment } from "./env";
 
 function createEmailTransport(environment: Environment): EmailTransport {
-  if (environment.EMAIL_PROVIDER === "memory") {
-    return createMemoryAdapter();
-  }
+  if (environment.EMAIL_PROVIDER === "memory") return createMemoryAdapter();
 
   if (environment.EMAIL_PROVIDER === "resend") {
     return createResendAdapter({
