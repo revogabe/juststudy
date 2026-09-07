@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: juststudy_test
+          POSTGRES_USER: juststudy
+          POSTGRES_PASSWORD: juststudy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U juststudy -d juststudy_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgres://juststudy:juststudy@127.0.0.1:5432/juststudy_test
+      AUTH_SECRET: test-secret-with-at-least-32-characters
+      EMAIL_PROVIDER: memory
+      RUN_DATABASE_TESTS: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+      - run: bun install --frozen-lockfile
+      - run: bun run database:migrate
+      - run: bun run check

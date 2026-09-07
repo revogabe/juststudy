@@ -1,0 +1,99 @@
+{
+  "info": {
+    "_postman_id": "5b5be322-fdf5-4092-b1a1-43b9dc9dfd87",
+    "name": "JustStudy API",
+    "description": "Authentication and billing requests. Postman keeps the Better Auth session cookie automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health",
+          "request": { "method": "GET", "url": "{{base_url}}/health" }
+        },
+        {
+          "name": "OpenAPI",
+          "request": { "method": "GET", "url": "{{base_url}}/openapi.json" }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Create anonymous session",
+          "request": { "method": "POST", "url": "{{base_url}}/v1/auth/anonymous" }
+        },
+        {
+          "name": "Get session",
+          "request": { "method": "GET", "url": "{{base_url}}/v1/auth/session" }
+        },
+        {
+          "name": "Send magic link",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"learner@juststudy.test\",\n  \"callback_url\": \"{{web_url}}/auth/callback\"\n}"
+            },
+            "url": "{{base_url}}/v1/auth/magic-link"
+          }
+        },
+        {
+          "name": "Start Google sign-in",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"callback_url\": \"{{web_url}}/auth/callback\"\n}"
+            },
+            "url": "{{base_url}}/v1/auth/google"
+          }
+        },
+        {
+          "name": "Delete session",
+          "request": { "method": "DELETE", "url": "{{base_url}}/v1/auth/session" }
+        }
+      ]
+    },
+    {
+      "name": "Billing",
+      "item": [
+        {
+          "name": "Get summary",
+          "request": { "method": "GET", "url": "{{base_url}}/v1/billing/summary" }
+        },
+        {
+          "name": "Create checkout",
+          "request": { "method": "POST", "url": "{{base_url}}/v1/billing/checkout" }
+        },
+        {
+          "name": "Create portal session",
+          "request": { "method": "POST", "url": "{{base_url}}/v1/billing/portal" }
+        },
+        {
+          "name": "Receive Polar webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "content-type", "value": "application/json" },
+              { "key": "webhook-id", "value": "{{webhook_id}}" },
+              { "key": "webhook-timestamp", "value": "{{webhook_timestamp}}" },
+              { "key": "webhook-signature", "value": "{{webhook_signature}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"customer.state_changed\"\n}"
+            },
+            "url": "{{base_url}}/v1/billing/webhook",
+            "description": "Use a payload and signature produced by Polar or its webhook tooling. Unsigned payloads are intentionally rejected."
+          }
+        }
+      ]
+    }
+  ]
+}

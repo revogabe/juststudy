@@ -1,0 +1,25 @@
+{
+  "name": "juststudy",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend/*"
+  ],
+  "scripts": {
+    "dev": "bun run --filter @juststudy/backend dev",
+    "check": "biome check . && bun run typecheck && bun run test",
+    "check:fix": "biome check --write .",
+    "typecheck": "bun run --filter '*' typecheck",
+    "test": "bun run --filter @juststudy/backend test",
+    "database:generate": "bun run --filter @juststudy/backend database:generate",
+    "database:migrate": "bun run --filter @juststudy/backend database:migrate",
+    "openapi:generate": "bun run --filter @juststudy/backend openapi:generate",
+    "infra:up": "docker compose -f infra/compose.yaml up -d",
+    "infra:down": "docker compose -f infra/compose.yaml down"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.22",
+    "@biomejs/biome": "^2.5.10",
+    "typescript": "^7.0.2"
+  }
+}
