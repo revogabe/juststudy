@@ -68,12 +68,15 @@ A module uses only the files its behavior needs:
 
 ```text
 modules/example/
+├── example.constant.ts  # Shared domain constants and named product policy
 ├── example.contract.ts  # Domain types shared inside or intentionally exported by the module
 ├── example.error.ts     # Product errors expressed as RFC 9457 problem details
 ├── example.model.ts     # Drizzle tables owned by the module
+├── example.rule.ts      # Substantial pure product rules behind a small internal interface
 ├── example.schema.ts    # Elysia request and response schemas
-├── example.store.ts     # Database access and transaction boundaries
-├── example.service.ts   # Business rules and orchestration
+├── example.store.ts      # Database access and transaction boundaries
+├── example-item.store.ts # Optional substantial persistence workflow for one resource
+├── example.service.ts    # Business rules and orchestration
 ├── example.routes.ts    # HTTP transport
 ├── example.module.ts    # Creates the module's service, store, and Elysia plugin
 └── index.ts              # Deliberate public API

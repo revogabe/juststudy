@@ -31,6 +31,7 @@ JustStudy currently provides the platform foundation:
 - magic-link and Google authentication;
 - Polar checkout, customer portal, and signed webhooks;
 - a local subscription mirror with idempotent event processing;
+- a curated global knowledge catalog with public subject discovery;
 - OpenAPI documentation and a Postman collection;
 - a web workspace ready for the product interface.
 

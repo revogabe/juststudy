@@ -3,6 +3,7 @@ import { createOpenApiModule } from "@/infrastructure/http/openapi";
 import { createProblemModule } from "@/infrastructure/http/problem";
 import { createAuthenticationModule } from "@/modules/authentication";
 import { createBillingModule } from "@/modules/billing";
+import { createKnowledgeModule } from "@/modules/knowledge";
 import type { Dependencies } from "./dependencies";
 import type { Environment } from "./env";
 
@@ -20,6 +21,10 @@ export function createApplication(input: ApplicationInput) {
     product_id: input.environment.POLAR_PRODUCT_ID,
     free_credits: input.environment.BILLING_FREE_CREDITS,
   });
+  const knowledge = createKnowledgeModule({
+    database: input.dependencies.database.client,
+    catalog_token: input.environment.KNOWLEDGE_CATALOG_TOKEN,
+  });
 
   return new Elysia({ name: "juststudy" })
     .use(createProblemModule())
@@ -33,7 +38,8 @@ export function createApplication(input: ApplicationInput) {
       () => ({ status: "ok" }),
     )
     .use(authentication.plugin)
-    .use(billing.plugin);
+    .use(billing.plugin)
+    .use(knowledge.plugin);
 }
 
 export type Application = ReturnType<typeof createApplication>;

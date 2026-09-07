@@ -21,6 +21,7 @@ Sessions use HTTP-only cookies. Clients must preserve the cookie returned by aut
 - `Session`: anonymous and identified sessions are accepted.
 - `Identified`: the user must have linked email or Google authentication.
 - `Polar signature`: the request must contain a valid Standard Webhooks signature.
+- `Knowledge token`: the request must contain the configured catalog bearer token.
 
 The callback surface `/v1/auth/provider/*` is owned by the identity adapter. It supports provider
 callbacks, is intentionally hidden from OpenAPI, and is not a stable application contract.
@@ -131,6 +132,38 @@ Webhook processing returns one of three stable states:
 - `duplicate`: `event_id` was already stored, so no second update occurred.
 - `ignored`: the event was valid and stored but did not contain a supported subscription update.
 
+### Knowledge
+
+| Method | Route | Access | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/v1/knowledge/subjects` | Public | List the global knowledge subjects and topic counts. |
+| `POST` | `/v1/knowledge/catalog` | Knowledge token | Add balanced subjects or topic batches atomically. |
+
+Subject listing never exposes topic names:
+
+```json
+{
+  "subjects": [
+    {
+      "slug": "mathematics",
+      "name": "Mathematics",
+      "topic_count": 100,
+      "level_counts": {
+        "beginner": 15,
+        "intermediate": 35,
+        "advanced": 30,
+        "specialist": 20
+      }
+    }
+  ]
+}
+```
+
+Catalog writes use `Authorization: Bearer <KNOWLEDGE_CATALOG_TOKEN>`. A new subject includes exactly
+100 nested topics distributed as 15 beginner, 35 intermediate, 30 advanced, and 20 specialist.
+`topic_batches` extend an existing subject in balanced blocks of 20 using a 3/7/6/4 distribution.
+Each group must be entirely new or an exact replay; the whole request is transactional.
+
 ## Error contract
 
 Errors use `application/problem+json` and follow the RFC 9457 shape:
@@ -154,6 +187,9 @@ Known codes currently include:
 | `INVALID_PAYMENT_EVENT` | `400` | Webhook signature or payload validation failed. |
 | `UNLINKED_PAYMENT_CUSTOMER` | `422` | The provider customer has no JustStudy user. |
 | `PAYMENT_PROVIDER_UNAVAILABLE` | `503` | Checkout or portal creation failed upstream. |
+| `KNOWLEDGE_CATALOG_UNAUTHORIZED` | `401` | The operational catalog bearer token is missing or invalid. |
+| `KNOWLEDGE_CATALOG_CONFLICT` | `409` | A group partially overlaps or conflicts with stored catalog content. |
+| `KNOWLEDGE_CATALOG_UNBALANCED` | `422` | A catalog update violates grouping or level distribution rules. |
 | `REQUEST_VALIDATION_FAILED` | `422` | Request data did not satisfy the route schema. |
 | `INTERNAL_SERVER_ERROR` | `500` | An unexpected error was hidden from the client. |
 
@@ -181,6 +217,7 @@ Commit the updated `backend/generated/openapi.json` with the code that changed t
 curl --cookie-jar .cookies -X POST http://127.0.0.1:3000/v1/auth/anonymous
 curl --cookie .cookies http://127.0.0.1:3000/v1/auth/session
 curl --cookie .cookies http://127.0.0.1:3000/v1/billing/summary
+curl http://127.0.0.1:3000/v1/knowledge/subjects
 ```
 
 Postman keeps the session cookie automatically. Import both files from `postman/`, select the local

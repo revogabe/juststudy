@@ -6,6 +6,7 @@ describe("createEnvironment", () => {
     const environment = createEnvironment({
       APP_ENV: "test",
       DATABASE_URL: "postgres://localhost/juststudy_test",
+      KNOWLEDGE_CATALOG_TOKEN: "test-knowledge-catalog-token-32-characters",
       AUTH_SECRET: "test-secret-with-at-least-32-characters",
     });
 
@@ -19,6 +20,7 @@ describe("createEnvironment", () => {
       createEnvironment({
         APP_ENV: "production",
         DATABASE_URL: "postgres://localhost/juststudy",
+        KNOWLEDGE_CATALOG_TOKEN: "production-knowledge-catalog-token-32-characters",
         AUTH_SECRET: "production-secret-with-at-least-32-characters",
       }),
     ).toThrow();
