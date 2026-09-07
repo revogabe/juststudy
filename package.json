@@ -6,14 +6,14 @@
     "frontend/*"
   ],
   "scripts": {
-    "dev": "bun run --filter @juststudy/backend dev",
+    "dev": "bun run --cwd backend --env-file=../.env dev",
     "check": "biome check . && bun run typecheck && bun run test",
     "check:fix": "biome check --write .",
     "typecheck": "bun run --filter '*' typecheck",
     "test": "bun run --filter @juststudy/backend test",
-    "database:generate": "bun run --filter @juststudy/backend database:generate",
-    "database:migrate": "bun run --filter @juststudy/backend database:migrate",
-    "openapi:generate": "bun run --filter @juststudy/backend openapi:generate",
+    "database:generate": "bun run --cwd backend --env-file=../.env database:generate",
+    "database:migrate": "bun run --cwd backend --env-file=../.env database:migrate",
+    "openapi:generate": "bun run --cwd backend --env-file=../.env openapi:generate",
     "infra:up": "docker compose -f infra/compose.yaml up -d",
     "infra:down": "docker compose -f infra/compose.yaml down"
   },

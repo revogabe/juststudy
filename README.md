@@ -77,6 +77,7 @@ The local services are:
 | OpenAPI UI | `http://127.0.0.1:3000/docs` |
 | OpenAPI JSON | `http://127.0.0.1:3000/openapi.json` |
 | Mailpit | `http://127.0.0.1:8025` |
+| Drizzle Studio | `https://local.drizzle.studio` |
 
 Anonymous authentication and local email work without external credentials. Google sign-in and
 live billing require the corresponding values in `.env`.

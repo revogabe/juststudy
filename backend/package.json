@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --watch src/app/server.ts",
+    "dev": "bun run --parallel --no-orphans 'dev:*'",
+    "dev:api": "bun --watch src/app/server.ts",
+    "dev:studio": "drizzle-kit studio --host 127.0.0.1 --port 4983",
     "start": "bun src/app/server.ts",
     "typecheck": "tsc --noEmit",
     "test": "bun test",

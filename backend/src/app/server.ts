@@ -11,7 +11,15 @@ application.listen({
   port: environment.APP_PORT,
 });
 
-console.log(`JustStudy API listening at http://${environment.APP_HOST}:${environment.APP_PORT}`);
+console.log(
+  [
+    "JustStudy development services",
+    `API:            ${environment.APP_BASE_URL}`,
+    `OpenAPI:        ${new URL("/docs", environment.APP_BASE_URL)}`,
+    `Mailpit:        ${environment.MAILPIT_URL}`,
+    "Drizzle Studio: https://local.drizzle.studio",
+  ].join("\n"),
+);
 
 async function close(): Promise<void> {
   application.stop();
