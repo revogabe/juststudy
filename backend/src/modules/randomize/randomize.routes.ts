@@ -1,20 +1,12 @@
 import { Elysia } from "elysia";
 import { type AuthenticationService, createAuthenticationMacro } from "@/modules/authentication";
 import type { TopicRandomization } from "./randomize.contract";
-import {
-  randomizeHistoryQuerySchema,
-  randomizeHistorySchema,
-  randomizeTopicInputSchema,
-  randomizeTopicSchema,
-} from "./randomize.schema";
+import { randomizeHistoryQuerySchema, randomizeHistorySchema, randomizeTopicInputSchema, randomizeTopicSchema } from "./randomize.schema";
 import type { RandomizeService } from "./randomize.service";
 
 const HISTORY_DEFAULT_LIMIT = 20;
 
-export function createRandomizeRoutes(
-  service: RandomizeService,
-  authentication: AuthenticationService,
-) {
+export function createRandomizeRoutes(service: RandomizeService, authentication: AuthenticationService) {
   return new Elysia({ name: "randomize.routes", prefix: "/v1/randomize" })
     .use(createAuthenticationMacro(authentication))
     .post(
@@ -57,9 +49,7 @@ export function createRandomizeRoutes(
     );
 }
 
-function toRandomizationResponse<Randomization extends TopicRandomization>(
-  randomization: Randomization,
-) {
+function toRandomizationResponse<Randomization extends TopicRandomization>(randomization: Randomization) {
   return {
     ...randomization,
     created_at: randomization.created_at.toISOString(),
