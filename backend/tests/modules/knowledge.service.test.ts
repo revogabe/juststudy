@@ -42,6 +42,17 @@ function createStore(
       async get() {
         return [];
       },
+      async exists() {
+        return false;
+      },
+    },
+    topic: {
+      async search() {
+        return [];
+      },
+      async get() {
+        return [];
+      },
     },
     catalog: { update },
   };

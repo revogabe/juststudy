@@ -124,6 +124,12 @@ use the local subscription mirror. Signed webhooks are converted to a provider-n
 stored with the subscription update in one database transaction. `payment_events.event_id` makes a
 redelivery idempotent.
 
+### Randomize
+
+Randomize depends on the public Knowledge service for catalog reads and owns only per-user topic
+attempts. It selects subjects and topics, excludes active or completed assignments, and exposes the
+user's history without changing the global catalog.
+
 ## Adding a module
 
 Use the repository skill at `.agents/skills/create-backend-module/SKILL.md`. It routes the work

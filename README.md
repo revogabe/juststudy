@@ -32,6 +32,7 @@ JustStudy currently provides the platform foundation:
 - Polar checkout, customer portal, and signed webhooks;
 - a local subscription mirror with idempotent event processing;
 - a curated global knowledge catalog with public subject discovery;
+- authenticated topic randomization with a personal cursor-paginated history;
 - OpenAPI documentation and a Postman collection;
 - a web workspace ready for the product interface.
 

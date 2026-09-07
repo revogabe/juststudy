@@ -17,6 +17,15 @@ export function createKnowledgeService(input: KnowledgeServiceInput) {
       get() {
         return input.store.subject.get();
       },
+      exists(subjectSlug: string) {
+        return input.store.subject.exists(subjectSlug);
+      },
+    },
+    topic: {
+      search(subjectSlug?: string) {
+        return input.store.topic.search(subjectSlug);
+      },
+      get: input.store.topic.get,
     },
     catalog: {
       async update(command: KnowledgeCatalogUpdate) {

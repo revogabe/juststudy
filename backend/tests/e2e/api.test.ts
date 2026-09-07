@@ -22,6 +22,7 @@ import type {
   KnowledgeTopicInput,
 } from "@/modules/knowledge/knowledge.contract";
 import { knowledge_subjects, knowledge_topics } from "@/modules/knowledge/knowledge.model";
+import { topic_randomizations } from "@/modules/randomize/randomize.model";
 
 const runDatabaseTests = process.env.RUN_DATABASE_TESTS === "true";
 
@@ -192,6 +193,17 @@ function updateKnowledgeCatalog(body: KnowledgeCatalogUpdate, token = KNOWLEDGE_
   });
 }
 
+function randomizeTopic(cookie: string, body: { subject_slug?: string } = {}) {
+  return request("/v1/randomize/topic", {
+    method: "POST",
+    headers: {
+      cookie,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
 async function cleanKnowledgeTestData(): Promise<void> {
   await database.client
     .delete(knowledge_topics)
@@ -202,6 +214,7 @@ async function cleanKnowledgeTestData(): Promise<void> {
 }
 
 async function cleanDatabase(): Promise<void> {
+  await database.client.delete(topic_randomizations);
   await cleanKnowledgeTestData();
   await database.client.delete(payment_events);
   await database.client.delete(subscriptions);
@@ -376,6 +389,132 @@ databaseDescribe("JustStudy HTTP API", () => {
       user: { is_anonymous: true },
     });
     expect(checkout.status).toBe(403);
+  });
+
+  it("randomizes topics for sessions and isolates cursor-paginated history", async () => {
+    const unauthenticated = await request("/v1/randomize/topic", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+    const firstAuthentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const secondAuthentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const firstCookie = sessionCookie(firstAuthentication);
+    const secondCookie = sessionCookie(secondAuthentication);
+    const globalRandomization = await randomizeTopic(firstCookie);
+    const subjectRandomization = await randomizeTopic(firstCookie, {
+      subject_slug: "mathematics",
+    });
+    const globalBody = (await globalRandomization.json()) as {
+      id: string;
+      subject: { slug: string };
+      topic: { slug: string; level: string };
+      status: string;
+      created_at: string;
+      updated_at: string;
+    };
+    const subjectBody = (await subjectRandomization.json()) as {
+      id: string;
+      subject: { slug: string };
+    };
+
+    await database.client
+      .update(topic_randomizations)
+      .set({ created_at: new Date("2026-09-07T10:00:00.000Z") })
+      .where(eq(topic_randomizations.id, globalBody.id));
+    await database.client
+      .update(topic_randomizations)
+      .set({ created_at: new Date("2026-09-07T10:00:01.000Z") })
+      .where(eq(topic_randomizations.id, subjectBody.id));
+
+    const missingSubject = await randomizeTopic(firstCookie, {
+      subject_slug: "unknown-subject",
+    });
+    const firstHistory = await request("/v1/randomize/history?limit=1", {
+      headers: { cookie: firstCookie },
+    });
+    const firstHistoryBody = (await firstHistory.json()) as {
+      randomizations: Array<{ id: string }>;
+      next_cursor: string | null;
+    };
+    const secondHistory = await request(
+      `/v1/randomize/history?limit=1&cursor=${firstHistoryBody.next_cursor}`,
+      { headers: { cookie: firstCookie } },
+    );
+    const secondUserHistory = await request("/v1/randomize/history", {
+      headers: { cookie: secondCookie },
+    });
+    const secondHistoryBody = (await secondHistory.json()) as {
+      randomizations: Array<{ id: string }>;
+      next_cursor: string | null;
+    };
+
+    expect(unauthenticated.status).toBe(401);
+    expect(globalRandomization.status).toBe(200);
+    expect(globalBody).toMatchObject({
+      status: "pending",
+      subject: { slug: expect.any(String) },
+      topic: { slug: expect.any(String), level: expect.any(String) },
+      created_at: expect.any(String),
+      updated_at: expect.any(String),
+    });
+    expect(subjectBody.subject.slug).toBe("mathematics");
+    expect(subjectBody.id).not.toBe(globalBody.id);
+    expect(missingSubject.status).toBe(404);
+    expect(await missingSubject.json()).toMatchObject({ code: "RANDOMIZE_SUBJECT_NOT_FOUND" });
+    expect(firstHistoryBody.randomizations).toHaveLength(1);
+    expect(firstHistoryBody.next_cursor).not.toBeNull();
+    expect(secondHistoryBody.randomizations).toHaveLength(1);
+    expect(secondHistoryBody.next_cursor).toBeNull();
+    expect(firstHistoryBody.randomizations[0]?.id).toBe(subjectBody.id);
+    expect(secondHistoryBody.randomizations[0]?.id).toBe(globalBody.id);
+    expect(await secondUserHistory.json()).toEqual({
+      randomizations: [],
+      next_cursor: null,
+    });
+  });
+
+  it("makes abandoned topics eligible again and rejects an exhausted subject", async () => {
+    const authentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const cookie = sessionCookie(authentication);
+    const authenticationBody = (await authentication.json()) as { user: { id: string } };
+    const firstRandomization = await randomizeTopic(cookie, { subject_slug: "mathematics" });
+    const firstBody = (await firstRandomization.json()) as {
+      id: string;
+      topic: { slug: string };
+    };
+    const mathematicsTopics = await database.client
+      .select({ slug: knowledge_topics.slug })
+      .from(knowledge_topics)
+      .where(eq(knowledge_topics.subject_slug, "mathematics"));
+
+    await database.client
+      .update(topic_randomizations)
+      .set({ status: "abandoned", updated_at: new Date() })
+      .where(eq(topic_randomizations.id, firstBody.id));
+    await database.client.insert(topic_randomizations).values(
+      mathematicsTopics
+        .filter((topic) => topic.slug !== firstBody.topic.slug)
+        .map((topic) => ({
+          user_id: authenticationBody.user.id,
+          subject_slug: "mathematics",
+          topic_slug: topic.slug,
+          status: "pending" as const,
+        })),
+    );
+
+    const retriedRandomization = await randomizeTopic(cookie, { subject_slug: "mathematics" });
+    const retriedBody = (await retriedRandomization.json()) as {
+      id: string;
+      topic: { slug: string };
+    };
+    const exhausted = await randomizeTopic(cookie, { subject_slug: "mathematics" });
+
+    expect(retriedRandomization.status).toBe(200);
+    expect(retriedBody.id).not.toBe(firstBody.id);
+    expect(retriedBody.topic.slug).toBe(firstBody.topic.slug);
+    expect(exhausted.status).toBe(409);
+    expect(await exhausted.json()).toMatchObject({ code: "RANDOMIZE_TOPIC_UNAVAILABLE" });
   });
 
   it("mirrors a signed payment event idempotently", async () => {

@@ -164,6 +164,42 @@ Catalog writes use `Authorization: Bearer <KNOWLEDGE_CATALOG_TOKEN>`. A new subj
 `topic_batches` extend an existing subject in balanced blocks of 20 using a 3/7/6/4 distribution.
 Each group must be entirely new or an exact replay; the whole request is transactional.
 
+### Randomize
+
+| Method | Route | Access | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/v1/randomize/topic` | Session | Randomize and assign an eligible topic. |
+| `GET` | `/v1/randomize/history` | Session | Read the user's cursor-paginated randomization timeline. |
+
+Pass a subject slug to randomize within that subject. An empty object first selects an eligible
+subject uniformly and then selects one of its eligible topics:
+
+```json
+{ "subject_slug": "mathematics" }
+```
+
+```json
+{}
+```
+
+Every successful randomization creates a `pending` attempt. Topics with a `pending` or `completed`
+attempt are excluded for that user; an `abandoned` topic is eligible again. The catalog itself is
+never changed. A randomization response includes the selected catalog data and attempt state:
+
+```json
+{
+  "id": "01992442-fb47-7c15-a796-e3906b65d20d",
+  "subject": { "slug": "mathematics", "name": "Mathematics" },
+  "topic": { "slug": "linear-equations", "name": "Linear Equations", "level": "beginner" },
+  "status": "pending",
+  "created_at": "2026-09-07T12:00:00.000Z",
+  "updated_at": "2026-09-07T12:00:00.000Z"
+}
+```
+
+History is ordered newest first. `limit` defaults to 20 and accepts up to 100; pass the returned
+opaque `next_cursor` to continue from the next item.
+
 ## Error contract
 
 Errors use `application/problem+json` and follow the RFC 9457 shape:
@@ -190,6 +226,8 @@ Known codes currently include:
 | `KNOWLEDGE_CATALOG_UNAUTHORIZED` | `401` | The operational catalog bearer token is missing or invalid. |
 | `KNOWLEDGE_CATALOG_CONFLICT` | `409` | A group partially overlaps or conflicts with stored catalog content. |
 | `KNOWLEDGE_CATALOG_UNBALANCED` | `422` | A catalog update violates grouping or level distribution rules. |
+| `RANDOMIZE_SUBJECT_NOT_FOUND` | `404` | The requested subject is absent from the knowledge catalog. |
+| `RANDOMIZE_TOPIC_UNAVAILABLE` | `409` | The requested scope has no eligible topic for the user. |
 | `REQUEST_VALIDATION_FAILED` | `422` | Request data did not satisfy the route schema. |
 | `INTERNAL_SERVER_ERROR` | `500` | An unexpected error was hidden from the client. |
 
@@ -218,6 +256,8 @@ curl --cookie-jar .cookies -X POST http://127.0.0.1:3000/v1/auth/anonymous
 curl --cookie .cookies http://127.0.0.1:3000/v1/auth/session
 curl --cookie .cookies http://127.0.0.1:3000/v1/billing/summary
 curl http://127.0.0.1:3000/v1/knowledge/subjects
+curl --cookie .cookies -H 'content-type: application/json' -d '{}' http://127.0.0.1:3000/v1/randomize/topic
+curl --cookie .cookies http://127.0.0.1:3000/v1/randomize/history
 ```
 
 Postman keeps the session cookie automatically. Import both files from `postman/`, select the local

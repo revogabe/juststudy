@@ -42,3 +42,20 @@ export type KnowledgeSubjectSummary = {
   topic_count: number;
   level_counts: Record<KnowledgeLevel, number>;
 };
+
+export type KnowledgeTopicReference = {
+  subject_slug: string;
+  topic_slug: string;
+};
+
+export type KnowledgeTopic = {
+  subject: {
+    slug: string;
+    name: string;
+  };
+  topic: {
+    slug: string;
+    name: string;
+    level: KnowledgeLevel;
+  };
+};

@@ -15,6 +15,13 @@
       "when": 1788745557331,
       "tag": "0001_omniscient_mimic",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788751147872,
+      "tag": "0002_zippy_northstar",
+      "breakpoints": true
     }
   ]
 }

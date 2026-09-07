@@ -4,6 +4,7 @@ import { createProblemModule } from "@/infrastructure/http/problem";
 import { createAuthenticationModule } from "@/modules/authentication";
 import { createBillingModule } from "@/modules/billing";
 import { createKnowledgeModule } from "@/modules/knowledge";
+import { createRandomizeModule } from "@/modules/randomize";
 import type { Dependencies } from "./dependencies";
 import type { Environment } from "./env";
 
@@ -25,6 +26,11 @@ export function createApplication(input: ApplicationInput) {
     database: input.dependencies.database.client,
     catalog_token: input.environment.KNOWLEDGE_CATALOG_TOKEN,
   });
+  const randomize = createRandomizeModule({
+    database: input.dependencies.database.client,
+    authentication: authentication.service,
+    knowledge: knowledge.service,
+  });
 
   return new Elysia({ name: "juststudy" })
     .use(createProblemModule())
@@ -39,7 +45,8 @@ export function createApplication(input: ApplicationInput) {
     )
     .use(authentication.plugin)
     .use(billing.plugin)
-    .use(knowledge.plugin);
+    .use(knowledge.plugin)
+    .use(randomize.plugin);
 }
 
 export type Application = ReturnType<typeof createApplication>;
