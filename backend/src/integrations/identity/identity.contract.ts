@@ -28,17 +28,10 @@ export type Identity = {
     create(headers: Headers): Promise<IdentityResponse<{ user: IdentityUser }>>;
   };
   magicLink: {
-    create(input: {
-      headers: Headers;
-      email: string;
-      callback_url: string;
-    }): Promise<IdentityResponse<{ accepted: true }>>;
+    create(input: { headers: Headers; email: string; callback_url: string }): Promise<IdentityResponse<{ accepted: true }>>;
   };
   google: {
-    create(input: {
-      headers: Headers;
-      callback_url: string;
-    }): Promise<IdentityResponse<{ redirect_url: string }>>;
+    create(input: { headers: Headers; callback_url: string }): Promise<IdentityResponse<{ redirect_url: string }>>;
   };
   session: {
     get(headers: Headers): Promise<IdentitySessionContext | null>;

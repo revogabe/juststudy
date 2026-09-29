@@ -1,10 +1,6 @@
 import { and, eq, inArray, or } from "drizzle-orm";
 import type { DatabaseClient, DatabaseTransaction } from "@/infrastructure/database";
-import type {
-  KnowledgeCatalogUpdateResult,
-  KnowledgeCatalogWrite,
-  KnowledgeTopicInput,
-} from "../knowledge.contract";
+import type { KnowledgeCatalogUpdateResult, KnowledgeCatalogWrite, KnowledgeTopicInput } from "../knowledge.contract";
 import { KnowledgeCatalogConflictError, KnowledgeSubjectNotFoundError } from "../knowledge.error";
 import { knowledge_subjects, knowledge_topics } from "../knowledge.model";
 
@@ -102,10 +98,7 @@ async function updateTopicGroup(
     })
     .from(knowledge_topics)
     .where(
-      and(
-        eq(knowledge_topics.subject_slug, subjectSlug),
-        or(inArray(knowledge_topics.slug, slugs), inArray(knowledge_topics.name, names)),
-      ),
+      and(eq(knowledge_topics.subject_slug, subjectSlug), or(inArray(knowledge_topics.slug, slugs), inArray(knowledge_topics.name, names))),
     );
 
   if (storedTopics.length !== topics.length) throw new KnowledgeCatalogConflictError();

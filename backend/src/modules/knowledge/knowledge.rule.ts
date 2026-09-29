@@ -5,12 +5,7 @@ import {
   KNOWLEDGE_TOPIC_BATCH_DISTRIBUTION,
   KNOWLEDGE_TOPIC_BATCH_SIZE,
 } from "./knowledge.constant";
-import type {
-  KnowledgeCatalogUpdate,
-  KnowledgeCatalogWrite,
-  KnowledgeLevel,
-  KnowledgeTopicInput,
-} from "./knowledge.contract";
+import type { KnowledgeCatalogUpdate, KnowledgeCatalogWrite, KnowledgeLevel, KnowledgeTopicInput } from "./knowledge.contract";
 import { knowledgeError } from "./knowledge.error";
 
 type TopicGroupValidation = {
@@ -69,8 +64,7 @@ function validateCatalogUpdate(input: KnowledgeCatalogUpdate): KnowledgeCatalogW
     validateTopicGroup(subject.topics, {
       topicCount: KNOWLEDGE_NEW_SUBJECT_TOPIC_COUNT,
       distribution: KNOWLEDGE_NEW_SUBJECT_DISTRIBUTION,
-      distributionDetail:
-        "A new subject requires 100 topics distributed as 15 beginner, 35 intermediate, 30 advanced, and 20 specialist.",
+      distributionDetail: "A new subject requires 100 topics distributed as 15 beginner, 35 intermediate, 30 advanced, and 20 specialist.",
     });
 
     subjectSlugs.add(subject.slug);

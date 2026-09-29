@@ -1,11 +1,6 @@
 import { Elysia, t } from "elysia";
 import { createAuthenticationMacro } from "./authentication.macro";
-import {
-  googleInputSchema,
-  identityUserSchema,
-  magicLinkInputSchema,
-  sessionSchema,
-} from "./authentication.schema";
+import { googleInputSchema, identityUserSchema, magicLinkInputSchema, sessionSchema } from "./authentication.schema";
 import type { AuthenticationService } from "./authentication.service";
 
 function applyHeaders(target: Record<string, string | number | string[]>, source: Headers): void {

@@ -1,8 +1,4 @@
-import type {
-  KnowledgeService,
-  KnowledgeTopic,
-  KnowledgeTopicReference,
-} from "@/modules/knowledge";
+import type { KnowledgeService, KnowledgeTopic, KnowledgeTopicReference } from "@/modules/knowledge";
 import { RANDOMIZE_BLOCKING_STATUSES } from "./randomize.constant";
 import type {
   PendingTopicRandomization,
@@ -49,13 +45,10 @@ export function createRandomizeService(input: RandomizeServiceInput) {
     },
     topic: {
       async create(command: RandomizeTopicCommand): Promise<PendingTopicRandomization> {
-        if (command.subject_slug && !(await input.knowledge.subject.exists(command.subject_slug)))
-          throw randomizeError.subjectNotFound();
+        if (command.subject_slug && !(await input.knowledge.subject.exists(command.subject_slug))) throw randomizeError.subjectNotFound();
 
         const topics = await input.knowledge.topic.search(command.subject_slug ?? undefined);
-        const blockedTopics = await input.store.blockedTopic.search(command.user_id, [
-          ...RANDOMIZE_BLOCKING_STATUSES,
-        ]);
+        const blockedTopics = await input.store.blockedTopic.search(command.user_id, [...RANDOMIZE_BLOCKING_STATUSES]);
 
         while (true) {
           const topic = randomizeTopicRule.select({
@@ -94,10 +87,7 @@ export function createRandomizeService(input: RandomizeServiceInput) {
   };
 }
 
-async function enrichRandomizations(
-  knowledge: RandomizeKnowledge,
-  records: TopicRandomizationRecord[],
-): Promise<TopicRandomization[]> {
+async function enrichRandomizations(knowledge: RandomizeKnowledge, records: TopicRandomizationRecord[]): Promise<TopicRandomization[]> {
   const references = uniqueTopicReferences(records);
   const topics = await knowledge.topic.get(references);
   const topicsByReference = indexTopicsByReference(topics);
@@ -111,9 +101,7 @@ async function enrichRandomizations(
   });
 }
 
-function uniqueTopicReferences(
-  randomizations: TopicRandomizationRecord[],
-): KnowledgeTopicReference[] {
+function uniqueTopicReferences(randomizations: TopicRandomizationRecord[]): KnowledgeTopicReference[] {
   const references: KnowledgeTopicReference[] = [];
   const topicSlugsBySubject = new Map<string, Set<string>>();
 
@@ -133,9 +121,7 @@ function uniqueTopicReferences(
   return references;
 }
 
-function indexTopicsByReference(
-  topics: KnowledgeTopic[],
-): Map<string, Map<string, KnowledgeTopic>> {
+function indexTopicsByReference(topics: KnowledgeTopic[]): Map<string, Map<string, KnowledgeTopic>> {
   const topicsBySubject = new Map<string, Map<string, KnowledgeTopic>>();
 
   for (const topic of topics) {
@@ -148,10 +134,7 @@ function indexTopicsByReference(
   return topicsBySubject;
 }
 
-function toTopicRandomization(
-  randomization: TopicRandomizationRecord,
-  topic: KnowledgeTopic,
-): TopicRandomization {
+function toTopicRandomization(randomization: TopicRandomizationRecord, topic: KnowledgeTopic): TopicRandomization {
   return {
     id: randomization.id,
     subject: topic.subject,
@@ -162,10 +145,7 @@ function toTopicRandomization(
   };
 }
 
-function toPendingTopicRandomization(
-  randomization: TopicRandomizationRecord,
-  topic: KnowledgeTopic,
-): PendingTopicRandomization {
+function toPendingTopicRandomization(randomization: TopicRandomizationRecord, topic: KnowledgeTopic): PendingTopicRandomization {
   return {
     ...toTopicRandomization(randomization, topic),
     status: "pending",

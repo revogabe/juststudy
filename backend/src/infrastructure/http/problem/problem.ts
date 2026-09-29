@@ -23,13 +23,7 @@ export class ProblemError extends Error {
   }
 }
 
-function problemResponse(input: {
-  status: number;
-  type: string;
-  title: string;
-  code: string;
-  detail: string;
-}): Response {
+function problemResponse(input: { status: number; type: string; title: string; code: string; detail: string }): Response {
   return Response.json(input, {
     status: input.status,
     headers: { "content-type": "application/problem+json" },

@@ -34,11 +34,7 @@ export function createFocusStore(database: DatabaseClient) {
 
         return session ?? null;
       },
-      async heartbeat(
-        userId: string,
-        sessionId: string,
-        seenAt: Date,
-      ): Promise<FocusSessionRecord | null> {
+      async heartbeat(userId: string, sessionId: string, seenAt: Date): Promise<FocusSessionRecord | null> {
         const [session] = await database
           .update(focus_sessions)
           .set({ last_seen_at: seenAt, updated_at: seenAt })
@@ -70,9 +66,7 @@ export function createFocusStore(database: DatabaseClient) {
               eq(focus_sessions.id, input.session_id),
               eq(focus_sessions.user_id, input.user_id),
               eq(focus_sessions.status, "active"),
-              input.expected_updated_at
-                ? eq(focus_sessions.updated_at, input.expected_updated_at)
-                : undefined,
+              input.expected_updated_at ? eq(focus_sessions.updated_at, input.expected_updated_at) : undefined,
             ),
           )
           .returning();
@@ -81,12 +75,7 @@ export function createFocusStore(database: DatabaseClient) {
 
         return getSession(database, input.user_id, input.session_id);
       },
-      async markSynced(
-        userId: string,
-        sessionId: string,
-        status: FocusTerminalStatus,
-        syncedAt: Date,
-      ): Promise<FocusSessionRecord | null> {
+      async markSynced(userId: string, sessionId: string, status: FocusTerminalStatus, syncedAt: Date): Promise<FocusSessionRecord | null> {
         const [session] = await database
           .update(focus_sessions)
           .set({ randomization_synced_at: syncedAt })
@@ -120,10 +109,7 @@ export function createFocusStore(database: DatabaseClient) {
           .where(
             and(
               eq(focus_sessions.status, "active"),
-              or(
-                lte(focus_sessions.ends_at, now),
-                lte(focus_sessions.last_seen_at, inactiveBefore),
-              ),
+              or(lte(focus_sessions.ends_at, now), lte(focus_sessions.last_seen_at, inactiveBefore)),
             ),
           );
       },
@@ -133,21 +119,13 @@ export function createFocusStore(database: DatabaseClient) {
         return database
           .select()
           .from(focus_sessions)
-          .where(
-            and(
-              inArray(focus_sessions.status, ["completed", "abandoned"]),
-              isNull(focus_sessions.randomization_synced_at),
-            ),
-          );
+          .where(and(inArray(focus_sessions.status, ["completed", "abandoned"]), isNull(focus_sessions.randomization_synced_at)));
       },
     },
   };
 }
 
-async function searchHistory(
-  database: DatabaseClient,
-  input: FocusHistoryQuery,
-): Promise<FocusHistoryRecordPage> {
+async function searchHistory(database: DatabaseClient, input: FocusHistoryQuery): Promise<FocusHistoryRecordPage> {
   let cursorCondition: SQL | undefined;
 
   if (input.cursor) {
@@ -179,10 +157,7 @@ async function searchHistory(
   };
 }
 
-async function createSession(
-  database: DatabaseClient,
-  input: FocusSessionCreate,
-): Promise<FocusSessionCreateResult> {
+async function createSession(database: DatabaseClient, input: FocusSessionCreate): Promise<FocusSessionCreateResult> {
   const [session] = await database
     .insert(focus_sessions)
     .values({
@@ -201,12 +176,7 @@ async function createSession(
   const [existing] = await database
     .select()
     .from(focus_sessions)
-    .where(
-      and(
-        eq(focus_sessions.randomization_id, input.randomization_id),
-        eq(focus_sessions.user_id, input.user_id),
-      ),
-    );
+    .where(and(eq(focus_sessions.randomization_id, input.randomization_id), eq(focus_sessions.user_id, input.user_id)));
 
   if (existing) {
     if (existing.status === "active" && existing.duration_seconds === input.duration_seconds)
@@ -220,11 +190,7 @@ async function createSession(
   return { result: "active_conflict" };
 }
 
-async function getSession(
-  database: DatabaseClient,
-  userId: string,
-  sessionId: string,
-): Promise<FocusSessionRecord | null> {
+async function getSession(database: DatabaseClient, userId: string, sessionId: string): Promise<FocusSessionRecord | null> {
   const [session] = await database
     .select()
     .from(focus_sessions)

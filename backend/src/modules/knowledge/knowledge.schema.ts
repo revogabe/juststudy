@@ -8,12 +8,7 @@ const slugSchema = t.String({
 
 const nameSchema = t.String({ minLength: 1, maxLength: 160 });
 
-const knowledgeLevelSchema = t.Union([
-  t.Literal("beginner"),
-  t.Literal("intermediate"),
-  t.Literal("advanced"),
-  t.Literal("specialist"),
-]);
+const knowledgeLevelSchema = t.Union([t.Literal("beginner"), t.Literal("intermediate"), t.Literal("advanced"), t.Literal("specialist")]);
 
 const knowledgeTopicInputSchema = t.Object(
   {

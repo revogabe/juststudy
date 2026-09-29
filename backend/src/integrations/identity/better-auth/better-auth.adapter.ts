@@ -3,12 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { anonymous, magicLink } from "better-auth/plugins";
 import type { DatabaseClient } from "@/infrastructure/database";
 import type { Email } from "@/integrations/email";
-import type {
-  Identity,
-  IdentitySession,
-  IdentitySessionContext,
-  IdentityUser,
-} from "../identity.contract";
+import type { Identity, IdentitySession, IdentitySessionContext, IdentityUser } from "../identity.contract";
 
 type BetterAuthAdapterInput = {
   base_url: string;
@@ -55,10 +50,7 @@ function toIdentitySession(session: BetterAuthSession): IdentitySession {
   };
 }
 
-function toIdentitySessionContext(input: {
-  user: BetterAuthUser;
-  session: BetterAuthSession;
-}): IdentitySessionContext {
+function toIdentitySessionContext(input: { user: BetterAuthUser; session: BetterAuthSession }): IdentitySessionContext {
   return {
     user: toIdentityUser(input.user),
     session: toIdentitySession(input.session),

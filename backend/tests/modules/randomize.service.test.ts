@@ -1,9 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type {
-  KnowledgeService,
-  KnowledgeTopic,
-  KnowledgeTopicReference,
-} from "@/modules/knowledge";
+import type { KnowledgeService, KnowledgeTopic, KnowledgeTopicReference } from "@/modules/knowledge";
 import type {
   RandomizationStatus,
   RandomizeHistoryRecordPage,
@@ -34,10 +30,7 @@ function knowledgeTopic(subjectSlug: string, topicSlug: string): KnowledgeTopic 
   };
 }
 
-function createKnowledge(
-  topics: KnowledgeTopic[],
-  additionalSubjects: string[] = [],
-): RandomizeKnowledge {
+function createKnowledge(topics: KnowledgeTopic[], additionalSubjects: string[] = []): RandomizeKnowledge {
   const subjects = new Set([...topics.map((topic) => topic.subject.slug), ...additionalSubjects]);
 
   return {
@@ -53,22 +46,15 @@ function createKnowledge(
         return topics.filter((topic) => topic.subject.slug === subjectSlug);
       },
       async get(references) {
-        const referenceKeys = new Set(
-          references.map((reference) => `${reference.subject_slug}/${reference.topic_slug}`),
-        );
+        const referenceKeys = new Set(references.map((reference) => `${reference.subject_slug}/${reference.topic_slug}`));
 
-        return topics.filter((topic) =>
-          referenceKeys.has(`${topic.subject.slug}/${topic.topic.slug}`),
-        );
+        return topics.filter((topic) => referenceKeys.has(`${topic.subject.slug}/${topic.topic.slug}`));
       },
     },
   };
 }
 
-function randomizationRecord(
-  input: TopicRandomizationCreate,
-  id = "00000000-0000-4000-8000-000000000001",
-): TopicRandomizationRecord {
+function randomizationRecord(input: TopicRandomizationCreate, id = "00000000-0000-4000-8000-000000000001"): TopicRandomizationRecord {
   return {
     id,
     ...input,
@@ -87,18 +73,10 @@ function createStore(input?: {
   return {
     attempt: {
       async get(query) {
-        return (
-          input?.attempts?.find(
-            (attempt) => attempt.id === query.id && attempt.user_id === query.user_id,
-          ) ?? null
-        );
+        return input?.attempts?.find((attempt) => attempt.id === query.id && attempt.user_id === query.user_id) ?? null;
       },
       async search(query) {
-        return (
-          input?.attempts?.filter(
-            (attempt) => attempt.user_id === query.user_id && query.ids.includes(attempt.id),
-          ) ?? []
-        );
+        return input?.attempts?.filter((attempt) => attempt.user_id === query.user_id && query.ids.includes(attempt.id)) ?? [];
       },
       async update() {
         return null;
@@ -136,9 +114,7 @@ describe("randomize service", () => {
       random: () => 0,
     });
 
-    await expect(
-      service.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).resolves.toMatchObject({
+    await expect(service.topic.create({ user_id: "user-1", subject_slug: "mathematics" })).resolves.toMatchObject({
       subject: second.subject,
       topic: second.topic,
       status: "pending",
@@ -157,9 +133,7 @@ describe("randomize service", () => {
       random: randomSequence(0.6, 0),
     });
 
-    await expect(
-      service.topic.create({ user_id: "user-1", subject_slug: null }),
-    ).resolves.toMatchObject({
+    await expect(service.topic.create({ user_id: "user-1", subject_slug: null })).resolves.toMatchObject({
       subject: { slug: "physics" },
       topic: { slug: "mechanics" },
     });
@@ -185,27 +159,20 @@ describe("randomize service", () => {
         async blockedSearch(_userId, statuses) {
           blockingStatuses = statuses;
 
-          return attempts
-            .filter((attempt) => statuses.includes(attempt.status))
-            .map((attempt) => attempt.reference);
+          return attempts.filter((attempt) => statuses.includes(attempt.status)).map((attempt) => attempt.reference);
         },
       }),
       random: () => 0,
     });
 
-    await expect(
-      service.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).resolves.toMatchObject({
+    await expect(service.topic.create({ user_id: "user-1", subject_slug: "mathematics" })).resolves.toMatchObject({
       topic: { slug: "geometry" },
     });
     expect(blockingStatuses).toEqual(["pending", "completed"]);
   });
 
   it("retries another candidate after a concurrent active-topic conflict", async () => {
-    const topics = [
-      knowledgeTopic("mathematics", "algebra"),
-      knowledgeTopic("mathematics", "geometry"),
-    ];
+    const topics = [knowledgeTopic("mathematics", "algebra"), knowledgeTopic("mathematics", "geometry")];
     const attemptedTopics: string[] = [];
     const service = createRandomizeService({
       knowledge: createKnowledge(topics),
@@ -221,9 +188,7 @@ describe("randomize service", () => {
       random: () => 0,
     });
 
-    await expect(
-      service.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).resolves.toMatchObject({
+    await expect(service.topic.create({ user_id: "user-1", subject_slug: "mathematics" })).resolves.toMatchObject({
       topic: { slug: "geometry" },
     });
     expect(attemptedTopics).toEqual(["algebra", "geometry"]);
@@ -246,21 +211,15 @@ describe("randomize service", () => {
       store: createStore(),
     });
 
-    await expect(
-      missingSubjectService.topic.create({ user_id: "user-1", subject_slug: "unknown" }),
-    ).rejects.toMatchObject({
+    await expect(missingSubjectService.topic.create({ user_id: "user-1", subject_slug: "unknown" })).rejects.toMatchObject({
       code: "RANDOMIZE_SUBJECT_NOT_FOUND",
       status: 404,
     });
-    await expect(
-      exhaustedService.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).rejects.toMatchObject({
+    await expect(exhaustedService.topic.create({ user_id: "user-1", subject_slug: "mathematics" })).rejects.toMatchObject({
       code: "RANDOMIZE_TOPIC_UNAVAILABLE",
       status: 409,
     });
-    await expect(
-      emptySubjectService.topic.create({ user_id: "user-1", subject_slug: "mathematics" }),
-    ).rejects.toMatchObject({
+    await expect(emptySubjectService.topic.create({ user_id: "user-1", subject_slug: "mathematics" })).rejects.toMatchObject({
       code: "RANDOMIZE_TOPIC_UNAVAILABLE",
       status: 409,
     });
@@ -297,9 +256,7 @@ describe("randomize service", () => {
       }),
     });
 
-    await expect(
-      service.history.search({ user_id: "user-1", limit: 2, cursor: null }),
-    ).resolves.toMatchObject({
+    await expect(service.history.search({ user_id: "user-1", limit: 2, cursor: null })).resolves.toMatchObject({
       randomizations: [
         { id: first.id, subject: physics.subject, topic: physics.topic },
         { id: second.id, subject: mathematics.subject, topic: mathematics.topic },
@@ -324,18 +281,14 @@ describe("randomize service", () => {
       store: createStore({ attempts: [attempt] }),
     });
 
-    await expect(service.attempt.search({ user_id: "user-1", ids: [attempt.id] })).resolves.toEqual(
-      [
-        expect.objectContaining({
-          id: attempt.id,
-          subject: mathematics.subject,
-          topic: mathematics.topic,
-          status: "completed",
-        }),
-      ],
-    );
-    await expect(service.attempt.search({ user_id: "user-2", ids: [attempt.id] })).resolves.toEqual(
-      [],
-    );
+    await expect(service.attempt.search({ user_id: "user-1", ids: [attempt.id] })).resolves.toEqual([
+      expect.objectContaining({
+        id: attempt.id,
+        subject: mathematics.subject,
+        topic: mathematics.topic,
+        status: "completed",
+      }),
+    ]);
+    await expect(service.attempt.search({ user_id: "user-2", ids: [attempt.id] })).resolves.toEqual([]);
   });
 });

@@ -20,12 +20,7 @@ export function createRandomizeStore(database: DatabaseClient) {
         const [attempt] = await database
           .select()
           .from(topic_randomizations)
-          .where(
-            and(
-              eq(topic_randomizations.id, input.id),
-              eq(topic_randomizations.user_id, input.user_id),
-            ),
-          );
+          .where(and(eq(topic_randomizations.id, input.id), eq(topic_randomizations.user_id, input.user_id)));
 
         return attempt ?? null;
       },
@@ -35,12 +30,7 @@ export function createRandomizeStore(database: DatabaseClient) {
         return database
           .select()
           .from(topic_randomizations)
-          .where(
-            and(
-              eq(topic_randomizations.user_id, input.user_id),
-              inArray(topic_randomizations.id, input.ids),
-            ),
-          );
+          .where(and(eq(topic_randomizations.user_id, input.user_id), inArray(topic_randomizations.id, input.ids)));
       },
       async update(input: RandomizationAttemptUpdate): Promise<TopicRandomizationRecord | null> {
         const [attempt] = await database
@@ -60,42 +50,25 @@ export function createRandomizeStore(database: DatabaseClient) {
         const [current] = await database
           .select()
           .from(topic_randomizations)
-          .where(
-            and(
-              eq(topic_randomizations.id, input.id),
-              eq(topic_randomizations.user_id, input.user_id),
-            ),
-          );
+          .where(and(eq(topic_randomizations.id, input.id), eq(topic_randomizations.user_id, input.user_id)));
 
         return current ?? null;
       },
     },
     blockedTopic: {
-      async search(
-        userId: string,
-        statuses: RandomizationStatus[],
-      ): Promise<KnowledgeTopicReference[]> {
+      async search(userId: string, statuses: RandomizationStatus[]): Promise<KnowledgeTopicReference[]> {
         return database
           .select({
             subject_slug: topic_randomizations.subject_slug,
             topic_slug: topic_randomizations.topic_slug,
           })
           .from(topic_randomizations)
-          .where(
-            and(
-              eq(topic_randomizations.user_id, userId),
-              inArray(topic_randomizations.status, statuses),
-            ),
-          );
+          .where(and(eq(topic_randomizations.user_id, userId), inArray(topic_randomizations.status, statuses)));
       },
     },
     randomization: {
       async create(input: TopicRandomizationCreate): Promise<TopicRandomizationRecord | null> {
-        const [randomization] = await database
-          .insert(topic_randomizations)
-          .values(input)
-          .onConflictDoNothing()
-          .returning();
+        const [randomization] = await database.insert(topic_randomizations).values(input).onConflictDoNothing().returning();
 
         return randomization ?? null;
       },
@@ -108,10 +81,7 @@ export function createRandomizeStore(database: DatabaseClient) {
   };
 }
 
-async function searchHistory(
-  database: DatabaseClient,
-  input: RandomizeHistoryQuery,
-): Promise<RandomizeHistoryRecordPage> {
+async function searchHistory(database: DatabaseClient, input: RandomizeHistoryQuery): Promise<RandomizeHistoryRecordPage> {
   let cursorCondition: SQL | undefined;
 
   if (input.cursor) {
@@ -121,21 +91,13 @@ async function searchHistory(
         created_at: topic_randomizations.created_at,
       })
       .from(topic_randomizations)
-      .where(
-        and(
-          eq(topic_randomizations.id, input.cursor),
-          eq(topic_randomizations.user_id, input.user_id),
-        ),
-      );
+      .where(and(eq(topic_randomizations.id, input.cursor), eq(topic_randomizations.user_id, input.user_id)));
 
     if (!cursor) return { randomizations: [], next_cursor: null };
 
     cursorCondition = or(
       lt(topic_randomizations.created_at, cursor.created_at),
-      and(
-        eq(topic_randomizations.created_at, cursor.created_at),
-        lt(topic_randomizations.id, cursor.id),
-      ),
+      and(eq(topic_randomizations.created_at, cursor.created_at), lt(topic_randomizations.id, cursor.id)),
     );
   }
 

@@ -1,17 +1,9 @@
 import { Elysia } from "elysia";
 import { type AuthenticationService, createAuthenticationMacro } from "@/modules/authentication";
-import {
-  billingSummarySchema,
-  checkoutSchema,
-  paymentEventSchema,
-  portalSchema,
-} from "./billing.schema";
+import { billingSummarySchema, checkoutSchema, paymentEventSchema, portalSchema } from "./billing.schema";
 import type { BillingService } from "./billing.service";
 
-export function createBillingRoutes(
-  service: BillingService,
-  authentication: AuthenticationService,
-) {
+export function createBillingRoutes(service: BillingService, authentication: AuthenticationService) {
   return new Elysia({ name: "billing.routes", prefix: "/v1/billing" })
     .use(createAuthenticationMacro(authentication))
     .get(

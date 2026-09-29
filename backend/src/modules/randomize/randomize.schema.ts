@@ -21,12 +21,7 @@ const randomizationProperties = {
     {
       slug: t.String(),
       name: t.String(),
-      level: t.Union([
-        t.Literal("beginner"),
-        t.Literal("intermediate"),
-        t.Literal("advanced"),
-        t.Literal("specialist"),
-      ]),
+      level: t.Union([t.Literal("beginner"), t.Literal("intermediate"), t.Literal("advanced"), t.Literal("specialist")]),
     },
     { additionalProperties: false },
   ),

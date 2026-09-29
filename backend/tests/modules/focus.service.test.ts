@@ -1,15 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import type {
-  FocusSessionCreate,
-  FocusSessionRecord,
-  FocusTerminalStatus,
-} from "@/modules/focus/focus.contract";
+import type { FocusSessionCreate, FocusSessionRecord, FocusTerminalStatus } from "@/modules/focus/focus.contract";
 import { createFocusService } from "@/modules/focus/focus.service";
 import type { FocusStore } from "@/modules/focus/focus.store";
-import type {
-  RandomizationAttemptUpdate,
-  TopicRandomizationRecord,
-} from "@/modules/randomize/randomize.contract";
+import type { RandomizationAttemptUpdate, TopicRandomizationRecord } from "@/modules/randomize/randomize.contract";
 
 const USER_ID = "user-1";
 const OTHER_USER_ID = "user-2";
@@ -33,36 +26,24 @@ function randomizationRecord(
   };
 }
 
-function createFixture(input?: {
-  randomizations?: TopicRandomizationRecord[];
-  sessions?: FocusSessionRecord[];
-}) {
+function createFixture(input?: { randomizations?: TopicRandomizationRecord[]; sessions?: FocusSessionRecord[] }) {
   let currentTime = STARTED_AT;
   let nextSessionId = 16;
   const sessions = input?.sessions ?? [];
   const randomizations = new Map(
-    (input?.randomizations ?? [randomizationRecord(RANDOMIZATION_ID)]).map((randomization) => [
-      randomization.id,
-      randomization,
-    ]),
+    (input?.randomizations ?? [randomizationRecord(RANDOMIZATION_ID)]).map((randomization) => [randomization.id, randomization]),
   );
 
   const store: FocusStore = {
     session: {
       async create(command: FocusSessionCreate) {
         const existing = sessions.find(
-          (session) =>
-            session.randomization_id === command.randomization_id &&
-            session.user_id === command.user_id,
+          (session) => session.randomization_id === command.randomization_id && session.user_id === command.user_id,
         );
 
         if (existing?.status === "active" && existing.duration_seconds === command.duration_seconds)
           return { result: "existing", session: existing } as const;
-        if (
-          sessions.some(
-            (session) => session.user_id === command.user_id && session.status === "active",
-          )
-        )
+        if (sessions.some((session) => session.user_id === command.user_id && session.status === "active"))
           return { result: "active_conflict" } as const;
 
         const session: FocusSessionRecord = {
@@ -84,20 +65,13 @@ function createFixture(input?: {
         return { result: "created", session } as const;
       },
       async get(userId, sessionId) {
-        return (
-          sessions.find((session) => session.user_id === userId && session.id === sessionId) ?? null
-        );
+        return sessions.find((session) => session.user_id === userId && session.id === sessionId) ?? null;
       },
       async getActive(userId) {
-        return (
-          sessions.find((session) => session.user_id === userId && session.status === "active") ??
-          null
-        );
+        return sessions.find((session) => session.user_id === userId && session.status === "active") ?? null;
       },
       async heartbeat(userId, sessionId, seenAt) {
-        const session = sessions.find(
-          (candidate) => candidate.user_id === userId && candidate.id === sessionId,
-        );
+        const session = sessions.find((candidate) => candidate.user_id === userId && candidate.id === sessionId);
 
         if (session?.status !== "active") return session ?? null;
         if (session.last_seen_at > seenAt) return session;
@@ -108,17 +82,10 @@ function createFixture(input?: {
         return session;
       },
       async finish(command) {
-        const session = sessions.find(
-          (candidate) =>
-            candidate.user_id === command.user_id && candidate.id === command.session_id,
-        );
+        const session = sessions.find((candidate) => candidate.user_id === command.user_id && candidate.id === command.session_id);
 
         if (session?.status !== "active") return session ?? null;
-        if (
-          command.expected_updated_at &&
-          session.updated_at.getTime() !== command.expected_updated_at.getTime()
-        )
-          return session;
+        if (command.expected_updated_at && session.updated_at.getTime() !== command.expected_updated_at.getTime()) return session;
 
         session.status = command.status;
         session.finished_at = command.finished_at;
@@ -128,9 +95,7 @@ function createFixture(input?: {
         return session;
       },
       async markSynced(userId, sessionId, status: FocusTerminalStatus, syncedAt) {
-        const session = sessions.find(
-          (candidate) => candidate.user_id === userId && candidate.id === sessionId,
-        );
+        const session = sessions.find((candidate) => candidate.user_id === userId && candidate.id === sessionId);
 
         if (!session || session.status !== status) return session ?? null;
 
@@ -148,9 +113,7 @@ function createFixture(input?: {
 
             return dateOrder || right.id.localeCompare(left.id);
           });
-        const cursorIndex = query.cursor
-          ? ordered.findIndex((session) => session.id === query.cursor)
-          : -1;
+        const cursorIndex = query.cursor ? ordered.findIndex((session) => session.id === query.cursor) : -1;
 
         if (query.cursor && cursorIndex === -1) return { sessions: [], next_cursor: null };
 
@@ -168,17 +131,13 @@ function createFixture(input?: {
         const inactiveBefore = now.getTime() - 120_000;
 
         return sessions.filter(
-          (session) =>
-            session.status === "active" &&
-            (session.ends_at <= now || session.last_seen_at.getTime() <= inactiveBefore),
+          (session) => session.status === "active" && (session.ends_at <= now || session.last_seen_at.getTime() <= inactiveBefore),
         );
       },
     },
     unsyncedSession: {
       async search() {
-        return sessions.filter(
-          (session) => session.status !== "active" && !session.randomization_synced_at,
-        );
+        return sessions.filter((session) => session.status !== "active" && !session.randomization_synced_at);
       },
     },
   };
@@ -265,10 +224,7 @@ describe("focus service", () => {
 
   it("rejects invalid durations, unavailable randomizations, and concurrent sessions", async () => {
     const fixture = createFixture({
-      randomizations: [
-        randomizationRecord(RANDOMIZATION_ID),
-        randomizationRecord(SECOND_RANDOMIZATION_ID, "completed"),
-      ],
+      randomizations: [randomizationRecord(RANDOMIZATION_ID), randomizationRecord(SECOND_RANDOMIZATION_ID, "completed")],
     });
 
     await expect(
@@ -336,9 +292,7 @@ describe("focus service", () => {
     expect(completed.finished_at).toEqual(new Date("2026-09-07T10:00:30.000Z"));
     expect(repeated.status).toBe("completed");
     expect(fixture.randomizations.get(RANDOMIZATION_ID)?.status).toBe("completed");
-    await expect(
-      fixture.service.session.abandon({ user_id: USER_ID, session_id: session.id }),
-    ).rejects.toMatchObject({
+    await expect(fixture.service.session.abandon({ user_id: USER_ID, session_id: session.id })).rejects.toMatchObject({
       code: "FOCUS_SESSION_STATE_CONFLICT",
       status: 409,
     });
@@ -381,9 +335,7 @@ describe("focus service", () => {
     completionFixture.setNow("2026-09-07T10:02:01.000Z");
 
     expect(await completionFixture.service.session.expire()).toBe(1);
-    expect(
-      completionFixture.sessions.find((session) => session.id === shortSession.id)?.status,
-    ).toBe("completed");
+    expect(completionFixture.sessions.find((session) => session.id === shortSession.id)?.status).toBe("completed");
 
     const abandonmentFixture = createFixture();
     await abandonmentFixture.service.session.create({
@@ -415,10 +367,7 @@ describe("focus service", () => {
 
   it("returns cursor-paginated session history with durations and studied topics", async () => {
     const fixture = createFixture({
-      randomizations: [
-        randomizationRecord(RANDOMIZATION_ID),
-        randomizationRecord(SECOND_RANDOMIZATION_ID),
-      ],
+      randomizations: [randomizationRecord(RANDOMIZATION_ID), randomizationRecord(SECOND_RANDOMIZATION_ID)],
     });
     const first = await fixture.service.session.create({
       user_id: USER_ID,

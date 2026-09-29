@@ -1,11 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { Elysia, t } from "elysia";
 import { knowledgeError } from "./knowledge.error";
-import {
-  knowledgeCatalogInputSchema,
-  knowledgeCatalogResultSchema,
-  knowledgeSubjectsSchema,
-} from "./knowledge.schema";
+import { knowledgeCatalogInputSchema, knowledgeCatalogResultSchema, knowledgeSubjectsSchema } from "./knowledge.schema";
 import type { KnowledgeService } from "./knowledge.service";
 
 export function createKnowledgeRoutes(service: KnowledgeService, catalogToken: string) {

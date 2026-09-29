@@ -1,11 +1,7 @@
 import { t } from "elysia";
 import { FOCUS_MAX_DURATION_SECONDS, FOCUS_MIN_DURATION_SECONDS } from "./focus.constant";
 
-const focusStatusSchema = t.Union([
-  t.Literal("active"),
-  t.Literal("completed"),
-  t.Literal("abandoned"),
-]);
+const focusStatusSchema = t.Union([t.Literal("active"), t.Literal("completed"), t.Literal("abandoned")]);
 const HISTORY_MAX_LIMIT = 100;
 
 const focusSessionProperties = {
@@ -75,12 +71,7 @@ export const focusHistorySchema = t.Object(
             {
               slug: t.String(),
               name: t.String(),
-              level: t.Union([
-                t.Literal("beginner"),
-                t.Literal("intermediate"),
-                t.Literal("advanced"),
-                t.Literal("specialist"),
-              ]),
+              level: t.Union([t.Literal("beginner"), t.Literal("intermediate"), t.Literal("advanced"), t.Literal("specialist")]),
             },
             { additionalProperties: false },
           ),

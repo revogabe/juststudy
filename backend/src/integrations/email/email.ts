@@ -1,15 +1,7 @@
-import type {
-  Email,
-  EmailDeliveryInput,
-  EmailMessage,
-  EmailTemplateKey,
-  EmailTransport,
-} from "./email.contract";
+import type { Email, EmailDeliveryInput, EmailMessage, EmailTemplateKey, EmailTransport } from "./email.contract";
 import { createMagicLinkTemplate } from "./templates/authentication/magic-link.template";
 
-function createTemplate<Key extends EmailTemplateKey>(
-  input: EmailDeliveryInput<Key>,
-): EmailMessage {
+function createTemplate<Key extends EmailTemplateKey>(input: EmailDeliveryInput<Key>): EmailMessage {
   if (input.template_key === "authentication.magic_link") {
     return createMagicLinkTemplate({
       recipient: input.recipient,

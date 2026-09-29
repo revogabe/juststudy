@@ -2,8 +2,7 @@ type PromptHookInput = {
   prompt?: unknown;
 };
 
-const MODULE_ACTION =
-  /\b(create|add|implement|extend|refactor|change|criar|adicionar|implementar|estender|refatorar|alterar)\b/i;
+const MODULE_ACTION = /\b(create|add|implement|extend|refactor|change|criar|adicionar|implementar|estender|refatorar|alterar)\b/i;
 const MODULE_TARGET = /\b(module|modules|modulo|modulos)\b/i;
 const MODULE_PATH = "backend/src/modules/";
 const SKILL_REMINDER = [
