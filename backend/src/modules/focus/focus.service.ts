@@ -23,15 +23,11 @@ type FocusServiceInput = {
 export function createFocusService(input: FocusServiceInput) {
   const now = input.now ?? (() => new Date());
 
-  async function finish(
-    command: FocusSessionCommand,
-    status: FocusTerminalStatus,
-  ): Promise<FocusSession> {
+  async function finish(command: FocusSessionCommand, status: FocusTerminalStatus): Promise<FocusSession> {
     const current = await getSession(input.store, command);
     const reconciled = await reconcileSession(input, current, now());
 
-    if (reconciled.status === status)
-      return toFocusSession(await synchronizeSession(input, reconciled, now()));
+    if (reconciled.status === status) return toFocusSession(await synchronizeSession(input, reconciled, now()));
     if (reconciled.status !== "active") {
       await synchronizeSession(input, reconciled, now());
       throw focusError.stateConflict();
@@ -55,6 +51,11 @@ export function createFocusService(input: FocusServiceInput) {
 
   return {
     session: {
+      async get(command: FocusSessionCommand): Promise<FocusSession> {
+        const current = await getSession(input.store, command);
+
+        return toFocusSession(await reconcileSession(input, current, now()));
+      },
       async create(command: FocusSessionStartCommand): Promise<FocusSession> {
         const durationSeconds = focusDurationRule.validate(command.duration_seconds);
         const active = await input.store.session.getActive(command.user_id);
@@ -63,10 +64,7 @@ export function createFocusService(input: FocusServiceInput) {
           const reconciled = await reconcileSession(input, active, now());
 
           if (reconciled.status === "active") {
-            if (
-              reconciled.randomization_id === command.randomization_id &&
-              reconciled.duration_seconds === durationSeconds
-            )
+            if (reconciled.randomization_id === command.randomization_id && reconciled.duration_seconds === durationSeconds)
               return toFocusSession(reconciled);
 
             throw focusError.activeSession();
@@ -89,8 +87,7 @@ export function createFocusService(input: FocusServiceInput) {
           ends_at: new Date(startedAt.getTime() + durationSeconds * 1000),
         });
 
-        if (result.result === "randomization_unavailable")
-          throw focusError.randomizationUnavailable();
+        if (result.result === "randomization_unavailable") throw focusError.randomizationUnavailable();
         if (result.result === "active_conflict") throw focusError.activeSession();
 
         return toFocusSession(result.session);
@@ -111,16 +108,11 @@ export function createFocusService(input: FocusServiceInput) {
 
         if (reconciled.status !== "active") return toFocusSession(reconciled);
 
-        const session = await input.store.session.heartbeat(
-          command.user_id,
-          command.session_id,
-          seenAt,
-        );
+        const session = await input.store.session.heartbeat(command.user_id, command.session_id, seenAt);
 
         if (!session) throw focusError.sessionNotFound();
 
-        if (session.status !== "active")
-          return toFocusSession(await synchronizeSession(input, session, now()));
+        if (session.status !== "active") return toFocusSession(await synchronizeSession(input, session, now()));
 
         return toFocusSession(session);
       },
@@ -143,8 +135,7 @@ export function createFocusService(input: FocusServiceInput) {
 
         const unsyncedSessions = await input.store.unsyncedSession.search();
 
-        for (const unsyncedSession of unsyncedSessions)
-          await synchronizeSession(input, unsyncedSession, now());
+        for (const unsyncedSession of unsyncedSessions) await synchronizeSession(input, unsyncedSession, now());
 
         return finishedCount;
       },
@@ -160,16 +151,13 @@ export function createFocusService(input: FocusServiceInput) {
           user_id: query.user_id,
           ids: history.sessions.map((session) => session.randomization_id),
         });
-        const randomizationsById = new Map(
-          randomizations.map((randomization) => [randomization.id, randomization]),
-        );
+        const randomizationsById = new Map(randomizations.map((randomization) => [randomization.id, randomization]));
 
         return {
           sessions: history.sessions.map((session) => {
             const randomization = randomizationsById.get(session.randomization_id);
 
-            if (!randomization)
-              throw new Error(`Randomization missing for focus session ${session.id}.`);
+            if (!randomization) throw new Error(`Randomization missing for focus session ${session.id}.`);
 
             return {
               ...toFocusSession(session),
@@ -184,10 +172,7 @@ export function createFocusService(input: FocusServiceInput) {
   };
 }
 
-async function getSession(
-  store: FocusStore,
-  command: FocusSessionCommand,
-): Promise<FocusSessionRecord> {
+async function getSession(store: FocusStore, command: FocusSessionCommand): Promise<FocusSessionRecord> {
   const session = await store.session.get(command.user_id, command.session_id);
 
   if (!session) throw focusError.sessionNotFound();
@@ -195,15 +180,10 @@ async function getSession(
   return session;
 }
 
-async function reconcileSession(
-  input: FocusServiceInput,
-  session: FocusSessionRecord,
-  now: Date,
-): Promise<FocusSessionRecord> {
+async function reconcileSession(input: FocusServiceInput, session: FocusSessionRecord, now: Date): Promise<FocusSessionRecord> {
   const status = focusDeadlineRule.resolve(session, now);
 
-  if (!status || session.status !== "active")
-    return session.status === "active" ? session : synchronizeSession(input, session, now);
+  if (!status || session.status !== "active") return session.status === "active" ? session : synchronizeSession(input, session, now);
 
   const reconciled = await input.store.session.finish({
     session_id: session.id,
@@ -219,11 +199,7 @@ async function reconcileSession(
   return synchronizeSession(input, reconciled, now);
 }
 
-async function synchronizeSession(
-  input: FocusServiceInput,
-  session: FocusSessionRecord,
-  now: Date,
-): Promise<FocusSessionRecord> {
+async function synchronizeSession(input: FocusServiceInput, session: FocusSessionRecord, now: Date): Promise<FocusSessionRecord> {
   if (session.status === "active" || session.randomization_synced_at) return session;
 
   const randomization = await input.randomize.attempt.update({
@@ -236,12 +212,7 @@ async function synchronizeSession(
   if (!randomization) throw focusError.randomizationNotFound();
   if (randomization.status !== session.status) throw focusError.stateConflict();
 
-  const synchronized = await input.store.session.markSynced(
-    session.user_id,
-    session.id,
-    session.status,
-    now,
-  );
+  const synchronized = await input.store.session.markSynced(session.user_id, session.id, session.status, now);
 
   if (!synchronized) throw focusError.sessionNotFound();
 

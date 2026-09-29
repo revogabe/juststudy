@@ -270,6 +270,91 @@ that occurred first determines the outcome. A worker reconciles persisted deadli
 and focus endpoints reconcile them immediately before acting. Completion and abandonment also set
 the related randomization to `completed` or `abandoned` respectively.
 
+### Feedback
+
+| Method | Route | Access | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/v1/feedback/sessions` | Identified + active student | Start the explanation timer after a completed focus session. |
+| `GET` | `/v1/feedback/sessions/:session_id` | Identified | Poll the current transcript/evaluation state. |
+| `POST` | `/v1/feedback/sessions/:session_id/heartbeat` | Identified | Keep an active recording session alive. |
+| `POST` | `/v1/feedback/sessions/:session_id/submit` | Identified + active student | Upload and transcribe one audio explanation. |
+| `GET` | `/v1/feedback/history` | Identified | Read cursor-paginated submits with complete transcript and evaluation. |
+
+Start with the completed focus session:
+
+```json
+{ "focus_session_id": "01992443-1697-788c-9d7f-664ba62e3670" }
+```
+
+The response contains a 15-minute `recording_ends_at` deadline followed by a two-minute
+`upload_ends_at` grace period. The client sends a heartbeat every 30 seconds; 120 seconds without a
+heartbeat expires the recording. One completed focus session accepts one submitted evaluation. A
+session that expires before submission may be started again.
+
+Submit `multipart/form-data` with an `audio` file. Accepted media types are WebM, Ogg, MP4, MPEG,
+AAC, and WAV, up to 32 MiB and from 3 through 900 seconds of understandable speech:
+
+```bash
+curl --cookie .cookies \
+  --form 'audio=@explanation.webm;type=audio/webm' \
+  http://127.0.0.1:3000/v1/feedback/sessions/$FEEDBACK_SESSION_ID/submit
+```
+
+Transcription completes within the submit request. A successful submit returns `202 Accepted`,
+`Retry-After: 2`, `status: "pending"`, and the full transcript with stable segment IDs. Poll the
+session endpoint until it becomes `completed` or `failed`. The evaluation includes:
+
+- a 0–4 rubric for factual accuracy, topic coverage, conceptual reasoning, and clarity;
+- a backend-computed mastery score and verdict;
+- evidence linked to transcript segment IDs;
+- a concept-by-concept understanding map;
+- analysis of the reasoning the student actually expressed;
+- prioritized corrections, strengths, an improvement plan, an answer outline, and follow-up
+  questions.
+
+Clarity is useful feedback but does not affect mastery. The backend computes mastery as 50% factual
+accuracy, 30% coverage, and 20% conceptual reasoning. Answers without enough topical evidence are
+`scorable: false`, receive no mastery, and do not change the subject score.
+
+History defaults to 10 records and accepts at most 50. It deliberately includes the complete
+transcript and complete structured evaluation so the student can revisit what was said. Raw audio
+is never stored. See [feedback evaluation example](feedback-evaluation.md) for a realistic transcript
+and complete response shape.
+
+### Scores
+
+| Method | Route | Access | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/v1/scores` | Identified | Map every catalog subject to the user's current 0–1000 score. |
+
+Unassessed subjects are returned with score zero. A score stays `provisional` until five distinct
+topics provide evidence:
+
+```json
+{
+  "subjects": [
+    {
+      "subject_slug": "biology",
+      "subject_name": "Biology",
+      "score": 366,
+      "certified_level": "intermediate",
+      "evaluations_count": 5,
+      "distinct_topics_count": 5,
+      "provisional": false,
+      "algorithm_version": "ordinal_bayes_v1",
+      "updated_at": "2026-09-07T15:20:00.000Z"
+    }
+  ]
+}
+```
+
+The score is an event-sourced conservative Bayesian projection, not a points total. Repeating the
+same topic has weights 1, 0.5, 0.25, then zero; newer evidence gradually outweighs older evidence;
+and any single evaluation changes the visible score by at most 100. Beginner-only evidence cannot
+exceed 400. Higher ceilings require two distinct strong topics at the relevant level with no
+critical misconception. The algorithm version is persisted so a future formula can be replayed in
+shadow before activation. See [score benchmark](benchmarks/feedback-score-v1.md).
+
 ## Error contract
 
 Errors use `application/problem+json` and follow the RFC 9457 shape:
@@ -298,6 +383,15 @@ Known codes currently include:
 | `KNOWLEDGE_CATALOG_UNBALANCED` | `422` | A catalog update violates grouping or level distribution rules. |
 | `RANDOMIZE_SUBJECT_NOT_FOUND` | `404` | The requested subject is absent from the knowledge catalog. |
 | `RANDOMIZE_TOPIC_UNAVAILABLE` | `409` | The requested scope has no eligible topic for the user. |
+| `FEEDBACK_SUBSCRIPTION_REQUIRED` | `403` | Start or submit requires an active student subscription. |
+| `FEEDBACK_FOCUS_UNAVAILABLE` | `409` | The focus session is not owned and completed. |
+| `FEEDBACK_CONTEXT_UNAVAILABLE` | `422` | The topic cannot produce an assessment context. |
+| `FEEDBACK_SESSION_ACTIVE` | `409` | Another feedback recording is active for the user. |
+| `FEEDBACK_SESSION_NOT_FOUND` | `404` | The requested feedback session is not owned by the user. |
+| `FEEDBACK_SESSION_STATE_CONFLICT` | `409` | The operation is invalid for the current feedback state. |
+| `FEEDBACK_SESSION_EXPIRED` | `409` | The recording or upload deadline passed. |
+| `FEEDBACK_AUDIO_INVALID` | `422` | The audio type, size, duration, or speech is invalid. |
+| `FEEDBACK_TRANSCRIPTION_UNAVAILABLE` | `503` | The local transcription service could not process the audio. |
 | `FOCUS_DURATION_INVALID` | `422` | Focus duration is outside the 60-to-14400-second range. |
 | `FOCUS_RANDOMIZATION_NOT_FOUND` | `404` | The randomization does not belong to the current user. |
 | `FOCUS_RANDOMIZATION_UNAVAILABLE` | `409` | The randomization cannot start a focus session. |
@@ -342,3 +436,30 @@ curl --cookie .cookies -X POST http://127.0.0.1:3000/v1/focus/sessions/<session_
 Postman keeps the session cookie automatically. Import both files from `postman/`, select the local
 environment, and run `Create anonymous session` before session-protected requests. A webhook request
 must use a payload and signature produced by Polar or the test helper; unsigned payloads are rejected.
+
+## Live E2E switch
+
+Use the local-only E2E switch to exercise the real focus, transcription, evaluation, history, and
+score pipeline without creating a Polar checkout:
+
+```bash
+bun run test:e2e:live
+```
+
+The command starts the Compose dependencies, applies migrations, and starts a temporary API on
+`http://127.0.0.1:3100` with `E2E_TEST_MODE=true`. In that isolated process, an anonymous fixture is
+accepted by identified-user guards, receives an active student entitlement, and does not emit usage
+to Polar. Faster Whisper, Qwen, PostgreSQL, the worker, prompts, and Langfuse tracing remain real.
+The environment schema refuses this switch when `APP_ENV=production`.
+
+macOS generates a Portuguese WAV fixture automatically. Other systems must provide an accepted
+audio file, which is also useful for checking a real recording:
+
+```bash
+E2E_AUDIO_FILE=/absolute/path/explanation.webm bun run test:e2e:live
+```
+
+Set `E2E_APP_PORT` to change the isolated API port, `E2E_SUBJECT_SLUG` to choose the subject, and
+`E2E_FLOW_TIMEOUT_MS` to adjust the evaluation polling deadline. A cold Whisper model load receives
+an E2E-only ten-minute timeout, configurable through `E2E_TRANSCRIPTION_TIMEOUT_MS`; the regular API
+timeout is unchanged.

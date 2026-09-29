@@ -60,6 +60,9 @@ function createPayments(): Payments {
         };
       },
     },
+    usage: {
+      async create() {},
+    },
   };
 }
 
@@ -106,9 +109,38 @@ describe("billing service", () => {
       free_credits: 3,
     });
 
-    await expect(service.paymentEvent.create({ body: "{}", headers: new Headers() })).resolves.toBe(
-      "processed",
-    );
+    await expect(service.paymentEvent.create({ body: "{}", headers: new Headers() })).resolves.toBe("processed");
     expect(received.user_id).toBe("user-1");
+  });
+
+  it("provides an isolated student entitlement without calling Polar in E2E test mode", async () => {
+    let usageCalls = 0;
+    const payments = createPayments();
+    payments.usage.create = async () => {
+      usageCalls += 1;
+    };
+    const service = createBillingService({
+      store: createStore(),
+      payments,
+      product_id: "student-product",
+      free_credits: 3,
+      e2e_test_mode: true,
+    });
+
+    await expect(service.entitlement.get("user-1")).resolves.toEqual({ active_student: true });
+    await expect(service.summary.get("user-1")).resolves.toMatchObject({
+      plan: "student",
+      status: "active",
+      is_active: true,
+    });
+    await service.usage.create({
+      external_id: "evaluation-1",
+      user_id: "user-1",
+      total_tokens: 10,
+      input_tokens: 7,
+      output_tokens: 3,
+      model: "test-model",
+    });
+    expect(usageCalls).toBe(0);
   });
 });

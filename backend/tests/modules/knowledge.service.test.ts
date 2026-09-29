@@ -1,13 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import type {
+  KnowledgeAssessmentWriter,
   KnowledgeCatalogUpdateResult,
   KnowledgeLevel,
   KnowledgeTopicInput,
 } from "@/modules/knowledge/knowledge.contract";
-import {
-  KnowledgeCatalogConflictError,
-  KnowledgeSubjectNotFoundError,
-} from "@/modules/knowledge/knowledge.error";
+import { KnowledgeCatalogConflictError, KnowledgeSubjectNotFoundError } from "@/modules/knowledge/knowledge.error";
 import { createKnowledgeService } from "@/modules/knowledge/knowledge.service";
 import type { KnowledgeStore } from "@/modules/knowledge/store/knowledge.store";
 
@@ -34,9 +32,15 @@ function topics(distribution: Record<KnowledgeLevel, number>): KnowledgeTopicInp
   return result;
 }
 
-function createStore(
-  update: KnowledgeStore["catalog"]["update"] = async () => CREATED,
-): KnowledgeStore {
+const unusedWriter: KnowledgeAssessmentWriter = {
+  assessment: {
+    async create() {
+      throw new Error("Not used");
+    },
+  },
+};
+
+function createStore(update: KnowledgeStore["catalog"]["update"] = async () => CREATED): KnowledgeStore {
   return {
     subject: {
       async get() {
@@ -53,6 +57,17 @@ function createStore(
       async get() {
         return [];
       },
+      async searchWithoutAssessment() {
+        return [];
+      },
+    },
+    assessment: {
+      async get() {
+        return null;
+      },
+      async create() {
+        return true;
+      },
     },
     catalog: { update },
   };
@@ -65,7 +80,7 @@ describe("knowledge service", () => {
       receivedTopics = catalog.subjects[0]?.topics.length ?? 0;
       return CREATED;
     });
-    const service = createKnowledgeService({ store });
+    const service = createKnowledgeService({ writer: unusedWriter, store });
 
     await expect(
       service.catalog.update({
@@ -82,7 +97,7 @@ describe("knowledge service", () => {
   });
 
   it("accepts balanced topic expansions in multiples of 20", async () => {
-    const service = createKnowledgeService({ store: createStore() });
+    const service = createKnowledgeService({ writer: unusedWriter, store: createStore() });
 
     await expect(
       service.catalog.update({
@@ -97,7 +112,7 @@ describe("knowledge service", () => {
   });
 
   it("rejects empty and unbalanced catalog updates", async () => {
-    const service = createKnowledgeService({ store: createStore() });
+    const service = createKnowledgeService({ writer: unusedWriter, store: createStore() });
 
     await expect(service.catalog.update({})).rejects.toMatchObject({
       code: "KNOWLEDGE_CATALOG_UNBALANCED",
@@ -122,7 +137,7 @@ describe("knowledge service", () => {
       topics_created: 0,
       topics_skipped: 100,
     };
-    const service = createKnowledgeService({ store: createStore(async () => replay) });
+    const service = createKnowledgeService({ writer: unusedWriter, store: createStore(async () => replay) });
 
     await expect(
       service.catalog.update({
@@ -139,11 +154,13 @@ describe("knowledge service", () => {
 
   it("translates store conflicts and missing subjects into product errors", async () => {
     const conflictService = createKnowledgeService({
+      writer: unusedWriter,
       store: createStore(async () => {
         throw new KnowledgeCatalogConflictError();
       }),
     });
     const missingSubjectService = createKnowledgeService({
+      writer: unusedWriter,
       store: createStore(async () => {
         throw new KnowledgeSubjectNotFoundError();
       }),
@@ -165,5 +182,61 @@ describe("knowledge service", () => {
       code: "KNOWLEDGE_CATALOG_UNBALANCED",
       status: 422,
     });
+  });
+
+  it("prefers a generated assessment and falls back to the catalog template", async () => {
+    const topic = {
+      subject: { slug: "biology", name: "Biologia" },
+      topic: { slug: "photosynthesis", name: "Fotossíntese", level: "intermediate" as const },
+    };
+    const generated = {
+      reference_summary: "O oxigênio liberado vem da água.",
+      key_concepts: ["Fotólise da água"],
+      common_misconceptions: ["O oxigênio vem do CO2"],
+      version: "generated-v1",
+    };
+    const store = createStore();
+    store.topic.get = async () => [topic];
+    store.assessment.get = async () => generated;
+    const service = createKnowledgeService({ writer: unusedWriter, store });
+
+    expect((await service.assessment.get({ subject_slug: "biology", topic_slug: "photosynthesis" }))?.assessment).toEqual(generated);
+
+    store.assessment.get = async () => null;
+
+    expect((await service.assessment.get({ subject_slug: "biology", topic_slug: "photosynthesis" }))?.assessment.version).toBe(
+      "catalog-template-v1",
+    );
+  });
+
+  it("generates assessments for topics without one and keeps going after a failure", async () => {
+    const saved: string[] = [];
+    const store = createStore();
+    store.topic.searchWithoutAssessment = async () => [
+      { subject: { slug: "biology", name: "Biologia" }, topic: { slug: "meiosis", name: "Meiose", level: "intermediate" } },
+      { subject: { slug: "biology", name: "Biologia" }, topic: { slug: "mitosis", name: "Mitose", level: "intermediate" } },
+    ];
+    store.assessment.create = async (input) => {
+      saved.push(`${input.topic_slug}:${input.model}:${input.assessment.version}`);
+      return true;
+    };
+    const writer: KnowledgeAssessmentWriter = {
+      assessment: {
+        async create(topic) {
+          if (topic.topic.slug === "mitosis") throw new Error("provider unavailable");
+
+          return {
+            assessment: { reference_summary: "Resumo", key_concepts: ["A"], common_misconceptions: ["B"], version: "generated-v1" },
+            provider: "openai",
+            model: "gpt-5.6-luna",
+            prompt_version: "local-v1",
+          };
+        },
+      },
+    };
+    const service = createKnowledgeService({ writer, store, now: () => new Date("2026-09-28T12:00:00.000Z") });
+
+    expect(await service.assessment.create(5)).toEqual({ topics_generated: 1, topics_failed: 1 });
+    expect(saved).toEqual(["meiosis:gpt-5.6-luna:generated-v1"]);
   });
 });

@@ -21,5 +21,34 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  transcription:
+    build: ./transcription
+    environment:
+      WHISPER_PRIMARY_MODEL: turbo
+      WHISPER_FALLBACK_MODEL: large-v3
+      WHISPER_DEVICE: cpu
+      WHISPER_COMPUTE_TYPE: int8
+    ports:
+      - "8001:8001"
+    volumes:
+      - juststudy-whisper-cache:/root/.cache/huggingface
+
+  ollama:
+    image: ollama/ollama:0.33.3
+    profiles: ["ai"]
+    environment:
+      OLLAMA_KEEP_ALIVE: 30m
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - juststudy-ollama:/root/.ollama
+
 volumes:
   juststudy-postgres:
+  juststudy-whisper-cache:
+  juststudy-ollama:

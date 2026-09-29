@@ -70,4 +70,12 @@ describe("authentication service", () => {
       code: "IDENTIFIED_USER_REQUIRED",
     });
   });
+
+  it("accepts an anonymous fixture as identified only in E2E test mode", async () => {
+    const service = createAuthenticationService(identityWithSession(anonymousSession), {
+      e2e_test_mode: true,
+    });
+
+    await expect(service.session.identify(new Headers())).resolves.toEqual(anonymousSession);
+  });
 });

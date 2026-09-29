@@ -16,3 +16,7 @@ export const KNOWLEDGE_TOPIC_BATCH_DISTRIBUTION = {
   advanced: 6,
   specialist: 4,
 } as const;
+
+export const KNOWLEDGE_ASSESSMENT_VERSION = "generated-v1";
+export const KNOWLEDGE_ASSESSMENT_BATCH_SIZE = 5;
+export const KNOWLEDGE_ASSESSMENT_WORKER_INTERVAL_MS = 60_000;

@@ -25,6 +25,16 @@ export type PaymentEvent = {
   payload: unknown;
 };
 
+export type PaymentUsage = {
+  external_id: string;
+  user_id: string;
+  event_name: string;
+  total_tokens: number;
+  input_tokens: number;
+  output_tokens: number;
+  model: string;
+};
+
 export class InvalidPaymentEventError extends Error {
   constructor(cause?: unknown) {
     super("The payment event signature or payload is invalid", { cause });
@@ -41,5 +51,8 @@ export type Payments = {
   };
   event: {
     create(input: { body: string; headers: Headers }): Promise<PaymentEvent>;
+  };
+  usage: {
+    create(input: PaymentUsage): Promise<void>;
   };
 };

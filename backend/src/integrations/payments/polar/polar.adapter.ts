@@ -116,5 +116,24 @@ export function createPolarAdapter(input: PolarAdapterInput): Payments {
         return toPaymentEvent(event.body, event.headers, input.webhook_secret);
       },
     },
+    usage: {
+      async create(usage) {
+        await client.events.ingest({
+          events: [
+            {
+              name: usage.event_name,
+              externalId: usage.external_id,
+              externalCustomerId: usage.user_id,
+              metadata: {
+                total_tokens: usage.total_tokens,
+                input_tokens: usage.input_tokens,
+                output_tokens: usage.output_tokens,
+                model: usage.model,
+              },
+            },
+          ],
+        });
+      },
+    },
   };
 }

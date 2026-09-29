@@ -4,17 +4,17 @@ import { Webhook } from "standardwebhooks";
 import { createApplication } from "@/app/app";
 import { createEnvironment } from "@/app/env";
 import { createDatabase } from "@/infrastructure/database";
+import type { Ai } from "@/integrations/ai";
 import { createEmail, createMemoryAdapter } from "@/integrations/email";
 import { createBetterAuthAdapter } from "@/integrations/identity";
 import { createPolarAdapter } from "@/integrations/payments";
+import type { Prompts } from "@/integrations/prompts";
 import { authenticationSchema } from "@/modules/authentication";
-import {
-  accounts,
-  sessions,
-  users,
-  verifications,
-} from "@/modules/authentication/authentication.model";
+import { accounts, sessions, users, verifications } from "@/modules/authentication/authentication.model";
 import { payment_events, subscriptions } from "@/modules/billing/billing.model";
+import { feedback_sessions, feedback_shadow_reviews } from "@/modules/feedback/feedback.model";
+import { feedbackEvaluationRule } from "@/modules/feedback/feedback.rule";
+import { createFeedbackStore } from "@/modules/feedback/feedback.store";
 import { focus_sessions } from "@/modules/focus/focus.model";
 import type {
   KnowledgeCatalogUpdate,
@@ -22,8 +22,11 @@ import type {
   KnowledgeSubjectSummary,
   KnowledgeTopicInput,
 } from "@/modules/knowledge/knowledge.contract";
-import { knowledge_subjects, knowledge_topics } from "@/modules/knowledge/knowledge.model";
+import { knowledge_subjects, knowledge_topic_assessments, knowledge_topics } from "@/modules/knowledge/knowledge.model";
+import { createKnowledgeStore } from "@/modules/knowledge/store/knowledge.store";
 import { topic_randomizations } from "@/modules/randomize/randomize.model";
+import { score_events } from "@/modules/score/score.model";
+import { createScoreStore } from "@/modules/score/score.store";
 
 const runDatabaseTests = process.env.RUN_DATABASE_TESTS === "true";
 
@@ -43,8 +46,7 @@ const environment = createEnvironment({
   APP_ENV: "test",
   APP_BASE_URL: "http://localhost:3000",
   APP_WEB_URL: "http://localhost:3001",
-  DATABASE_URL:
-    process.env.DATABASE_URL ?? "postgres://juststudy:juststudy@127.0.0.1:5432/juststudy_test",
+  DATABASE_URL: process.env.DATABASE_URL ?? "postgres://juststudy:juststudy@127.0.0.1:5432/juststudy_test",
   KNOWLEDGE_CATALOG_TOKEN,
   AUTH_SECRET: "test-secret-with-at-least-32-characters",
   EMAIL_PROVIDER: "memory",
@@ -71,9 +73,56 @@ const payments = createPolarAdapter({
   success_url: "http://localhost:3001/billing/success",
   return_url: "http://localhost:3001/settings/billing",
 });
+const transcription = {
+  transcript: {
+    async create() {
+      return {
+        text: "A força resultante produz aceleração proporcional e depende da massa.",
+        language: "pt",
+        language_probability: 0.99,
+        duration_seconds: 8,
+        model: "test-whisper",
+        segments: [
+          {
+            id: "seg_1",
+            start_ms: 0,
+            end_ms: 8_000,
+            text: "A força resultante produz aceleração proporcional e depende da massa.",
+          },
+        ],
+      };
+    },
+  },
+};
+const ai: Ai = {
+  structured: {
+    async create() {
+      throw new Error("AI is not configured in this suite.");
+    },
+  },
+};
+const prompts: Prompts = {
+  text: {
+    async get() {
+      return { text: "Test prompt", version: "test-v1" };
+    },
+  },
+};
+const observability = { async shutdown() {} };
 const application = createApplication({
   environment,
-  dependencies: { database, email, identity, payments },
+  dependencies: {
+    database,
+    email,
+    identity,
+    payments,
+    transcription,
+    ai,
+    shadow_ai: ai,
+    decisions: null,
+    prompts,
+    observability,
+  },
 });
 
 function request(path: string, init?: RequestInit): Promise<Response> {
@@ -164,10 +213,7 @@ function signedWebhook(payload: unknown): RequestInit {
   };
 }
 
-function knowledgeTopics(
-  prefix: string,
-  distribution: Record<KnowledgeLevel, number>,
-): KnowledgeTopicInput[] {
+function knowledgeTopics(prefix: string, distribution: Record<KnowledgeLevel, number>): KnowledgeTopicInput[] {
   const topics: KnowledgeTopicInput[] = [];
 
   for (const [level, count] of Object.entries(distribution)) {
@@ -205,10 +251,7 @@ function randomizeTopic(cookie: string, body: { subject_slug?: string } = {}) {
   });
 }
 
-function startFocusSession(
-  cookie: string,
-  body: { randomization_id: string; duration_seconds: number },
-) {
+function startFocusSession(cookie: string, body: { randomization_id: string; duration_seconds: number }) {
   return request("/v1/focus/sessions", {
     method: "POST",
     headers: {
@@ -220,15 +263,12 @@ function startFocusSession(
 }
 
 async function cleanKnowledgeTestData(): Promise<void> {
-  await database.client
-    .delete(knowledge_topics)
-    .where(eq(knowledge_topics.subject_slug, "testing-science"));
-  await database.client
-    .delete(knowledge_subjects)
-    .where(eq(knowledge_subjects.slug, "testing-science"));
+  await database.client.delete(knowledge_topics).where(eq(knowledge_topics.subject_slug, "testing-science"));
+  await database.client.delete(knowledge_subjects).where(eq(knowledge_subjects.slug, "testing-science"));
 }
 
 async function cleanDatabase(): Promise<void> {
+  await database.client.delete(knowledge_topic_assessments);
   await database.client.delete(focus_sessions);
   await database.client.delete(topic_randomizations);
   await cleanKnowledgeTestData();
@@ -284,10 +324,7 @@ databaseDescribe("JustStudy HTTP API", () => {
       headers: { "content-type": "application/json" },
       body: "{}",
     });
-    const wrongToken = await updateKnowledgeCatalog(
-      {},
-      "wrong-knowledge-catalog-token-32-characters",
-    );
+    const wrongToken = await updateKnowledgeCatalog({}, "wrong-knowledge-catalog-token-32-characters");
 
     expect(missingToken.status).toBe(401);
     expect(await missingToken.json()).toMatchObject({ code: "KNOWLEDGE_CATALOG_UNAUTHORIZED" });
@@ -453,12 +490,9 @@ databaseDescribe("JustStudy HTTP API", () => {
       randomizations: Array<{ id: string }>;
       next_cursor: string | null;
     };
-    const secondHistory = await request(
-      `/v1/randomize/history?limit=1&cursor=${firstHistoryBody.next_cursor}`,
-      {
-        headers: { cookie: firstCookie },
-      },
-    );
+    const secondHistory = await request(`/v1/randomize/history?limit=1&cursor=${firstHistoryBody.next_cursor}`, {
+      headers: { cookie: firstCookie },
+    });
     const secondUserHistory = await request("/v1/randomize/history", {
       headers: { cookie: secondCookie },
     });
@@ -696,6 +730,113 @@ databaseDescribe("JustStudy HTTP API", () => {
     expect(await abandonedHeartbeat.json()).toMatchObject({ status: "abandoned" });
   });
 
+  it("starts feedback, stores the full transcript, and exposes unassessed scores", async () => {
+    const authentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const cookie = sessionCookie(authentication);
+    const authenticationBody = (await authentication.json()) as { user: { id: string } };
+
+    await database.client.update(users).set({ is_anonymous: false, email_verified: true }).where(eq(users.id, authenticationBody.user.id));
+    await request("/v1/billing/webhook", signedWebhook(customerState(authenticationBody.user.id)));
+
+    const randomization = await randomizeTopic(cookie, { subject_slug: "physics" });
+    const randomizationBody = (await randomization.json()) as { id: string };
+    const focus = await startFocusSession(cookie, {
+      randomization_id: randomizationBody.id,
+      duration_seconds: 60,
+    });
+    const focusBody = (await focus.json()) as { id: string };
+
+    await request(`/v1/focus/sessions/${focusBody.id}/complete`, {
+      method: "POST",
+      headers: { cookie },
+    });
+
+    const started = await request("/v1/feedback/sessions", {
+      method: "POST",
+      headers: { cookie, "content-type": "application/json" },
+      body: JSON.stringify({ focus_session_id: focusBody.id }),
+    });
+    const startedBody = (await started.json()) as { id: string; status: string };
+    const heartbeat = await request(`/v1/feedback/sessions/${startedBody.id}/heartbeat`, {
+      method: "POST",
+      headers: { cookie },
+    });
+    const form = new FormData();
+    form.set("audio", new File([Uint8Array.from([1, 2, 3])], "explanation.webm", { type: "audio/webm" }));
+    const submitted = await request(`/v1/feedback/sessions/${startedBody.id}/submit`, {
+      method: "POST",
+      headers: { cookie },
+      body: form,
+    });
+    const submittedBody = (await submitted.json()) as {
+      status: string;
+      transcript: { text: string; segments: Array<{ id: string }> };
+    };
+    const history = await request("/v1/feedback/history?limit=10", { headers: { cookie } });
+    const historyBody = (await history.json()) as {
+      feedback: Array<{ id: string; transcript: { text: string } }>;
+    };
+    const scores = await request("/v1/scores", { headers: { cookie } });
+    const scoresBody = (await scores.json()) as {
+      subjects: Array<{ score: number; evaluations_count: number }>;
+    };
+
+    expect(started.status).toBe(200);
+    expect(startedBody.status).toBe("active");
+    expect(heartbeat.status).toBe(200);
+    expect(submitted.status).toBe(202);
+    expect(submitted.headers.get("retry-after")).toBe("2");
+    expect(submittedBody.status).toBe("pending");
+    expect(submittedBody.transcript.segments[0]?.id).toBe("seg_1");
+    expect(historyBody.feedback[0]).toMatchObject({
+      id: startedBody.id,
+      transcript: { text: submittedBody.transcript.text },
+    });
+    expect(scores.status).toBe(200);
+    expect(scoresBody.subjects.length).toBeGreaterThan(0);
+    expect(scoresBody.subjects.every((subject) => subject.evaluations_count === 0)).toBe(true);
+  });
+
+  it("applies a score evaluation idempotently", async () => {
+    const authentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const authenticationBody = (await authentication.json()) as { user: { id: string } };
+    const cookie = sessionCookie(authentication);
+    const randomization = await randomizeTopic(cookie, { subject_slug: "biology" });
+    const randomizationBody = (await randomization.json()) as {
+      subject: { slug: string };
+      topic: { slug: string; level: KnowledgeLevel };
+    };
+    const evaluationId = Bun.randomUUIDv7();
+    const scoreStore = createScoreStore(database.client);
+    const scoreInput = {
+      evaluation_id: evaluationId,
+      feedback_session_id: Bun.randomUUIDv7(),
+      user_id: authenticationBody.user.id,
+      subject_slug: randomizationBody.subject.slug,
+      topic_slug: randomizationBody.topic.slug,
+      topic_level: randomizationBody.topic.level,
+      mastery: 90,
+      factual_accuracy: 4,
+      has_critical_misconception: false,
+      occurred_at: new Date(),
+    };
+
+    const first = await scoreStore.evaluation.create(scoreInput);
+    const retry = await scoreStore.evaluation.create(scoreInput);
+    const storedEvents = await database.client
+      .select({ id: score_events.id })
+      .from(score_events)
+      .where(eq(score_events.evaluation_id, evaluationId));
+
+    expect(retry).toMatchObject({
+      before: first.before,
+      after: first.after,
+      delta: first.delta,
+      algorithm_version: first.algorithm_version,
+    });
+    expect(storedEvents).toHaveLength(1);
+  });
+
   it("mirrors a signed payment event idempotently", async () => {
     const authentication = await request("/v1/auth/anonymous", {
       method: "POST",
@@ -720,5 +861,144 @@ databaseDescribe("JustStudy HTTP API", () => {
       credits_remaining: 875,
       is_active: true,
     });
+  });
+
+  it("stores one generated assessment per topic and removes it from the generation queue", async () => {
+    const knowledgeStore = createKnowledgeStore(database.client);
+    const [topic] = await knowledgeStore.topic.searchWithoutAssessment(1);
+
+    if (!topic) throw new Error("The seeded catalog must contain a topic.");
+
+    const reference = { subject_slug: topic.subject.slug, topic_slug: topic.topic.slug };
+    const write = {
+      ...reference,
+      assessment: {
+        reference_summary: "Resumo gerado para o tópico.",
+        key_concepts: ["Conceito A", "Conceito B", "Conceito C", "Conceito D"],
+        common_misconceptions: ["Erro comum A", "Erro comum B"],
+        version: "generated-v1",
+      },
+      provider: "openai",
+      model: "gpt-5.6-luna",
+      prompt_version: "local-v1",
+      created_at: new Date(),
+    };
+
+    expect(await knowledgeStore.assessment.create(write)).toBe(true);
+    expect(await knowledgeStore.assessment.create(write)).toBe(false);
+    expect(await knowledgeStore.assessment.get(reference)).toEqual(write.assessment);
+
+    const [next] = await knowledgeStore.topic.searchWithoutAssessment(1);
+
+    expect(next?.topic.slug === topic.topic.slug && next.subject.slug === topic.subject.slug).toBe(false);
+  });
+
+  it("keeps one shadow review per completed feedback session and mode", async () => {
+    const authentication = await request("/v1/auth/anonymous", { method: "POST" });
+    const authenticationBody = (await authentication.json()) as { user: { id: string } };
+    const [topic] = await createKnowledgeStore(database.client).topic.search("biology");
+
+    if (!topic) throw new Error("The seeded catalog must contain a biology topic.");
+
+    const now = new Date();
+    const transcript = {
+      text: "A fotossíntese transforma luz em energia química.",
+      language: "pt",
+      language_probability: 0.99,
+      duration_seconds: 10,
+      model: "test-whisper",
+      segments: [{ id: "seg_1", start_ms: 0, end_ms: 10_000, text: "A fotossíntese transforma luz em energia química." }],
+    };
+    const criterion = { score: 3, feedback: "Bom.", evidence: [{ segment_id: "seg_1", quote: "transforma luz" }] };
+    const evaluation = feedbackEvaluationRule.create(
+      {
+        language: "pt-BR",
+        scorable: true,
+        insufficient_reason: null,
+        headline: "Boa base",
+        summary: "A explicação está correta, mas curta.",
+        rubric: { factual_accuracy: criterion, coverage: criterion, conceptual_reasoning: criterion, clarity: criterion },
+        understanding_map: [],
+        reasoning_analysis: { observed_approach: "Definição", what_worked: [], where_it_broke: [] },
+        corrections: [],
+        strengths: [],
+        improvement_plan: [],
+        recommended_outline: [],
+        follow_up_questions: [],
+        uncertainties: [],
+      },
+      transcript,
+    );
+    const [session] = await database.client
+      .insert(feedback_sessions)
+      .values({
+        focus_session_id: Bun.randomUUIDv7(),
+        randomization_id: Bun.randomUUIDv7(),
+        user_id: authenticationBody.user.id,
+        subject_slug: topic.subject.slug,
+        subject_name: topic.subject.name,
+        topic_slug: topic.topic.slug,
+        topic_name: topic.topic.name,
+        topic_level: topic.topic.level,
+        assessment_context: {
+          ...topic,
+          assessment: { reference_summary: "Resumo", key_concepts: ["A"], common_misconceptions: ["B"], version: "test" },
+        },
+        status: "completed",
+        started_at: new Date(now.getTime() - 120_000),
+        recording_ends_at: new Date(now.getTime() - 60_000),
+        upload_ends_at: new Date(now.getTime() - 30_000),
+        last_seen_at: now,
+        submitted_at: now,
+        completed_at: now,
+        transcript,
+        evaluation_id: Bun.randomUUIDv7(),
+        evaluation,
+        updated_at: now,
+      })
+      .returning({ id: feedback_sessions.id });
+
+    if (!session) throw new Error("The completed feedback session was not inserted.");
+
+    const feedbackStore = createFeedbackStore(database.client);
+    const since = new Date(now.getTime() - 3_600_000);
+    const pending = await feedbackStore.shadow.search({ mode: "decision", completed_after: since, limit: 10 });
+    const write = {
+      feedback_session_id: session.id,
+      mode: "decision" as const,
+      status: "completed" as const,
+      provider: "openrouter",
+      model: "typesafe/jev-1.13",
+      scorable: true,
+      mastery: 80,
+      verdict: "mostly_correct" as const,
+      correction_segment_ids: [],
+      confidence: 0.8,
+      primary_mastery: evaluation.mastery,
+      primary_verdict: evaluation.verdict,
+      decision: null,
+      evaluation: null,
+      input_tokens: 900,
+      output_tokens: 80,
+      estimated_cost_usd: 0.00004,
+      latency_ms: 300,
+      error_code: null,
+      created_at: now,
+    };
+
+    await feedbackStore.shadow.create(write);
+    await feedbackStore.shadow.create(write);
+
+    const stored = await database.client
+      .select({ id: feedback_shadow_reviews.id })
+      .from(feedback_shadow_reviews)
+      .where(eq(feedback_shadow_reviews.feedback_session_id, session.id));
+    const decisionPending = await feedbackStore.shadow.search({ mode: "decision", completed_after: since, limit: 10 });
+    const llmPending = await feedbackStore.shadow.search({ mode: "llm", completed_after: since, limit: 10 });
+
+    expect(pending.map((item) => item.id)).toContain(session.id);
+    expect(stored).toHaveLength(1);
+    expect(decisionPending.map((item) => item.id)).not.toContain(session.id);
+    expect(llmPending.map((item) => item.id)).toContain(session.id);
   });
 });

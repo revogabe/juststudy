@@ -3,8 +3,12 @@ import type { Identity } from "@/integrations/identity";
 import { createAuthenticationRoutes } from "./authentication.routes";
 import { createAuthenticationService } from "./authentication.service";
 
-export function createAuthenticationModule(identity: Identity) {
-  const service = createAuthenticationService(identity);
+type AuthenticationModuleOptions = {
+  e2e_test_mode?: boolean;
+};
+
+export function createAuthenticationModule(identity: Identity, options: AuthenticationModuleOptions = {}) {
+  const service = createAuthenticationService(identity, options);
 
   return {
     service,

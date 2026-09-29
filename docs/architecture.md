@@ -25,13 +25,22 @@ backend/src/
 ├── modules/             # Product capabilities and business language
 │   ├── authentication/
 │   ├── billing/
+│   ├── feedback/
 │   ├── focus/
 │   ├── knowledge/
-│   └── randomize/
+│   ├── randomize/
+│   └── score/
 ├── integrations/        # External service contracts and provider adapters
+│   ├── ai/
+│   ├── decisions/
 │   ├── email/
 │   ├── identity/
-│   └── payments/
+│   ├── observability/
+│   ├── payments/
+│   ├── prompts/
+│   └── transcription/
+├── prompts/             # Versioned local prompt fallbacks grouped by product feature
+│   └── feedback/
 └── infrastructure/      # Shared technical mechanisms
     ├── database/
     └── http/
@@ -138,6 +147,52 @@ user's history without changing the global catalog.
 Focus owns timed study sessions and browser-presence tracking. It depends on the public Randomize
 service to validate an assigned topic and synchronize terminal outcomes without querying or writing
 Randomize tables. Unsynchronized outcomes remain persisted for idempotent worker reconciliation.
+
+### Feedback
+
+Feedback owns the post-focus explanation lifecycle, immutable transcript snapshot, pedagogical
+review schema, retryable worker lease, and billing outbox. Versioned prompt fallbacks live under
+`src/prompts/feedback`; the module delegates generic structured generation to the neutral AI contract
+and prompt retrieval to the neutral Prompts contract. AI SDK provider adapters implement OpenAI and
+OpenAI-compatible runtimes behind that contract. Production uses GPT-6 Luna through OpenAI as the
+primary writer and a self-hosted Ollama or vLLM runtime as the allowlisted failure fallback.
+Development and test use GPT-6 Luna through OpenRouter when `OPENROUTER_API_KEY` is set, with the same
+fallback, and Qwen through Ollama alone otherwise. The fallback circuit does not hide
+authentication, permission, prompt, or schema defects. Raw audio is sent to the local transcription sidecar and is never persisted by the API or
+sidecar.
+
+Feedback grades in two steps. It first asks the neutral `Decisions` contract (Jev by default) for
+the grading decisions only: scorability, the four 0–4 rubric scores, and a contradiction and
+severity for each segment. It then asks the AI contract to write the student-facing text for those
+fixed decisions. Rubric scores are rounded to the integer contract, and mastery and verdict come from
+`feedbackEvaluationRule`, so every path shares one formula. Transient decision-provider failures fall
+back to the single structured review; authentication and validation failures stay visible. When no
+decision key is configured outside production, the single structured review is used. Billing meters
+only the writer's tokens.
+
+`FEEDBACK_SHADOW_MODE` adds a second reviewer that runs after completion as an outbox in the same
+worker cycle. Each completed session from the last 24 hours gets at most one `feedback_shadow_reviews`
+row per mode, with the shadow result, the primary mastery and verdict, cost, and latency. A failed
+shadow is recorded once and never retried. It never changes the student's result.
+
+The `integrations/decisions` System One adapter serves TypeSafe Jev, directly or through OpenRouter,
+and a self-hosted Kev server through the same API.
+
+### Knowledge
+
+Knowledge owns the global subject and topic catalog and the grading reference for each topic. When
+`KNOWLEDGE_ASSESSMENT_GENERATION` is enabled, its worker asks the AI contract for a reference
+summary, key concepts, and misconceptions for topics that lack one, and stores them with their model
+and prompt version in `knowledge_topic_assessments`. `assessment.get` prefers the stored reference
+and falls back to the generic `catalog-template-v1` template. Feedback snapshots the reference when a
+session starts, so later regeneration never changes past evaluations.
+
+### Score
+
+Score owns append-only evidence and the current per-subject projection. `ordinal_bayes_v1` replays a
+canonical event order, applies recency and novelty weights, caps each visible transition, and gates
+higher ceilings on two strong distinct topics. Every event stores its original before/after values,
+making a retried evaluation idempotent even after later evidence exists.
 
 ## Adding a module
 

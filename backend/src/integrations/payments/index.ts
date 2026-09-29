@@ -1,3 +1,4 @@
+export type { PaymentUsage } from "./payments.contract";
 export {
   InvalidPaymentEventError,
   type PaymentCustomer,

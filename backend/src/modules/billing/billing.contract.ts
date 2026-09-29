@@ -31,3 +31,16 @@ export type PaymentEventCreate = {
 };
 
 export type PaymentEventCreateStatus = "processed" | "duplicate" | "ignored";
+
+export type BillingEntitlement = {
+  active_student: boolean;
+};
+
+export type BillingUsageCreate = {
+  external_id: string;
+  user_id: string;
+  total_tokens: number;
+  input_tokens: number;
+  output_tokens: number;
+  model: string;
+};

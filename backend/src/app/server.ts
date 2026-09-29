@@ -18,6 +18,7 @@ console.log(
     `OpenAPI:        ${new URL("/docs", environment.APP_BASE_URL)}`,
     `Mailpit:        ${environment.MAILPIT_URL}`,
     "Drizzle Studio: https://local.drizzle.studio",
+    ...(environment.E2E_TEST_MODE ? ["E2E TEST MODE:  ENABLED (anonymous identity and student entitlement bypassed)"] : []),
   ].join("\n"),
 );
 

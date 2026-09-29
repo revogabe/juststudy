@@ -1,7 +1,11 @@
 import type { Identity } from "@/integrations/identity";
 import { authenticationError } from "./authentication.error";
 
-export function createAuthenticationService(identity: Identity) {
+type AuthenticationServiceOptions = {
+  e2e_test_mode?: boolean;
+};
+
+export function createAuthenticationService(identity: Identity, options: AuthenticationServiceOptions = {}) {
   return {
     anonymous: identity.anonymous,
     magicLink: identity.magicLink,
@@ -20,7 +24,7 @@ export function createAuthenticationService(identity: Identity) {
 
         if (!session) throw authenticationError.unauthenticated();
 
-        if (session.user.is_anonymous) throw authenticationError.identifiedUserRequired();
+        if (session.user.is_anonymous && !options.e2e_test_mode) throw authenticationError.identifiedUserRequired();
 
         return session;
       },

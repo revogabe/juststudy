@@ -8,8 +8,7 @@ export function createOpenApiModule() {
       info: {
         title: "JustStudy API",
         version: "1.0.0",
-        description:
-          "Authentication, billing, knowledge, topic discovery, and focus sessions for JustStudy.",
+        description: "Authentication, billing, study sessions, structured feedback, and subject scores for JustStudy.",
       },
       tags: [
         { name: "Health", description: "Process health." },
@@ -18,6 +17,8 @@ export function createOpenApiModule() {
         { name: "Knowledge", description: "Global subjects and catalog operations." },
         { name: "Randomize", description: "Personal topic randomization and history." },
         { name: "Focus", description: "Timed study sessions and presence tracking." },
+        { name: "Feedback", description: "Audio explanations and structured evaluations." },
+        { name: "Scores", description: "Versioned per-subject mastery projections." },
         { name: "Webhooks", description: "Signed provider events." },
       ],
     },

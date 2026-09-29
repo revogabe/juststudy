@@ -1,0 +1,648 @@
+{
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "local-v1",
+  "references": {
+    "biology/photosynthesis": {
+      "reference_summary": "A fotossíntese é o processo pelo qual plantas, algas e algumas bactérias usam a energia luminosa para produzir matéria orgânica a partir de dióxido de carbono e água, liberando oxigênio em muitos casos. Nas plantas, ocorre principalmente nos cloroplastos: as reações dependentes de luz produzem ATP e NADPH e liberam oxigênio a partir da água; depois, o ciclo de Calvin utiliza ATP e NADPH para incorporar o carbono do CO₂ em moléculas orgânicas. A glicose é um modo simplificado de representar os produtos orgânicos, pois o processo forma inicialmente outros compostos.",
+      "key_concepts": [
+        "Função da fotossíntese: conversão de energia luminosa em energia química armazenada em matéria orgânica",
+        "Reagentes e produtos gerais: CO₂ e água são usados; compostos orgânicos são produzidos e o O₂ pode ser liberado",
+        "Cloroplastos, tilacoides e estroma como locais das principais etapas nas células vegetais",
+        "Reações dependentes de luz: absorção de luz, produção de ATP e NADPH e fotólise da água com liberação de oxigênio",
+        "Ciclo de Calvin: utilização de ATP e NADPH para fixar o carbono do CO₂ e formar compostos orgânicos",
+        "Importância ecológica: produção de matéria orgânica e contribuição para a manutenção do oxigênio atmosférico"
+      ],
+      "common_misconceptions": [
+        "A fotossíntese é apenas a respiração das plantas durante o dia.",
+        "O oxigênio liberado na fotossíntese vem do dióxido de carbono.",
+        "A planta obtém sua matéria orgânica principalmente do solo.",
+        "A fotossíntese ocorre somente quando há luz, inclusive todas as suas etapas diretamente dependem dela."
+      ],
+      "version": "generated-v1"
+    },
+    "mathematics/pythagorean-theorem": {
+      "reference_summary": "Em um triângulo retângulo, isto é, um triângulo que possui um ângulo de 90°, o quadrado da medida da hipotenusa é igual à soma dos quadrados das medidas dos dois catetos: a² + b² = c². A hipotenusa é o lado oposto ao ângulo reto e é sempre o maior lado; o teorema permite calcular um lado quando os outros dois são conhecidos.",
+      "key_concepts": [
+        "Triângulo retângulo: possui um ângulo de 90°.",
+        "Catetos: são os dois lados que formam o ângulo reto.",
+        "Hipotenusa: é o lado oposto ao ângulo reto e o maior lado.",
+        "Relação a² + b² = c², em que c representa a hipotenusa.",
+        "Uso do teorema para encontrar uma medida desconhecida, isolando-a e calculando a raiz quadrada quando necessário."
+      ],
+      "common_misconceptions": [
+        "O Teorema de Pitágoras vale para qualquer triângulo.",
+        "A hipotenusa é um dos lados que formam o ângulo reto.",
+        "A fórmula é a² + b² = c² mesmo quando c não é a hipotenusa.",
+        "Para aplicar o teorema, basta somar os lados, sem elevar suas medidas ao quadrado."
+      ],
+      "version": "generated-v1"
+    },
+    "physics/newtons-second-law": {
+      "reference_summary": "A segunda lei de Newton afirma que a força resultante sobre um corpo é igual ao produto de sua massa por sua aceleração: F_resultante = m·a. A aceleração tem a mesma direção e o mesmo sentido da força resultante, e seu valor depende da força resultante e da massa do corpo. A força resultante é a soma vetorial de todas as forças que atuam no corpo.",
+      "key_concepts": [
+        "Força resultante como soma vetorial das forças aplicadas",
+        "Relação entre força resultante, massa e aceleração",
+        "Direção e sentido da aceleração determinados pela força resultante",
+        "Unidade de força no Sistema Internacional: newton",
+        "Diferença entre força resultante nula, aceleração nula e equilíbrio",
+        "Importância de analisar um corpo isoladamente e identificar as forças que atuam nele"
+      ],
+      "common_misconceptions": [
+        "A segunda lei diz que uma força isolada é sempre igual a massa vezes aceleração, sem considerar as demais forças.",
+        "Se a força resultante é nula, o corpo necessariamente está parado.",
+        "Um corpo mais pesado sempre cai com maior aceleração, independentemente das condições e das forças consideradas.",
+        "A aceleração tem direção oposta à força resultante."
+      ],
+      "version": "generated-v1"
+    },
+    "biology/natural-selection": {
+      "reference_summary": "Seleção natural é o processo pelo qual indivíduos com características hereditárias que favorecem a sobrevivência ou a reprodução em determinado ambiente tendem a deixar mais descendentes. Ao longo das gerações, essas características podem se tornar mais comuns na população. O ambiente não cria intencionalmente as características; ele favorece ou desfavorece variações que já existem ou surgem por mutação e recombinação genética.",
+      "key_concepts": [
+        "Variação entre indivíduos da mesma população",
+        "Hereditariedade das características",
+        "Diferenças de sobrevivência e reprodução",
+        "Influência do ambiente",
+        "Mudança na frequência das características ao longo das gerações",
+        "Adaptação como resultado evolutivo"
+      ],
+      "common_misconceptions": [
+        "Os indivíduos mudam suas características porque precisam se adaptar e passam essas mudanças aos descendentes.",
+        "A seleção natural acontece porque os organismos escolhem conscientemente as características mais vantajosas.",
+        "Os organismos mais fortes ou maiores sempre são favorecidos pela seleção natural.",
+        "A seleção natural produz mudanças em um indivíduo durante sua vida, em vez de alterar populações ao longo das gerações."
+      ],
+      "version": "generated-v1"
+    },
+    "biology/cellular-respiration": {
+      "reference_summary": "A respiração celular é o conjunto de reações pelas quais a célula obtém energia utilizável, principalmente na forma de ATP, a partir da oxidação de moléculas orgânicas, como a glicose. Na respiração aeróbica, a glicose é degradada por etapas: glicólise, oxidação do piruvato, ciclo de Krebs e cadeia transportadora de elétrons com fosforilação oxidativa; o oxigênio atua como aceptor final de elétrons e forma água. A glicólise ocorre no citosol, enquanto as demais etapas principais ocorrem na mitocôndria das células eucarióticas.",
+      "key_concepts": [
+        "ATP como principal forma imediata de energia celular, produzida por fosforilação em nível de substrato e, principalmente, por fosforilação oxidativa",
+        "Glicólise: ocorre no citosol e converte a glicose em piruvato, produzindo ATP e NADH",
+        "Oxidação do piruvato e ciclo de Krebs: ocorrem na matriz mitocondrial e geram CO₂, ATP ou GTP, NADH e FADH₂",
+        "Cadeia transportadora de elétrons: recebe elétrons de NADH e FADH₂ e usa sua energia para bombear prótons através da membrana interna da mitocôndria",
+        "Quimiosmose e ATP sintase: o gradiente de prótons impulsiona a síntese de ATP",
+        "Papel do oxigênio como aceptor final de elétrons, sendo reduzido a água; sem ele, a cadeia respiratória aeróbica não se mantém"
+      ],
+      "common_misconceptions": [
+        "A respiração celular ocorre apenas nos pulmões ou é simplesmente o ato de inspirar e expirar.",
+        "A glicólise ocorre dentro da mitocôndria.",
+        "O oxigênio é usado diretamente para produzir ATP em todas as etapas da respiração celular.",
+        "A fermentação produz mais ATP do que a respiração aeróbica."
+      ],
+      "version": "generated-v1"
+    },
+    "biology/dna-replication": {
+      "reference_summary": "A replicação do DNA é um processo semiconservativo, bidirecional e baseado no pareamento complementar de bases, no qual cada fita parental serve de molde para a síntese de uma nova fita. A síntese ocorre sempre no sentido 5’→3’, realizada por DNA-polimerases, o que torna contínua a síntese da fita líder e descontínua, em fragmentos de Okazaki, a da fita retardada. O processo envolve abertura da dupla-hélice, formação de primers de RNA, extensão das novas fitas, remoção e substituição dos primers, união dos fragmentos e mecanismos de revisão e reparo que asseguram alta fidelidade.",
+      "key_concepts": [
+        "Semiconservatividade e bidirecionalidade: cada molécula filha contém uma fita parental e uma fita recém-sintetizada, e as forquilhas de replicação avançam a partir das origens.",
+        "Abertura e estabilização do DNA: helicases separam as fitas, proteínas ligantes de fita simples impedem seu reassociamento e topoisomerases reduzem a tensão gerada à frente da forquilha.",
+        "Síntese 5’→3’ dependente de primer: DNA-polimerases adicionam nucleotídeos à extremidade 3’ de uma cadeia preexistente, usando a fita molde e o pareamento complementar.",
+        "Fita líder e fita retardada: a líder é sintetizada continuamente; a retardada é formada em fragmentos de Okazaki, posteriormente processados e unidos pela DNA-ligase.",
+        "Fidelidade da replicação: seleção de bases, atividade de revisão exonucleolítica de algumas polimerases e sistemas de reparo corrigem grande parte dos erros.",
+        "Replicação das extremidades cromossômicas: em cromossomos lineares, a remoção dos primers gera um problema terminal, solucionado em certos tipos celulares pela telomerase, que estende os telômeros. "
+      ],
+      "common_misconceptions": [
+        "As duas fitas novas são sintetizadas continuamente no mesmo sentido do avanço da forquilha.",
+        "A DNA-polimerase inicia a síntese de uma nova cadeia diretamente, sem necessidade de primer.",
+        "A replicação conserva a molécula parental intacta e produz uma molécula inteiramente nova, em vez de ser semiconservativa.",
+        "A DNA-ligase sintetiza os fragmentos de Okazaki; sua função principal é unir fragmentos já formados, após o processamento dos primers."
+      ],
+      "version": "generated-v1"
+    },
+    "biology/lac-operon": {
+      "reference_summary": "O operon lac de Escherichia coli é um sistema de regulação negativa e positiva da expressão dos genes lacZ, lacY e lacA, envolvidos no aproveitamento da lactose. Na ausência de lactose, o repressor LacI liga-se ao operador e reduz fortemente a transcrição; na presença de lactose, seu isômero alolactose liga-se ao repressor e diminui sua afinidade pelo operador. Quando a glicose está baixa, aumenta o AMPc, que se associa à proteína CAP/CRP e favorece o recrutamento da RNA-polimerase ao promotor; assim, a expressão máxima ocorre com lactose presente e glicose escassa, enquanto a glicose exerce repressão catabólica principalmente por reduzir o AMPc.",
+      "key_concepts": [
+        "Organização do operon: promotor, operador, genes estruturais lacZ, lacY e lacA e o gene regulador lacI, que possui regulação própria.",
+        "Regulação negativa por LacI: o repressor ligado ao operador dificulta a transcrição; a alolactose atua como indutor fisiológico ao promover sua dissociação funcional do operador.",
+        "Regulação positiva por CAP/CRP–AMPc: a baixa glicose eleva o AMPc, e o complexo CAP–AMPc auxilia a RNA-polimerase na iniciação da transcrição.",
+        "Repressão catabólica: a presença de glicose reduz o AMPc e limita a ativação por CAP, mesmo quando há lactose.",
+        "Lógica combinatória da expressão: sem lactose, expressão mínima; com lactose e muita glicose, expressão baixa ou intermediária; com lactose e pouca glicose, expressão máxima.",
+        "A lactose não é o indutor regulatório direto principal: a alolactose, derivada da lactose, é o efetor que inativa funcionalmente o repressor LacI."
+      ],
+      "common_misconceptions": [
+        "A lactose liga-se diretamente ao operador e libera a RNA-polimerase.",
+        "A presença de lactose, por si só, produz expressão máxima do operon, independentemente da concentração de glicose.",
+        "O repressor LacI é codificado por um dos genes estruturais lacZ, lacY ou lacA.",
+        "A glicose ativa diretamente o operon lac; na realidade, sua presença reduz o AMPc e impede a ativação eficiente por CAP/CRP."
+      ],
+      "version": "generated-v1"
+    },
+    "chemistry/ph-acids-bases": {
+      "reference_summary": "Ácidos são substâncias que, em água, aumentam a concentração de íons hidrogênio (H⁺), enquanto bases aumentam a concentração de íons hidróxido (OH⁻) ou aceitam H⁺, dependendo da definição usada. O pH indica o grau de acidez de uma solução aquosa: valores menores que 7 são ácidos, 7 é neutro e valores maiores que 7 são básicos, em condições usuais. A escala de pH é logarítmica, portanto uma diferença de uma unidade representa uma variação de dez vezes na concentração de H⁺.",
+      "key_concepts": [
+        "Definição de ácido e base em solução aquosa",
+        "Significado do pH como medida relacionada à concentração de H⁺",
+        "Classificação: pH menor que 7, igual a 7 e maior que 7",
+        "Diferença entre soluções ácidas, neutras e básicas",
+        "Caráter logarítmico da escala de pH",
+        "Indicadores ácido-base e mudança de cor conforme o pH"
+      ],
+      "common_misconceptions": [
+        "Todo ácido é necessariamente perigoso ou corrosivo.",
+        "Uma substância com pH 7 é sempre neutra, independentemente da temperatura e das condições da solução.",
+        "Quanto maior o valor do pH, mais ácida é a solução.",
+        "A escala de pH é linear, de modo que pH 4 é apenas um pouco mais ácido que pH 5."
+      ],
+      "version": "generated-v1"
+    },
+    "chemistry/reaction-rates": {
+      "reference_summary": "A velocidade de uma reação química indica a rapidez com que reagentes são consumidos ou produtos são formados, podendo ser expressa pela variação da concentração em função do tempo. Segundo a teoria das colisões, uma reação ocorre quando as partículas dos reagentes colidem com orientação adequada e energia suficiente para superar a energia de ativação, formando o complexo ativado. A velocidade aumenta quando cresce a frequência ou a eficácia das colisões, como ocorre, em geral, com o aumento da temperatura, da concentração dos reagentes, da pressão de gases, da superfície de contato ou pela ação de um catalisador.",
+      "key_concepts": [
+        "Definição de velocidade de reação como variação da concentração de reagentes ou produtos ao longo do tempo",
+        "Teoria das colisões: somente colisões eficazes produzem reação",
+        "Energia de ativação e orientação adequada das partículas",
+        "Efeito da temperatura, da concentração, da pressão dos gases e da superfície de contato sobre a frequência e a eficácia das colisões",
+        "Ação dos catalisadores: fornecem um caminho reacional de menor energia de ativação e aceleram a reação sem serem consumidos globalmente",
+        "Diferença entre rapidez da reação e quantidade final de produto, que depende das condições e do equilíbrio químico quando aplicável"
+      ],
+      "common_misconceptions": [
+        "Toda colisão entre partículas dos reagentes produz uma reação.",
+        "O catalisador aumenta a quantidade final de produto ou é consumido permanentemente durante a reação.",
+        "Aumentar a temperatura apenas aumenta a frequência das colisões, sem alterar a energia das partículas.",
+        "A velocidade de reação é determinada somente pela concentração dos reagentes, independentemente de temperatura, superfície de contato, pressão ou catalisadores."
+      ],
+      "version": "generated-v1"
+    },
+    "chemistry/le-chatelier-principle": {
+      "reference_summary": "O princípio de Le Chatelier estabelece que, quando um sistema em equilíbrio é submetido a uma perturbação, sua composição se desloca no sentido que tende a minimizar o efeito dessa perturbação, restabelecendo um novo equilíbrio. Alterações nas concentrações, na pressão ou no volume podem modificar a composição de equilíbrio; a temperatura também desloca o equilíbrio e, diferentemente das demais perturbações, altera o valor de K. A adição de catalisador não desloca o equilíbrio nem altera K, pois acelera igualmente as reações direta e inversa.",
+      "key_concepts": [
+        "Efeito de alterações de concentração: a adição de uma espécie favorece seu consumo, enquanto sua remoção favorece sua formação, sem alterar K quando a temperatura permanece constante.",
+        "Efeito da pressão e do volume em equilíbrios gasosos: a compressão favorece o lado com menor número de mols gasosos, e a expansão favorece o lado com maior número; se os números forem iguais, não há12",
+        "Efeito da temperatura: o aumento da temperatura favorece o sentido endotérmico e a redução favorece o sentido exotérmico; a temperatura altera a constante de equilíbrio.",
+        "Constante de equilíbrio: para uma dada reação e temperatura, K permanece constante no novo equilíbrio, embora as concentrações ou pressões de equilíbrio possam mudar.",
+        "Catalisadores: reduzem a energia de ativação e aceleram a chegada ao equilíbrio, mas não alteram sua composição nem o valor de K.",
+        "Quociente de reação: a direção espontânea do deslocamento pode ser determinada comparando Q com K; Q<K indica avanço no sentido direto, Q>K no inverso e Q=K equilíbrio."
+      ],
+      "common_misconceptions": [
+        "Adicionar um catalisador desloca o equilíbrio para o lado dos produtos.",
+        "Aumentar a pressão sempre favorece a formação de produtos.",
+        "Alterar a concentração ou a pressão modifica o valor da constante de equilíbrio K.",
+        "O princípio significa que o sistema necessariamente retorna às condições iniciais, e não que atinge uma nova composição de equilíbrio."
+      ],
+      "version": "generated-v1"
+    },
+    "chemistry/sn2-mechanism": {
+      "reference_summary": "A reação SN2 é uma substituição nucleofílica bimolecular concertada, em uma única etapa, na qual o nucleófilo ataca o carbono eletrofílico simultaneamente à saída do grupo abandonador. O ataque ocorre pela face oposta à ligação C–grupo abandonador, passando por um estado de transição com participação parcial de ambas as ligações e resultando, em centro estereogênico, em inversão de configuração. Sua velocidade segue uma lei de segunda ordem, v = k[substrato][nucleófilo], e depende tanto da estrutura do substrato quanto da nucleofilicidade, concentração e solvatação do nucleófilo.",
+      "key_concepts": [
+        "Mecanismo concertado: formação da ligação C–Nu e ruptura da ligação C–grupo abandonador ocorrem no mesmo evento elementar, sem intermediário carbocatiônico.",
+        "Ataque posterior e estereoquímica: o nucleófilo aproxima-se pela face oposta ao grupo abandonador, pois a interação ocorre com o orbital antiligante σ* da ligação C–grupo abandonador; em substratos c(",
+        "common_misconceptions:[",
+        " )"
+      ],
+      "common_misconceptions": [
+        "A SN2 ocorre em duas etapas, formando primeiro um carbocátion intermediário.",
+        "O nucleófilo ataca o carbono pelo mesmo lado do grupo abandonador e, por isso, ocorre retenção de configuração.",
+        "A velocidade da SN2 depende apenas da concentração do substrato, como em uma reação unimolecular.",
+        "Substratos terciários reagem mais rapidamente por SN2 porque possuem mais grupos alquila capazes de estabilizar a reação."
+      ],
+      "version": "generated-v1"
+    },
+    "physics/free-fall": {
+      "reference_summary": "Queda livre é o movimento de um corpo sob a ação exclusiva da gravidade, desprezando a resistência do ar. Próximo à superfície da Terra, a aceleração gravitacional é aproximadamente constante, tem direção vertical e aponta para baixo. Se o corpo é abandonado do repouso, sua velocidade aumenta continuamente na direção da queda; se é lançado para cima, sua velocidade diminui até ficar momentaneamente nula no ponto mais alto e depois aumenta para baixo.",
+      "key_concepts": [
+        "Ação exclusiva da gravidade e desprezo da resistência do ar",
+        "Aceleração gravitacional constante, vertical e dirigida para baixo",
+        "Diferença entre velocidade inicial e aceleração durante a queda",
+        "Conversão de energia potencial gravitacional em energia cinética",
+        "Movimento de um corpo lançado para cima: subida, ponto mais alto e descida"
+      ],
+      "common_misconceptions": [
+        "Um corpo mais pesado sempre cai mais rápido que um corpo mais leve quando a resistência do ar é desprezada.",
+        "Durante a queda livre, o corpo mantém velocidade constante.",
+        "No ponto mais alto de um lançamento vertical, a aceleração é zero.",
+        "Queda livre só ocorre quando o corpo é abandonado do repouso."
+      ],
+      "version": "generated-v1"
+    },
+    "physics/ohms-law": {
+      "reference_summary": "As leis de Ohm relacionam tensão elétrica, corrente elétrica e resistência em um circuito. Para um resistor ôhmico, a resistência permanece constante em condições físicas constantes, de modo que U = R·I e a relação entre tensão e corrente é linear. A resistência depende do material, do comprimento, da área da seção transversal e da temperatura; em circuitos, resistores em série têm a mesma corrente e resistores em paralelo têm a mesma tensão.",
+      "key_concepts": [
+        "Primeira lei de Ohm: relação U = R·I e significado das grandezas tensão, corrente e resistência",
+        "Comportamento ôhmico: proporcionalidade entre tensão e corrente quando a resistência é constante",
+        "Segunda lei de Ohm: R = ρL/A, relacionando resistência, resistividade, comprimento e área da seção transversal",
+        "Influência da temperatura e distinção entre materiais ou dispositivos ôhmicos e não ôhmicos",
+        "Associação em série: mesma corrente e resistência equivalente igual à soma das resistências",
+        "Associação em paralelo: mesma tensão e corrente total igual à soma das correntes dos ramos"
+      ],
+      "common_misconceptions": [
+        "A lei de Ohm vale para qualquer componente elétrico, independentemente de suas características e das condições de operação.",
+        "A resistência é sempre constante e não depende do material, das dimensões ou da temperatura do condutor.",
+        "Em uma associação em série, a tensão é a mesma em todos os resistores.",
+        "Em uma associação em paralelo, a corrente é a mesma em todos os ramos."
+      ],
+      "version": "generated-v1"
+    },
+    "physics/electromagnetic-induction": {
+      "reference_summary": "A indução eletromagnética é a produção de força eletromotriz (fem) em um circuito devido à variação temporal do fluxo magnético através de uma superfície delimitada pelo circuito. Pela lei de Faraday–Lenz, a fem induzida é ε = −dΦ_B/dt (ou ε = −N dΦ_B/dt para N espiras), e o sinal negativo expressa que a corrente induzida se opõe à variação do fluxo que a produz. O fluxo pode variar por mudança no campo magnético, na área efetiva ou na orientação do circuito; em formulação mais geral, campos elétricos não conservativos também podem ser gerados por campos magnéticos variáveis, conforme a lei de Faraday na forma integral e diferencial.",
+      "key_concepts": [
+        "Fluxo magnético: definição como Φ_B = ∫ B · dA e dependência do campo, da área e da orientação da superfície.",
+        "Lei de Faraday–Lenz: relação entre a variação do fluxo e a fem induzida, incluindo o sinal associado à oposição à variação do fluxo.",
+        "Distinção entre fem induzida e corrente induzida: a corrente depende também da resistência e da impedância do circuito, além de suas condições elétricas.",
+        "Mecanismos de indução: variação temporal do campo ou movimento do circuito em um campo magnético, incluindo a fem motional associada à força magnética sobre cargas.",
+        "Formulação de Maxwell–Faraday: ∮ E · dl = −dΦ_B/dt e ∇ × E = −∂B/∂t, evidenciando que o campo elétrico induzido é não conservativo.",
+        "Aplicações e energia: geradores, transformadores e correntes de Foucault, com a energia mecânica ou elétrica fornecida sendo convertida e, no caso resistivo, dissipada como calor."
+      ],
+      "common_misconceptions": [
+        "A indução eletromagnética ocorre somente quando o campo magnético varia; um circuito que se move ou muda sua orientação ou área em um campo magnético estático também pode apresentar variação de fluxo e fem induzida.",
+        "A corrente induzida sempre se opõe ao campo magnético externo; na realidade, ela se opõe à variação do fluxo magnético, podendo reforçar ou enfraquecer o campo na região conforme o sentido da variação.",
+        "Se existe fluxo magnético através de um circuito, necessariamente existe fem ou corrente induzida; é necessária uma variação temporal do fluxo para haver fem induzida, e a corrente ainda requer um caminho condutor fechado.",
+        "A lei de Faraday implica que o campo elétrico induzido é conservativo e pode ser descrito globalmente apenas por um potencial escalar; em geral, sua circulação em um caminho fechado é não nula quando o fluxo magnético varia."
+      ],
+      "version": "generated-v1"
+    },
+    "physics/special-relativity-time-dilation": {
+      "reference_summary": "Na relatividade restrita, a dilatação do tempo é uma consequência da invariância da velocidade da luz e da relatividade da simultaneidade entre referenciais inerciais. Para dois eventos que ocorrem no mesmo lugar no referencial próprio de um relógio, o intervalo de tempo próprio Δτ é o menor intervalo entre esses eventos, e um referencial no qual o relógio se move mede Δt = γΔτ, com γ = 1/√(1 − v²/c²); portanto, relógios em movimento relativo marcam menos tempo entre eventos comparados no referencial em que se deslocam. O efeito é recíproco entre referenciais inerciais e não representa uma alteração local do funcionamento do relógio, mas uma diferença na decomposição espaço-temporal dos eventos.",
+      "key_concepts": [
+        "Tempo próprio: intervalo entre dois eventos que ocorrem no mesmo ponto de um referencial, medido por um único relógio que acompanha esses eventos.",
+        "Fator de Lorentz: γ = 1/√(1 − v²/c²), que relaciona o intervalo coordenado Δt ao tempo próprio por Δt = γΔτ.",
+        "Relatividade da simultaneidade: eventos simultâneos em um referencial podem não ser simultâneos em outro, sendo essencial para a interpretação da dilatação temporal.",
+        "Reciprocidade entre referenciais inerciais: cada observador considera o relógio do outro em movimento e, portanto, mais lento, sem contradição quando a comparação é feita de modo consistente.",
+        "Intervalo espaço-temporal: Δs² = c²Δt² − Δx² é invariante; para uma trajetória temporal, Δτ = √(Δt² − Δx²/c²).",
+        "Assimetria em reencontros: no paradoxo dos gêmeos, a diferença efetiva de idades decorre da mudança de referencial ou da trajetória não inercial de um dos viajantes, não de uma simples contradição da-"
+      ],
+      "common_misconceptions": [
+        "A dilatação do tempo significa que o relógio em movimento realmente apresenta um defeito ou funciona fisicamente mais devagar em seu próprio referencial.",
+        "A dilatação temporal, sozinha, permite identificar qual referencial inercial está verdadeiramente em repouso.",
+        "O efeito depende apenas da velocidade absoluta do relógio, em vez da velocidade relativa entre referenciais inerciais.",
+        "No paradoxo dos gêmeos, a reciprocidade entre observadores inerciais implica que os dois gêmeos devem necessariamente envelhecer o mesmo tanto após o reencontro."
+      ],
+      "version": "generated-v1"
+    },
+    "mathematics/quadratic-function": {
+      "reference_summary": "Uma função quadrática é uma função da forma f(x) = ax² + bx + c, com a diferente de zero. Seu gráfico é uma parábola, cuja abertura depende do sinal de a: para cima se a > 0 e para baixo se a < 0. As raízes são os valores de x para os quais f(x) = 0, e o vértice representa o ponto de máximo ou de mínimo da função.",
+      "key_concepts": [
+        "Forma geral f(x) = ax² + bx + c e a ≠ 0",
+        "Parábola como gráfico da função",
+        "Influência do sinal de a na abertura",
+        "Raízes ou zeros da função, obtidos ao resolver f(x) = 0",
+        "Vértice como ponto de máximo ou de mínimo",
+        "Eixo de simetria da parábola"
+      ],
+      "common_misconceptions": [
+        "Toda função da forma ax² + bx + c é quadrática, mesmo quando a = 0.",
+        "O gráfico de uma função quadrática é uma reta.",
+        "Se a > 0, a parábola se abre para baixo.",
+        "As raízes da função são os valores de y onde o gráfico cruza o eixo vertical."
+      ],
+      "version": "generated-v1"
+    },
+    "mathematics/derivative": {
+      "reference_summary": "A derivada de uma função em um ponto é o limite da razão entre a variação da função e a variação da variável independente quando essa variação tende a zero, desde que esse limite exista. Ela representa a taxa de variação instantânea da função e, geometricamente, o coeficiente angular da reta tangente ao gráfico no ponto. As regras de derivação permitem calcular derivadas de somas, produtos, quocientes e composições de funções, e a derivada pode ser usada para analisar crescimento, decrescimento e extremos locais.",
+      "key_concepts": [
+        "Definição de derivada como limite da razão incremental",
+        "Interpretação geométrica como inclinação da reta tangente",
+        "Interpretação como taxa de variação instantânea",
+        "Regras básicas de derivação, incluindo produto, quociente e cadeia",
+        "Relação entre o sinal da derivada e o crescimento ou decrescimento da função",
+        "Uso da derivada na identificação de pontos críticos e extremos locais"
+      ],
+      "common_misconceptions": [
+        "A derivada é sempre igual à inclinação da reta secante entre dois pontos do gráfico.",
+        "Se a derivada em um ponto é zero, então a função necessariamente tem um máximo ou mínimo nesse ponto.",
+        "Uma função ser contínua em um ponto garante que ela seja derivável nesse ponto.",
+        "Derivar uma função significa apenas diminuir em um o expoente de cada termo, regra que se aplica a qualquer função."
+      ],
+      "version": "generated-v1"
+    },
+    "mathematics/fundamental-theorem-of-calculus": {
+      "reference_summary": "O Teorema Fundamental do Cálculo estabelece a relação de inversão entre diferenciação e integração. Se f é contínua em um intervalo e F(x)=∫_a^x f(t)dt, então F é derivável e F'(x)=f(x); reciprocamente, se F é uma primitiva de f, então ∫_a^b f(x)dx=F(b)-F(a), sob as hipóteses adequadas de integrabilidade e continuidade. Assim, integrais definidas podem ser calculadas por primitivas, e a acumulação de uma taxa de variação é recuperada pela derivação.",
+      "key_concepts": [
+        "Função área acumulada: construção de F(x)=∫_a^x f(t)dt e sua interpretação como acumulação orientada",
+        "Primeira parte: continuidade de f garante que a derivada da função acumulada coincide com f",
+        "Segunda parte: uma primitiva permite calcular a integral definida pela diferença F(b)-F(a)",
+        "Relação entre derivada e integral como operações inversas, respeitadas as hipóteses do teorema",
+        "Integral orientada e independência da escolha da primitiva na fórmula de Newton–Leibniz",
+        "Importância das hipóteses: a versão elementar requer continuidade, embora existam extensões para funções integráveis em sentidos mais gerais"
+      ],
+      "common_misconceptions": [
+        "Toda função integrável é necessariamente contínua em todos os pontos.",
+        "A derivada de qualquer função definida por uma integral acumulada é sempre exatamente o integrando, mesmo quando as hipóteses de continuidade ou regularidade não são satisfeitas.",
+        "A integral definida é uma área geométrica sempre positiva, e não uma área orientada que pode resultar em valor negativo.",
+        "O teorema afirma que derivar e integrar são operações inversas sem nenhuma condição sobre as funções envolvidas."
+      ],
+      "version": "generated-v1"
+    },
+    "mathematics/eigenvalues-eigenvectors": {
+      "reference_summary": "Para uma transformação linear T:V→V sobre um espaço vetorial de dimensão finita, um escalar λ é autovalor quando existe um vetor não nulo v tal que T(v)=λv; esse vetor é um autovetor associado. Em uma base, isso equivale a det(A−λI)=0, isto é, λ é raiz do polinômio característico, e o autoespaço E_λ=ker(A−λI) reúne todos os autovetores associados a λ, juntamente com o vetor nulo. A multiplicidade geométrica de λ é dim E_λ e não excede sua multiplicidade algébrica; a matriz é diagonalizável exatamente quando possui uma base de autovetores, equivalentemente quando a soma das dimensões dos autoespaços é a dimensão do espaço.",
+      "key_concepts": [
+        "Definição de autovalor e autovetor e sua interpretação como direções invariantes da transformação",
+        "Polinômio característico det(A−λI) e condição de existência de autovetores não nulos",
+        "Autoespaço E_λ=ker(A−λI), incluindo sua estrutura de subespaço",
+        "Multiplicidades algébrica e geométrica e a desigualdade entre elas",
+        "Diagonalização como existência de uma base de autovetores e forma A=PDP⁻¹",
+        "Fatos estruturais: autoespaços associados a autovalores distintos são linearmente independentes e matrizes semelhantes têm os mesmos autovalores"
+      ],
+      "common_misconceptions": [
+        "Todo vetor associado a um autovalor é um autovetor; na verdade, o vetor nulo pertence ao autoespaço, mas não é autovetor.",
+        "A multiplicidade algébrica de um autovalor é sempre igual à sua multiplicidade geométrica; a igualdade pode falhar, impedindo a diagonalização.",
+        "Toda matriz possui uma base de autovetores e, portanto, é diagonalizável; isso só é garantido quando há autovetores linearmente independentes suficientes.",
+        "Autovalores são determinados pelos vetores ou dependem da base escolhida; os autovalores de um operador não mudam sob mudança de base, embora sua matriz possa mudar."
+      ],
+      "version": "generated-v1"
+    },
+    "history/french-revolution": {
+      "reference_summary": "A Revolução Francesa foi um processo político e social iniciado em 1789, provocado pela combinação de crise financeira do Estado, desigualdades sociais do Antigo Regime e influência de ideias iluministas. A queda da monarquia absoluta levou à criação de novas instituições, à proclamação da República e a intensos conflitos internos e externos. O processo também foi marcado pelo Terror e terminou, em sua fase revolucionária, com a ascensão de Napoleão Bonaparte, deixando como legado a defesa da cidadania, da igualdade jurídica e da soberania popular, embora essas ideias não tenham sido aplicadas de forma plena a todos.",
+      "key_concepts": [
+        "Crise do Antigo Regime: dificuldades financeiras, problemas de abastecimento e desigualdade entre os grupos sociais contribuíram para a ruptura política.",
+        "Estrutura social: clero e nobreza gozavam de privilégios, enquanto o Terceiro Estado concentrava a maior parte da população e dos encargos tributários.",
+        "Iluminismo e soberania popular: ideias de liberdade, igualdade jurídica, cidadania e limitação do poder monárquico influenciaram os revolucionários.",
+        "Ruptura política: a convocação dos Estados Gerais, a formação da Assembleia Nacional e a queda da Bastilha simbolizaram o fim da ordem absolutista.",
+        "Radicalização e Terror: conflitos entre grupos revolucionários, guerra externa e ameaças internas favoreceram medidas de exceção e a violência política.",
+        "Legados e limites: a Declaração dos Direitos do Homem e do Cidadão difundiu princípios universais, mas mulheres, escravizados e outros grupos permaneceram excluídos ou limitados em seus direitos."
+      ],
+      "common_misconceptions": [
+        "A Revolução Francesa foi causada exclusivamente pelas ideias iluministas.",
+        "Todos os franceses tinham os mesmos direitos e participação política durante a Revolução.",
+        "A tomada da Bastilha, sozinha, encerrou imediatamente a monarquia e iniciou uma república estável.",
+        "A Revolução Francesa foi um movimento uniforme, sem disputas entre diferentes grupos e projetos políticos."
+      ],
+      "version": "generated-v1"
+    },
+    "history/brazil-independence": {
+      "reference_summary": "A Independência do Brasil foi o processo pelo qual o Brasil rompeu sua ligação política com Portugal, proclamado por D. Pedro em 7 de setembro de 1822. O processo foi influenciado pelas tensões entre as elites brasileiras e as exigências das Cortes portuguesas, e resultou na formação do Brasil como uma monarquia independente, sob o governo de D. Pedro I. A separação não transformou imediatamente a sociedade: a escravidão e muitas desigualdades foram mantidas.",
+      "key_concepts": [
+        "Relação colonial entre Brasil e Portugal e as tensões políticas que levaram à ruptura",
+        "Atuação de D. Pedro e o significado do episódio do 7 de setembro de 1822",
+        "Participação e interesses das elites brasileiras no processo de independência",
+        "Reconhecimento da independência e conflitos ocorridos em algumas regiões",
+        "Manutenção da monarquia, da escravidão e de desigualdades sociais após a independência"
+      ],
+      "common_misconceptions": [
+        "A independência aconteceu apenas por causa de um ato isolado de D. Pedro, sem conflitos ou participação de outros grupos.",
+        "Todos os habitantes do Brasil apoiaram a independência da mesma maneira.",
+        "A independência acabou imediatamente com a escravidão e com as desigualdades sociais.",
+        "A independência fez do Brasil uma república."
+      ],
+      "version": "generated-v1"
+    },
+    "history/industrial-revolution": {
+      "reference_summary": "A Revolução Industrial foi um processo de transformações econômicas, sociais e tecnológicas iniciado na Inglaterra no século XVIII e posteriormente expandido para outras regiões. A introdução de máquinas, novas fontes de energia e do sistema fabril aumentou a produção e modificou o trabalho, favorecendo o crescimento urbano, a formação da burguesia industrial e do proletariado. O processo também gerou conflitos sociais, desigualdades e mudanças nas relações de trabalho e no modo de vida da população.",
+      "key_concepts": [
+        "Pioneirismo inglês: condições econômicas, políticas e sociais que favoreceram o início da industrialização na Inglaterra.",
+        "Máquinas e fontes de energia: mecanização da produção e uso de fontes como carvão mineral e vapor, que ampliaram a capacidade produtiva.",
+        "Sistema fabril: concentração de trabalhadores e máquinas nas fábricas, com divisão e maior controle do trabalho.",
+        "Urbanização e mudanças sociais: crescimento das cidades e consolidação da burguesia industrial e do proletariado.",
+        "Condições de trabalho: jornadas longas, baixos salários, trabalho feminino e infantil e ausência inicial de proteção trabalhista.",
+        "Consequências e reações: aumento da produção e do comércio, desigualdade social, conflitos entre trabalhadores e empresários e surgimento de movimentos operários."
+      ],
+      "common_misconceptions": [
+        "A Revolução Industrial foi um acontecimento breve, limitado à invenção de algumas máquinas.",
+        "Ela começou simultaneamente em todos os países europeus e ocorreu da mesma forma em todos eles.",
+        "A industrialização beneficiou igualmente todas as classes sociais e melhorou imediatamente as condições de vida dos trabalhadores.",
+        "A Revolução Industrial substituiu completamente o trabalho artesanal e eliminou de imediato todas as formas anteriores de produção."
+      ],
+      "version": "generated-v1"
+    },
+    "geography/plate-tectonics": {
+      "reference_summary": "A tectônica de placas descreve a litosfera como um conjunto de placas rígidas que se deslocam sobre a astenosfera, impulsionadas principalmente por processos associados à convecção do manto, à tração das placas que subduzem e ao empurrão exercido nas dorsais. Os limites divergentes geram nova crosta oceânica por expansão do assoalho; os convergentes envolvem subducção ou colisão continental, produzindo fossas, vulcanismo, terremotos e, em certos casos, cadeias montanhosas; os transformantes acomodam o movimento lateral entre placas. O movimento das placas explica a distribuição de terremotos, vulcões, dorsais, fossas e orogênese, mas não elimina a deformação intraplaca nem implica que todos os limites sejam simples ou exclusivamente de um tipo.",
+      "key_concepts": [
+        "Litosfera, astenosfera e placas tectônicas: diferença entre a camada rígida que se fragmenta em placas e o material mais deformável subjacente.",
+        "Forças e dinâmica do movimento: papel combinado da convecção do manto, da tração das placas em subducção e do empurrão nas dorsais, sem reduzir o mecanismo a uma única causa.",
+        "Limites divergentes: afastamento das placas, ascensão do material mantélico, formação de crosta oceânica e expansão do assoalho oceânico.",
+        "Limites convergentes: subducção de litosfera oceânica ou colisão entre continentes, com geração de fossas, arcos vulcânicos, terremotos e cadeias montanhosas.",
+        "Limites transformantes: deslocamento predominantemente horizontal, com acúmulo e liberação de tensão por terremotos e pouca ou nenhuma criação ou destruição de litosfera.",
+        "Evidências e consequências globais: distribuição de sismos e vulcões, paleomagnetismo, idades do fundo oceânico, ajuste dos continentes e deformações associadas à interação das placas."
+      ],
+      "common_misconceptions": [
+        "As placas tectônicas são blocos que flutuam diretamente sobre um oceano de magma líquido.",
+        "A convecção do manto, sozinha e de modo uniforme, é a única força responsável pelo movimento das placas.",
+        "Todo vulcanismo ocorre nos limites entre placas.",
+        "Nos limites transformantes, uma placa é necessariamente criada ou destruída."
+      ],
+      "version": "generated-v1"
+    },
+    "geography/el-nino": {
+      "reference_summary": "El Niño é o aquecimento anômalo das águas superficiais do Pacífico Equatorial central e leste, acompanhado de alterações na circulação atmosférica, nos ventos e na distribuição das chuvas. No Brasil, seus efeitos variam regionalmente: em geral, aumenta a tendência de chuvas e temperaturas acima da média no Sul, enquanto pode favorecer períodos mais secos no Norte e Nordeste, especialmente na Amazônia e no semiárido. Também pode contribuir para temperaturas elevadas e mudanças no regime de chuvas em outras áreas, mas seus efeitos não são uniformes e dependem da intensidade do fenômeno e da interação com outras condições atmosféricas e oceânicas.",
+      "key_concepts": [
+        "Aquecimento anômalo do Pacífico Equatorial e sua relação com alterações na circulação atmosférica",
+        "Aumento da tendência de chuvas no Sul do Brasil",
+        "Tendência à redução ou irregularidade das chuvas no Norte e Nordeste, incluindo a Amazônia e o semiárido",
+        "Elevação das temperaturas e ocorrência de ondas de calor em diferentes regiões",
+        "Variação regional dos impactos e influência de outros fatores climáticos",
+        "Possíveis impactos na agricultura, nos recursos hídricos e na ocorrência de enchentes ou secas"
+      ],
+      "common_misconceptions": [
+        "El Niño provoca exatamente os mesmos efeitos climáticos em todo o Brasil.",
+        "El Niño é apenas um aumento da temperatura do ar no Brasil.",
+        "El Niño causa necessariamente seca em todo o país.",
+        "Todo evento de chuva intensa ou seca no Brasil é causado exclusivamente pelo El Niño."
+      ],
+      "version": "generated-v1"
+    },
+    "geography/water-cycle": {
+      "reference_summary": "O ciclo da água é o movimento contínuo da água entre a superfície da Terra, o subsolo, os seres vivos e a atmosfera. O calor do Sol provoca a evaporação da água, e o vapor pode se condensar, formando nuvens; depois, a água retorna à superfície por meio da precipitação, como chuva. Parte da água infiltra no solo e parte escoa para rios, lagos e oceanos, onde o ciclo recomeça.",
+      "key_concepts": [
+        "Evaporação: transformação da água líquida em vapor pelo aquecimento, principalmente pelo Sol.",
+        "Condensação: resfriamento do vapor de água, formando pequenas gotas que compõem as nuvens.",
+        "Precipitação: queda da água das nuvens para a superfície, como chuva, neve ou granizo.",
+        "Infiltração: entrada de parte da água no solo, podendo abastecer as águas subterrâneas.",
+        "Escoamento: deslocamento da água pela superfície até rios, lagos e oceanos.",
+        "Transpiração: liberação de vapor de água pelos seres vivos, especialmente pelas plantas."
+      ],
+      "common_misconceptions": [
+        "A água desaparece quando evapora.",
+        "As nuvens são feitas apenas de vapor de água invisível.",
+        "Toda a água da chuva escoa diretamente para os rios e oceanos, sem infiltrar no solo.",
+        "O ciclo da água acontece somente entre os oceanos e a atmosfera."
+      ],
+      "version": "generated-v1"
+    },
+    "portuguese/crase": {
+      "reference_summary": "A crase é a fusão da preposição “a” com o artigo definido feminino “a” ou com certos pronomes, representada pelo acento grave (`à`). Seu uso depende simultaneamente da regência do termo anterior, que deve exigir a preposição “a”, e da possibilidade de o termo seguinte admitir artigo feminino ou outra forma que resulte nessa fusão. Não se emprega crase diante de palavras que não admitem artigo feminino, em muitas expressões com palavras repetidas e, em geral, antes de verbos, pronomes pessoais e pronomes de tratamento não femininos; há casos facultativos, especialmente antes de nomes próprios femininos e pronomes possessivos femininos.",
+      "key_concepts": [
+        "Fusão da preposição “a” com o artigo feminino “a” ou com pronomes, formando “à” ou “às”",
+        "Regência: identificação de verbos ou nomes que exigem a preposição “a”",
+        "Verificação de que o termo seguinte admite artigo feminino, por exemplo pelo teste de substituição por um termo masculino (“ao”)",
+        "Casos obrigatórios, proibidos e facultativos de crase",
+        "Uso em locuções adverbiais, prepositivas e conjuntivas femininas, como “à noite” e “à medida que”",
+        "Ausência de crase antes de verbos, da maioria dos pronomes e de palavras repetidas, como em “cara a cara”"
+      ],
+      "common_misconceptions": [
+        "Toda palavra feminina deve ser antecedida por crase.",
+        "A crase é apenas um acento usado para indicar que a palavra seguinte é feminina.",
+        "A crase deve ser usada antes de qualquer nome próprio feminino e de qualquer pronome de tratamento feminino.",
+        "A crase ocorre antes de verbos, como em “à estudar”."
+      ],
+      "version": "generated-v1"
+    },
+    "portuguese/figures-of-speech": {
+      "reference_summary": "Figuras de linguagem são recursos usados para expressar ideias de modo mais criativo, expressivo ou com efeito de sentido específico. Elas podem alterar ou ampliar o sentido habitual das palavras e aparecem tanto em textos literários quanto na comunicação cotidiana. Para identificá-las, é importante observar o contexto e o efeito produzido pela expressão.",
+      "key_concepts": [
+        "Sentido literal e sentido figurado: diferenciar o significado comum das palavras do significado construído no contexto.",
+        "Metáfora: estabelecer uma comparação implícita entre elementos, sem usar necessariamente palavras como “como”.",
+        "Comparação: aproximar dois elementos por meio de palavras comparativas, como “como”, “tal qual” ou “parece”.",
+        "Personificação: atribuir características ou ações humanas a animais, objetos ou seres não humanos.",
+        "Hipérbole: usar um exagero intencional para enfatizar uma ideia.",
+        "Ironia: expressar uma ideia dizendo algo que, pelo contexto, sugere sentido diferente ou contrário ao literal."
+      ],
+      "common_misconceptions": [
+        "Toda expressão com sentido diferente do literal é uma metáfora.",
+        "Metáfora e comparação são exatamente a mesma figura de linguagem.",
+        "Hipérbole é uma mentira feita sem intenção expressiva.",
+        "Ironia significa apenas fazer uma brincadeira ou falar algo engraçado."
+      ],
+      "version": "generated-v1"
+    },
+    "portuguese/coordinate-subordinate-clauses": {
+      "reference_summary": "Orações coordenadas são sintaticamente independentes entre si: cada uma possui estrutura predicativa própria e não exerce função sintática dentro da outra, embora possam estabelecer relações semânticas como adição, oposição, alternância, conclusão ou explicação. Orações subordinadas dependem sintaticamente de uma oração principal e exercem nela uma função, podendo ser substantivas, adjetivas ou adverbiais; sua relação pode ser introduzida por conjunções, pronomes relativos ou, em certos casos, formas nominais do verbo. A classificação deve considerar simultaneamente a estrutura sintática e o sentido produzido no período, distinguindo coordenação e subordinação mesmo quando há conectivos ou construções reduzidas.",
+      "key_concepts": [
+        "Coordenação: independência sintática das orações e relações semânticas estabelecidas entre elas, inclusive nas coordenadas sindéticas e assindéticas.",
+        "Subordinação: dependência sintática de uma oração em relação a outra, com exercício de função integrante, modificadora ou circunstancial.",
+        "Orações subordinadas substantivas, adjetivas e adverbiais: funções que desempenham e critérios de identificação.",
+        "Orações coordenadas sindéticas: valores semânticos de adição, oposição, alternância, conclusão e explicação, sem confundir conjunção com função sintática.",
+        "Orações subordinadas adjetivas restritivas e explicativas: diferença de sentido e papel da pontuação.",
+        "Orações desenvolvidas e reduzidas: reconhecimento da relação sintática mesmo quando a subordinada aparece no infinitivo, gerúndio ou particípio."
+      ],
+      "common_misconceptions": [
+        "Toda oração iniciada por uma conjunção é subordinada.",
+        "Orações coordenadas não podem ter relação de dependência semântica entre si.",
+        "A oração principal é sempre a primeira oração do período.",
+        "Toda oração introduzida por “que” é subordinada substantiva ou toda oração com “que” é subordinada, sem considerar sua função e o antecedente no contexto."
+      ],
+      "version": "generated-v1"
+    },
+    "computer-science/binary-search": {
+      "reference_summary": "A busca binária localiza um elemento em uma sequência ordenada comparando o alvo com o elemento central e descartando, a cada etapa, a metade que não pode conter a resposta. O processo continua até encontrar o elemento ou esvaziar o intervalo de busca. Sua complexidade de tempo é O(log n), mas ela exige que os dados estejam ordenados e que seja possível acessar eficientemente a posição central; em um vetor, o espaço adicional iterativo é O(1).",
+      "key_concepts": [
+        "Pré-condição de ordenação dos dados e manutenção do intervalo de busca",
+        "Comparação com o elemento central para decidir qual metade descartar",
+        "Atualização correta dos limites, evitando perder possíveis ocorrências ou criar repetição infinita",
+        "Critérios de parada: encontrar o alvo ou concluir que ele não está presente",
+        "Complexidade temporal O(log n), em contraste com a busca linear O(n)",
+        "Diferença entre localizar uma ocorrência qualquer e encontrar a primeira ou a última ocorrência em caso de duplicatas"
+      ],
+      "common_misconceptions": [
+        "A busca binária funciona corretamente em qualquer sequência, mesmo que ela não esteja ordenada.",
+        "A busca binária sempre é mais rápida, independentemente da estrutura de dados e do custo de acessar o elemento central.",
+        "Depois de comparar com o elemento central, é necessário examinar as duas metades restantes.",
+        "A busca binária só pode ser usada quando todos os elementos são distintos."
+      ],
+      "version": "generated-v1"
+    },
+    "computer-science/tcp-vs-udp": {
+      "reference_summary": "TCP e UDP são protocolos da camada de transporte que utilizam portas para multiplexar aplicações sobre IP, mas oferecem modelos de serviço distintos. TCP é orientado à conexão e fornece um fluxo de bytes confiável, ordenado e sem duplicações aparentes, usando confirmação, retransmissão, controle de fluxo e controle de congestionamento; não preserva fronteiras de mensagens. UDP é não orientado à conexão e fornece datagramas sem garantia de entrega, ordenação ou exclusão de duplicatas, com baixo overhead e suporte à comunicação um-para-muitos por multicast e broadcast, dependendo da rede e da aplicação. A escolha entre eles depende dos requisitos da aplicação: TCP transfere a confiabilidade e o controle de congestionamento para o protocolo, enquanto UDP permite que a aplicação defina mecanismos próprios ou aceite perdas e variação de atraso.",
+      "key_concepts": [
+        "TCP como fluxo confiável e ordenado de bytes, sem preservação das fronteiras das mensagens",
+        "Estabelecimento e encerramento de conexão TCP, controle de sequência, confirmações, retransmissões e tratamento de perda",
+        "Controle de fluxo do TCP, que evita exceder a capacidade do receptor, e controle de congestionamento, que adapta o envio às condições da rede",
+        "UDP como transporte de datagramas independentes, preservando seus limites, mas sem garantias de entrega, ordem, unicidade ou controle de congestionamento embutido",
+        "Multiplexação por portas e identificação de fluxos por endereços IP e portas, incluindo a distinção entre sockets e conexões TCP",
+        "Trade-offs entre latência, overhead, confiabilidade, ordenação, escalabilidade e possibilidade de implementar confiabilidade ou temporização na aplicação"
+      ],
+      "common_misconceptions": [
+        "UDP é sempre mais rápido que TCP e deve ser usado sempre que o desempenho for importante.",
+        "TCP garante que os dados chegarão ao destino, independentemente de falhas, indisponibilidade do destino ou interrupção da rede.",
+        "UDP não verifica erros nem possui qualquer mecanismo de integridade.",
+        "TCP transmite mensagens preservando os limites definidos pela aplicação emissora."
+      ],
+      "version": "generated-v1"
+    },
+    "computer-science/stacks-and-queues": {
+      "reference_summary": "Pilhas e filas são estruturas de dados usadas para organizar elementos de acordo com a ordem de inserção e remoção. Em uma pilha, o último elemento inserido é o primeiro a sair (LIFO), enquanto em uma fila, o primeiro elemento inserido é o primeiro a sair (FIFO). As operações básicas de uma pilha são empilhar e desempilhar; em uma fila, são enfileirar e desenfileirar.",
+      "key_concepts": [
+        "Pilha: estrutura em que a inserção e a remoção ocorrem no mesmo extremo, chamado topo.",
+        "Fila: estrutura em que os elementos entram por uma extremidade e saem pela outra.",
+        "LIFO: princípio da pilha, em que o último elemento inserido é removido primeiro.",
+        "FIFO: princípio da fila, em que o primeiro elemento inserido é removido primeiro.",
+        "Operações básicas: empilhar e desempilhar em pilhas; enfileirar e desenfileirar em filas.",
+        "Aplicações: pilhas podem representar histórico de ações ou chamadas de funções, e filas podem representar atendimento por ordem de chegada."
+      ],
+      "common_misconceptions": [
+        "Uma pilha remove primeiro o elemento que foi inserido há mais tempo.",
+        "Uma fila remove primeiro o elemento que acabou de ser inserido.",
+        "Em uma pilha, os elementos podem ser removidos livremente de qualquer posição.",
+        "Pilha e fila são a mesma estrutura; a diferença é apenas o nome das operações."
+      ],
+      "version": "generated-v1"
+    },
+    "economics/inflation": {
+      "reference_summary": "Inflação é o aumento generalizado e persistente dos preços de bens e serviços em uma economia, reduzindo o poder de compra da moeda. Quando os preços sobem, a mesma quantia de dinheiro compra uma quantidade menor de produtos. A inflação pode ter diferentes causas, como aumento da demanda, aumento dos custos de produção ou expansão excessiva da quantidade de dinheiro em relação à produção, e costuma ser acompanhada por índices que medem a variação média dos preços.",
+      "key_concepts": [
+        "Aumento generalizado dos preços: a inflação não é a alta isolada de apenas um produto, mas a elevação de muitos preços na economia.",
+        "Persistência: uma variação temporária ou pontual de preços não caracteriza necessariamente inflação; é preciso observar a continuidade do aumento.",
+        "Poder de compra: com inflação, o dinheiro perde valor real e compra menos bens e serviços.",
+        "Causas da inflação: pode resultar de demanda elevada, custos de produção maiores ou excesso de dinheiro em relação à oferta de bens e serviços.",
+        "Medição por índices: índices de preços acompanham a variação média de uma cesta de bens e serviços ao longo do tempo."
+      ],
+      "common_misconceptions": [
+        "Inflação é apenas o aumento do preço de um produto específico.",
+        "Inflação significa que todos os preços sobem exatamente na mesma proporção.",
+        "Inflação faz o dinheiro aumentar de valor, porque os preços estão maiores.",
+        "Qualquer aumento pontual de preços já é necessariamente inflação."
+      ],
+      "version": "generated-v1"
+    },
+    "economics/gross-domestic-product": {
+      "reference_summary": "O Produto Interno Bruto (PIB) é o valor monetário dos bens e serviços finais produzidos dentro das fronteiras de um país em determinado período. Ele pode ser calculado pela ótica da produção, da renda ou da despesa, que devem resultar no mesmo valor. O PIB mede o nível de atividade econômica, mas não representa, sozinho, o bem-estar da população, a distribuição de renda ou a qualidade de vida.",
+      "key_concepts": [
+        "Bens e serviços finais: inclusão apenas da produção final evita a dupla contagem de bens intermediários.",
+        "Territorialidade: o PIB contabiliza a produção realizada dentro do território, independentemente da nacionalidade dos produtores.",
+        "Ótica da despesa: consumo das famílias, investimento, gastos do governo e exportações líquidas, isto é, exportações menos importações.",
+        "PIB nominal e real: o nominal usa os preços do período corrente; o real desconta o efeito da variação de preços e permite comparar a produção ao longo do tempo.",
+        "PIB per capita: é o PIB dividido pela população e serve como indicador médio, mas não mostra como a renda é distribuída.",
+        "Limitações do indicador: atividades não remuneradas, economia informal não registrada, impactos ambientais e desigualdades podem não ser adequadamente refletidos no PIB."
+      ],
+      "common_misconceptions": [
+        "O PIB é a soma de toda a riqueza ou de todo o dinheiro existente no país.",
+        "O PIB contabiliza igualmente todos os bens e serviços produzidos, inclusive os bens intermediários, sem risco de dupla contagem.",
+        "Um aumento do PIB significa necessariamente que toda a população ficou mais rica ou passou a ter melhor qualidade de vida.",
+        "O PIB de um país considera apenas a produção realizada por empresas e cidadãos nacionais, mesmo quando ela ocorre no exterior."
+      ],
+      "version": "generated-v1"
+    },
+    "economics/supply-and-demand": {
+      "reference_summary": "A demanda representa quanto os consumidores desejam e podem comprar de um bem ou serviço a diferentes preços; em geral, quanto maior o preço, menor a quantidade demandada, mantendo os demais fatores constantes. A oferta representa quanto os produtores desejam e podem vender; em geral, quanto maior o preço, maior a quantidade ofertada. O equilíbrio de mercado ocorre quando a quantidade demandada é igual à quantidade ofertada, determinando um preço e uma quantidade de equilíbrio; mudanças em outros fatores podem deslocar a oferta ou a demanda.",
+      "key_concepts": [
+        "Lei da demanda: relação geralmente inversa entre preço e quantidade demandada, mantendo os demais fatores constantes.",
+        "Lei da oferta: relação geralmente direta entre preço e quantidade ofertada, mantendo os demais fatores constantes.",
+        "Equilíbrio de mercado: ponto em que oferta e demanda se igualam.",
+        "Excesso de demanda e excesso de oferta: situações em que a quantidade desejada pelos compradores é maior ou menor que a quantidade oferecida.",
+        "Fatores que alteram a demanda, como renda, preferências e preços de bens relacionados.",
+        "Fatores que alteram a oferta, como custos de produção, tecnologia e condições de produção."
+      ],
+      "common_misconceptions": [
+        "A demanda é a mesma coisa que a quantidade comprada.",
+        "Se o preço aumenta, a demanda sempre aumenta.",
+        "A oferta é determinada apenas pela vontade dos consumidores.",
+        "Todo aumento de preço provoca um deslocamento da curva de demanda."
+      ],
+      "version": "generated-v1"
+    },
+    "philosophy/allegory-of-the-cave": {
+      "reference_summary": "A Alegoria da Caverna, apresentada por Platão na República, descreve prisioneiros que veem apenas sombras projetadas numa parede e as tomam como realidade. A libertação representa o processo educativo e filosófico pelo qual a alma se volta do mundo sensível, marcado por aparências e opiniões, para o conhecimento inteligível, simbolizado pela contemplação do Bem. O retorno do indivíduo à caverna expressa a responsabilidade de compartilhar o conhecimento e participar da vida da comunidade, embora isso possa gerar incompreensão e resistência.",
+      "key_concepts": [
+        "Prisioneiros, caverna, sombras e fogo como representação de uma realidade limitada e baseada nas aparências",
+        "Libertação e ascensão como etapas difíceis de transformação intelectual e moral",
+        "Distinção entre mundo sensível, acessível pelos sentidos, e mundo inteligível, alcançado pela razão",
+        "Sol como símbolo do Bem, princípio que ilumina e torna possível o conhecimento",
+        "Educação filosófica como conversão da alma em direção à verdade, e não simples transmissão de informações",
+        "Retorno à caverna como dever político e ético do filósofo diante da comunidade"
+      ],
+      "common_misconceptions": [
+        "As sombras são apenas ilusões sem qualquer relação com a realidade; na alegoria, elas representam o conhecimento limitado e aparente dos prisioneiros.",
+        "Platão defende que os sentidos são completamente inúteis; a alegoria enfatiza seus limites para alcançar o conhecimento verdadeiro, não sua inutilidade absoluta.",
+        "A libertação da caverna é apenas uma fuga física de um lugar; ela simboliza principalmente uma transformação intelectual e filosófica.",
+        "O filósofo deve permanecer fora da caverna e afastar-se da sociedade; o retorno indica sua responsabilidade de contribuir para a organização da comunidade."
+      ],
+      "version": "generated-v1"
+    },
+    "philosophy/categorical-imperative": {
+      "reference_summary": "Em Kant, o imperativo categórico é o princípio supremo da moralidade: uma exigência racional, incondicional e universal que determina a vontade independentemente de desejos, interesses ou consequências esperadas. Ele ordena que se aja apenas segundo máximas que possam ser queridas como lei universal e, em formulações correlatas, que a humanidade, em si mesma e nos outros, seja sempre tratada como fim, nunca meramente como meio. Sua validade funda-se na autonomia da razão prática: o agente moral dá a si mesmo a lei que deve seguir enquanto membro de uma comunidade de seres racionais, o reino dos fins.",
+      "key_concepts": [
+        "Diferença entre imperativos categóricos e hipotéticos: o categórico ordena sem depender de uma finalidade desejada, enquanto o hipotético vale sob a condição de querer determinado fim.",
+        "Máxima e universalização: a máxima é o princípio subjetivo da ação; sua moralidade deve ser testada pela possibilidade de ser pensada e querida como lei universal, sem contradição.",
+        "Formulação da humanidade como fim: pessoas, por serem racionais e autônomas, possuem dignidade e não podem ser usadas apenas como instrumentos para fins alheios.",
+        "Autonomia e heteronomia: agir moralmente é obedecer à lei racional que a própria vontade, enquanto racional, dá a si mesma; agir por inclinações, recompensas, punições ou autoridade externa é heterôn¨",
+        "Dever e valor moral: uma ação tem valor moral propriamente dito quando é realizada por dever, isto é, por respeito à lei moral, e não apenas quando coincide externamente com o que o dever exige.",
+        "Unidade das formulações e reino dos fins: as diferentes formulações exprimem o mesmo princípio da razão prática e representam os agentes racionais como legisladores e membros de uma comunidade moral."
+      ],
+      "common_misconceptions": [
+        "O imperativo categórico significa fazer sempre o que se deseja, desde que a pessoa seja sincera consigo mesma.",
+        "Uma ação é moralmente correta quando produz as melhores consequências ou maximiza a felicidade.",
+        "Universalizar uma máxima significa apenas verificar se todos de fato poderiam agir assim, e não se a máxima pode ser concebida e querida sem contradição como lei universal.",
+        "Tratar alguém como meio é sempre imoral; para Kant, o problema é tratar uma pessoa meramente como meio, sem respeitar sua autonomia e sua condição de fim em si mesma."
+      ],
+      "version": "generated-v1"
+    }
+  }
+}

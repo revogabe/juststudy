@@ -11,6 +11,7 @@ type BillingModuleInput = {
   authentication: AuthenticationService;
   product_id: string;
   free_credits: number;
+  e2e_test_mode?: boolean;
 };
 
 export function createBillingModule(input: BillingModuleInput) {
@@ -20,6 +21,7 @@ export function createBillingModule(input: BillingModuleInput) {
     payments: input.payments,
     product_id: input.product_id,
     free_credits: input.free_credits,
+    e2e_test_mode: input.e2e_test_mode ?? false,
   });
 
   return {

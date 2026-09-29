@@ -1,10 +1,6 @@
 import type { IdentityUser } from "@/integrations/identity";
-import {
-  InvalidPaymentEventError,
-  type PaymentEvent,
-  type Payments,
-} from "@/integrations/payments";
-import type { BillingPlan, BillingSummary, SubscriptionSnapshot } from "./billing.contract";
+import { InvalidPaymentEventError, type PaymentEvent, type Payments } from "@/integrations/payments";
+import type { BillingPlan, BillingSummary, BillingUsageCreate, SubscriptionSnapshot } from "./billing.contract";
 import { billingError } from "./billing.error";
 import type { BillingStore } from "./billing.store";
 
@@ -13,6 +9,7 @@ type BillingServiceInput = {
   payments: Payments;
   product_id: string;
   free_credits: number;
+  e2e_test_mode?: boolean;
 };
 
 const ACTIVE_STATUSES = new Set(["active", "trialing"]);
@@ -43,14 +40,25 @@ function subscriptionSummary(subscription: SubscriptionSnapshot): BillingSummary
   };
 }
 
+function e2eSummary(userId: string, freeCredits: number): BillingSummary {
+  return {
+    user_id: userId,
+    plan: "student",
+    status: "active",
+    credit_allowance: freeCredits,
+    credits_used: 0,
+    credits_remaining: freeCredits,
+    period_ends_at: null,
+    is_active: true,
+  };
+}
+
 function toSubscription(event: PaymentEvent, productId: string): SubscriptionSnapshot | null {
   if (event.event_type !== "customer.state_changed") return null;
 
   if (!event.user_id || !event.customer_id) throw billingError.unlinkedCustomer();
 
-  const paidSubscription = event.subscriptions.find(
-    (subscription) => subscription.product_id === productId,
-  );
+  const paidSubscription = event.subscriptions.find((subscription) => subscription.product_id === productId);
   const usage = event.meters.reduce(
     (total, meter) => ({
       credited_units: total.credited_units + meter.credited_units,
@@ -84,8 +92,35 @@ function paymentCustomer(user: IdentityUser) {
 
 export function createBillingService(input: BillingServiceInput) {
   return {
+    entitlement: {
+      async get(userId: string) {
+        if (input.e2e_test_mode) return { active_student: true };
+
+        const subscription = await input.store.subscription.get(userId);
+
+        return {
+          active_student: Boolean(subscription?.plan === "student" && ACTIVE_STATUSES.has(subscription.status)),
+        };
+      },
+    },
+    usage: {
+      async create(usage: BillingUsageCreate) {
+        if (input.e2e_test_mode) return;
+
+        try {
+          await input.payments.usage.create({
+            ...usage,
+            event_name: "feedback_evaluation_tokens",
+          });
+        } catch {
+          throw billingError.providerUnavailable();
+        }
+      },
+    },
     summary: {
       async get(userId: string): Promise<BillingSummary> {
+        if (input.e2e_test_mode) return e2eSummary(userId, input.free_credits);
+
         const subscription = await input.store.subscription.get(userId);
 
         if (!subscription) return freeSummary(userId, input.free_credits);

@@ -59,3 +59,37 @@ export type KnowledgeTopic = {
     level: KnowledgeLevel;
   };
 };
+
+export type KnowledgeAssessmentContext = KnowledgeTopic & {
+  assessment: {
+    reference_summary: string;
+    key_concepts: string[];
+    common_misconceptions: string[];
+    version: string;
+  };
+};
+
+export type KnowledgeAssessment = KnowledgeAssessmentContext["assessment"];
+
+export type KnowledgeGeneratedAssessment = {
+  assessment: KnowledgeAssessment;
+  provider: string;
+  model: string;
+  prompt_version: string;
+};
+
+export type KnowledgeAssessmentWrite = KnowledgeTopicReference &
+  KnowledgeGeneratedAssessment & {
+    created_at: Date;
+  };
+
+export type KnowledgeAssessmentGeneration = {
+  topics_generated: number;
+  topics_failed: number;
+};
+
+export type KnowledgeAssessmentWriter = {
+  assessment: {
+    create(topic: KnowledgeTopic): Promise<KnowledgeGeneratedAssessment>;
+  };
+};

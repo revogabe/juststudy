@@ -6,15 +6,19 @@
     "frontend/*"
   ],
   "scripts": {
+    "prototype:layouts": "python3 prototypes/juststudy-layout-lab/_source/serve.py",
     "dev": "bun run --cwd backend --env-file=../.env dev",
     "check": "biome check . && bun run typecheck && bun run test",
     "check:fix": "biome check --write .",
     "typecheck": "bun run --filter '*' typecheck",
     "test": "bun run --filter @juststudy/backend test",
+    "test:e2e:live": "bun --env-file=.env backend/tests/e2e/live-flow.ts",
     "database:generate": "bun run --cwd backend --env-file=../.env database:generate",
     "database:migrate": "bun run --cwd backend --env-file=../.env database:migrate",
     "openapi:generate": "bun run --cwd backend --env-file=../.env openapi:generate",
     "infra:up": "docker compose -f infra/compose.yaml up -d",
+    "infra:ai:up": "docker compose -f infra/compose.yaml --profile ai up -d ollama",
+    "infra:ai:pull": "docker compose -f infra/compose.yaml exec ollama ollama pull qwen3.5:9b",
     "infra:down": "docker compose -f infra/compose.yaml down"
   },
   "devDependencies": {

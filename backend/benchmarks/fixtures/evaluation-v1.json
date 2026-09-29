@@ -1,0 +1,173 @@
+{
+  "cases": [
+    {
+      "id": "photosynthesis-two-misconceptions-ptbr",
+      "context": {
+        "subject": { "slug": "biology", "name": "Biologia" },
+        "topic": {
+          "slug": "photosynthesis",
+          "name": "Fotossíntese",
+          "level": "intermediate"
+        },
+        "assessment": {
+          "reference_summary": "A fotossíntese converte energia luminosa em energia química. As reações luminosas oxidam água, liberam O2 e produzem ATP e NADPH. O ciclo de Calvin usa ATP e NADPH para fixar o carbono do CO2; ele não absorve luz diretamente.",
+          "key_concepts": [
+            "Reações luminosas produzem ATP e NADPH",
+            "O oxigênio liberado vem da água",
+            "O ciclo de Calvin fixa carbono do CO2",
+            "Cloroplastos e clorofila",
+            "Relação causal entre as duas etapas"
+          ],
+          "common_misconceptions": ["O oxigênio liberado vem do CO2", "O ciclo de Calvin usa luz diretamente"],
+          "version": "benchmark-v1"
+        }
+      },
+      "transcript": {
+        "text": "Fotossíntese usa luz, água e gás carbônico para produzir glicose e oxigênio. Ela acontece nos cloroplastos, e a clorofila captura a luz. O oxigênio sai do gás carbônico. O ciclo de Calvin recebe luz diretamente para montar a glicose.",
+        "language": "pt",
+        "language_probability": 0.99,
+        "duration_seconds": 45,
+        "model": "gold-fixture",
+        "segments": [
+          {
+            "id": "seg_1",
+            "start_ms": 0,
+            "end_ms": 11000,
+            "text": "Fotossíntese usa luz, água e gás carbônico para produzir glicose e oxigênio."
+          },
+          {
+            "id": "seg_2",
+            "start_ms": 11000,
+            "end_ms": 21000,
+            "text": "Ela acontece nos cloroplastos, e a clorofila captura a luz."
+          },
+          {
+            "id": "seg_3",
+            "start_ms": 21000,
+            "end_ms": 31000,
+            "text": "O oxigênio sai do gás carbônico."
+          },
+          {
+            "id": "seg_4",
+            "start_ms": 31000,
+            "end_ms": 45000,
+            "text": "O ciclo de Calvin recebe luz diretamente para montar a glicose."
+          }
+        ]
+      },
+      "expected": {
+        "scorable": true,
+        "mastery_min": 25,
+        "mastery_max": 65,
+        "verdicts": ["incorrect", "partial"],
+        "required_correction_segment_ids": ["seg_3", "seg_4"]
+      }
+    },
+    {
+      "id": "pythagorean-solid-explanation-ptbr",
+      "context": {
+        "subject": { "slug": "mathematics", "name": "Matemática" },
+        "topic": {
+          "slug": "pythagorean-theorem",
+          "name": "Teorema de Pitágoras",
+          "level": "beginner"
+        },
+        "assessment": {
+          "reference_summary": "Em um triângulo retângulo, o quadrado da hipotenusa é igual à soma dos quadrados dos catetos. A hipotenusa é o lado oposto ao ângulo reto. O teorema permite calcular um lado quando os outros dois são conhecidos e não vale diretamente para triângulos não retângulos.",
+          "key_concepts": [
+            "Triângulo retângulo",
+            "Identificação da hipotenusa",
+            "Relação a² + b² = c²",
+            "Cálculo de lado desconhecido",
+            "Limite de aplicação"
+          ],
+          "common_misconceptions": ["Aplicar a relação a qualquer triângulo", "Tratar qualquer lado como hipotenusa"],
+          "version": "benchmark-v1"
+        }
+      },
+      "transcript": {
+        "text": "O teorema vale em triângulos retângulos. A hipotenusa fica oposta ao ângulo de noventa graus e é o maior lado. Se os catetos medem três e quatro, faço três ao quadrado mais quatro ao quadrado, obtenho vinte e cinco, e a raiz dá hipotenusa cinco. Para outro tipo de triângulo eu não posso usar essa fórmula diretamente.",
+        "language": "pt",
+        "language_probability": 0.99,
+        "duration_seconds": 39,
+        "model": "gold-fixture",
+        "segments": [
+          {
+            "id": "seg_1",
+            "start_ms": 0,
+            "end_ms": 9000,
+            "text": "O teorema vale em triângulos retângulos."
+          },
+          {
+            "id": "seg_2",
+            "start_ms": 9000,
+            "end_ms": 17000,
+            "text": "A hipotenusa fica oposta ao ângulo de noventa graus e é o maior lado."
+          },
+          {
+            "id": "seg_3",
+            "start_ms": 17000,
+            "end_ms": 32000,
+            "text": "Se os catetos medem três e quatro, faço três ao quadrado mais quatro ao quadrado, obtenho vinte e cinco, e a raiz dá hipotenusa cinco."
+          },
+          {
+            "id": "seg_4",
+            "start_ms": 32000,
+            "end_ms": 39000,
+            "text": "Para outro tipo de triângulo eu não posso usar essa fórmula diretamente."
+          }
+        ]
+      },
+      "expected": {
+        "scorable": true,
+        "mastery_min": 80,
+        "mastery_max": 100,
+        "verdicts": ["mostly_correct", "correct"],
+        "required_correction_segment_ids": []
+      }
+    },
+    {
+      "id": "off-topic-insufficient-ptbr",
+      "context": {
+        "subject": { "slug": "physics", "name": "Física" },
+        "topic": {
+          "slug": "newtons-second-law",
+          "name": "Segunda lei de Newton",
+          "level": "beginner"
+        },
+        "assessment": {
+          "reference_summary": "A força resultante sobre um corpo é igual à taxa de variação do momento; para massa constante, F = ma. A relação usa a força resultante vetorial, não uma força isolada.",
+          "key_concepts": ["Força resultante", "Massa e aceleração", "Relação vetorial F = ma", "Condições da forma de massa constante"],
+          "common_misconceptions": ["Toda força produz movimento", "Confundir velocidade com aceleração"],
+          "version": "benchmark-v1"
+        }
+      },
+      "transcript": {
+        "text": "Eu achei a aula interessante e gostei principalmente dos exemplos. Preciso rever minhas anotações porque ainda não lembro a fórmula.",
+        "language": "pt",
+        "language_probability": 0.99,
+        "duration_seconds": 13,
+        "model": "gold-fixture",
+        "segments": [
+          {
+            "id": "seg_1",
+            "start_ms": 0,
+            "end_ms": 7000,
+            "text": "Eu achei a aula interessante e gostei principalmente dos exemplos."
+          },
+          {
+            "id": "seg_2",
+            "start_ms": 7000,
+            "end_ms": 13000,
+            "text": "Preciso rever minhas anotações porque ainda não lembro a fórmula."
+          }
+        ]
+      },
+      "expected": {
+        "scorable": false,
+        "verdicts": ["insufficient"],
+        "required_correction_segment_ids": []
+      }
+    }
+  ]
+}

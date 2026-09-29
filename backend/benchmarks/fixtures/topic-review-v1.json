@@ -1,0 +1,1012 @@
+{
+  "subjects": [
+    {
+      "slug": "biology",
+      "name": "Biologia",
+      "existing_topics": [
+        {
+          "slug": "cell-basic-unit",
+          "name": "A célula como unidade básica da vida",
+          "level": "beginner"
+        },
+        {
+          "slug": "food-chains",
+          "name": "Cadeias alimentares",
+          "level": "beginner"
+        },
+        {
+          "slug": "plant-parts",
+          "name": "Partes das plantas",
+          "level": "beginner"
+        },
+        {
+          "slug": "mitosis",
+          "name": "Divisão celular por mitose",
+          "level": "intermediate"
+        },
+        {
+          "slug": "photosynthesis-stages",
+          "name": "Etapas fotoquímica e química da fotossíntese",
+          "level": "intermediate"
+        },
+        {
+          "slug": "mendel-first-law",
+          "name": "Primeira lei de Mendel",
+          "level": "intermediate"
+        },
+        {
+          "slug": "aerobic-cellular-respiration",
+          "name": "Respiração celular aeróbica",
+          "level": "intermediate"
+        },
+        {
+          "slug": "animal-histology",
+          "name": "Histologia animal: tecidos epitelial, conjuntivo, muscular e nervoso",
+          "level": "intermediate"
+        },
+        {
+          "slug": "ecological-succession",
+          "name": "Sucessão ecológica",
+          "level": "intermediate"
+        },
+        {
+          "slug": "abo-rh-blood-system",
+          "name": "Sistema ABO e fator Rh",
+          "level": "intermediate"
+        },
+        {
+          "slug": "michaelis-menten-kinetics",
+          "name": "Cinética enzimática de Michaelis-Menten",
+          "level": "advanced"
+        },
+        {
+          "slug": "lac-operon",
+          "name": "Regulação gênica em procariotos pelo operon lac",
+          "level": "advanced"
+        },
+        {
+          "slug": "gpcr-signaling",
+          "name": "Sinalização por receptores acoplados à proteína G",
+          "level": "advanced"
+        },
+        {
+          "slug": "lotka-volterra-models",
+          "name": "Modelos predador-presa de Lotka-Volterra",
+          "level": "advanced"
+        },
+        {
+          "slug": "spliceosome-pre-mrna-processing",
+          "name": "Mecanismo do spliceossomo no processamento do pré-mRNA",
+          "level": "advanced"
+        },
+        {
+          "slug": "renal-countercurrent-mechanism",
+          "name": "Mecanismo de contracorrente na fisiologia renal",
+          "level": "advanced"
+        },
+        {
+          "slug": "single-cell-rna-seq",
+          "name": "Sequenciamento de RNA de célula única",
+          "level": "specialist"
+        },
+        {
+          "slug": "cryo-electron-microscopy",
+          "name": "Criomicroscopia eletrônica para estrutura de proteínas",
+          "level": "specialist"
+        },
+        {
+          "slug": "bayesian-phylogenetic-inference",
+          "name": "Inferência filogenética bayesiana",
+          "level": "specialist"
+        },
+        {
+          "slug": "circuit-optogenetics",
+          "name": "Optogenética em neurociência de circuitos",
+          "level": "specialist"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "biology-c01",
+          "name": "Desenho de RNA-guia e análise de off-target em CRISPR-Cas9",
+          "slug": "crispr-guide-design-off-target",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c02",
+          "name": "Grupos sanguíneos ABO e Rh",
+          "slug": "abo-rh-blood-groups",
+          "expected_level": "intermediate",
+          "duplicate_of": "abo-rh-blood-system",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "biology-c03",
+          "name": "Declaração de imposto de renda para autônomos",
+          "slug": "self-employed-income-tax-return",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "biology-c04",
+          "name": "Como montar um cronograma de estudos",
+          "slug": "study-schedule-planning",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "biology-c05",
+          "name": "Meiose",
+          "slug": "meiosis",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c06",
+          "name": "Mitose: divisão celular",
+          "slug": "mitotic-cell-division",
+          "expected_level": "intermediate",
+          "duplicate_of": "mitosis",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "biology-c07",
+          "name": "Herdabilidade e partição da variância fenotípica",
+          "slug": "heritability-variance-partitioning",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c08",
+          "name": "Potencial de membrana e equação de Nernst",
+          "slug": "nernst-membrane-potential",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c09",
+          "name": "Arquitetura tridimensional do genoma por Hi-C",
+          "slug": "hi-c-genome-architecture",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c10",
+          "name": "Animais vertebrados e invertebrados",
+          "slug": "vertebrates-and-invertebrates",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c11",
+          "name": "Segunda lei de Mendel",
+          "slug": "mendel-second-law",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c12",
+          "name": "Os cinco sentidos do corpo humano",
+          "slug": "human-five-senses",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "biology-c13",
+          "name": "Balanceamento de equações químicas",
+          "slug": "chemical-equation-balancing",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "biology-c14",
+          "name": "Single-cell RNA sequencing (scRNA-seq)",
+          "slug": "scrna-seq",
+          "expected_level": "specialist",
+          "duplicate_of": "single-cell-rna-seq",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "biology-c15",
+          "name": "Operon lac e regulação gênica bacteriana",
+          "slug": "bacterial-lac-operon-regulation",
+          "expected_level": "advanced",
+          "duplicate_of": "lac-operon",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "biology-c16",
+          "name": "Cadeia alimentar nos ecossistemas",
+          "slug": "ecosystem-food-chain",
+          "expected_level": "beginner",
+          "duplicate_of": "food-chains",
+          "in_scope": true,
+          "kind": "duplicate"
+        }
+      ]
+    },
+    {
+      "slug": "mathematics",
+      "name": "Matemática",
+      "existing_topics": [
+        {
+          "slug": "fraction-basics",
+          "name": "Frações: conceito e representação",
+          "level": "beginner"
+        },
+        {
+          "slug": "four-operations-natural-numbers",
+          "name": "Quatro operações com números naturais",
+          "level": "beginner"
+        },
+        {
+          "slug": "perimeter-and-area",
+          "name": "Perímetro e área de figuras planas",
+          "level": "beginner"
+        },
+        {
+          "slug": "quadratic-function",
+          "name": "Função quadrática",
+          "level": "intermediate"
+        },
+        {
+          "slug": "arithmetic-progression",
+          "name": "Progressão aritmética",
+          "level": "intermediate"
+        },
+        {
+          "slug": "unit-circle",
+          "name": "Ciclo trigonométrico",
+          "level": "intermediate"
+        },
+        {
+          "slug": "permutations-and-combinations",
+          "name": "Análise combinatória: permutações e combinações",
+          "level": "intermediate"
+        },
+        {
+          "slug": "logarithms",
+          "name": "Logaritmos e suas propriedades",
+          "level": "intermediate"
+        },
+        {
+          "slug": "matrices-and-determinants",
+          "name": "Matrizes e determinantes",
+          "level": "intermediate"
+        },
+        {
+          "slug": "line-equation",
+          "name": "Geometria analítica: equação da reta",
+          "level": "intermediate"
+        },
+        {
+          "slug": "eigenvalues-eigenvectors",
+          "name": "Autovalores e autovetores",
+          "level": "advanced"
+        },
+        {
+          "slug": "multiple-integrals",
+          "name": "Integrais múltiplas",
+          "level": "advanced"
+        },
+        {
+          "slug": "first-order-odes",
+          "name": "Equações diferenciais ordinárias de primeira ordem",
+          "level": "advanced"
+        },
+        {
+          "slug": "epsilon-delta-limits",
+          "name": "Definição épsilon-delta de limite",
+          "level": "advanced"
+        },
+        {
+          "slug": "group-theory-subgroups-homomorphisms",
+          "name": "Teoria de grupos: subgrupos e homomorfismos",
+          "level": "advanced"
+        },
+        {
+          "slug": "taylor-series",
+          "name": "Séries de Taylor",
+          "level": "advanced"
+        },
+        {
+          "slug": "singular-homology",
+          "name": "Homologia singular em topologia algébrica",
+          "level": "specialist"
+        },
+        {
+          "slug": "ito-stochastic-calculus",
+          "name": "Cálculo estocástico de Itô",
+          "level": "specialist"
+        },
+        {
+          "slug": "sobolev-spaces",
+          "name": "Espaços de Sobolev",
+          "level": "specialist"
+        },
+        {
+          "slug": "modular-forms",
+          "name": "Formas modulares",
+          "level": "specialist"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "mathematics-c01",
+          "name": "Transformada de Laplace",
+          "slug": "laplace-transform",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c02",
+          "name": "Cálculo de Itô para processos estocásticos",
+          "slug": "ito-calculus-stochastic-processes",
+          "expected_level": "specialist",
+          "duplicate_of": "ito-stochastic-calculus",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "mathematics-c03",
+          "name": "Números complexos na forma algébrica",
+          "slug": "complex-numbers-algebraic-form",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c04",
+          "name": "Teoria ergódica",
+          "slug": "ergodic-theory",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c05",
+          "name": "Séries de Fourier",
+          "slug": "fourier-series",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c06",
+          "name": "Progressão geométrica",
+          "slug": "geometric-progression",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c07",
+          "name": "Figuras de linguagem",
+          "slug": "figures-of-speech",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "mathematics-c08",
+          "name": "Múltiplos e divisores",
+          "slug": "multiples-and-divisors",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c09",
+          "name": "Ângulos: medida e classificação",
+          "slug": "angle-measurement-classification",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c10",
+          "name": "Técnicas de negociação em vendas B2B",
+          "slug": "b2b-sales-negotiation",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "mathematics-c11",
+          "name": "Função do 2º grau",
+          "slug": "second-degree-function",
+          "expected_level": "intermediate",
+          "duplicate_of": "quadratic-function",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "mathematics-c12",
+          "name": "Como controlar a ansiedade no dia da prova",
+          "slug": "exam-day-anxiety-control",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "mathematics-c13",
+          "name": "Teoria de esquemas em geometria algébrica",
+          "slug": "scheme-theory",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "mathematics-c14",
+          "name": "Autovetores e autovalores de uma matriz",
+          "slug": "matrix-eigenvectors-eigenvalues",
+          "expected_level": "advanced",
+          "duplicate_of": "eigenvalues-eigenvectors",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "mathematics-c15",
+          "name": "Sequências aritméticas (PA)",
+          "slug": "arithmetic-sequences-pa",
+          "expected_level": "intermediate",
+          "duplicate_of": "arithmetic-progression",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "mathematics-c16",
+          "name": "Conceito de fração",
+          "slug": "fraction-concept",
+          "expected_level": "beginner",
+          "duplicate_of": "fraction-basics",
+          "in_scope": true,
+          "kind": "duplicate"
+        }
+      ]
+    },
+    {
+      "slug": "history",
+      "name": "História",
+      "existing_topics": [
+        {
+          "slug": "historical-sources",
+          "name": "O que são fontes históricas",
+          "level": "beginner"
+        },
+        {
+          "slug": "timeline-and-centuries",
+          "name": "Linha do tempo e contagem de séculos",
+          "level": "beginner"
+        },
+        {
+          "slug": "portuguese-arrival-brazil",
+          "name": "Chegada dos portugueses ao Brasil em 1500",
+          "level": "beginner"
+        },
+        {
+          "slug": "french-revolution",
+          "name": "Revolução Francesa",
+          "level": "intermediate"
+        },
+        {
+          "slug": "industrial-revolution",
+          "name": "Revolução Industrial",
+          "level": "intermediate"
+        },
+        {
+          "slug": "vargas-era",
+          "name": "Era Vargas",
+          "level": "intermediate"
+        },
+        {
+          "slug": "cold-war",
+          "name": "Guerra Fria",
+          "level": "intermediate"
+        },
+        {
+          "slug": "brazilian-military-dictatorship",
+          "name": "Ditadura militar no Brasil (1964-1985)",
+          "level": "intermediate"
+        },
+        {
+          "slug": "protestant-reformation",
+          "name": "Reforma Protestante",
+          "level": "intermediate"
+        },
+        {
+          "slug": "world-war-one",
+          "name": "Primeira Guerra Mundial",
+          "level": "intermediate"
+        },
+        {
+          "slug": "annales-school",
+          "name": "Escola dos Annales",
+          "level": "advanced"
+        },
+        {
+          "slug": "historical-materialism-method",
+          "name": "Materialismo histórico como método historiográfico",
+          "level": "advanced"
+        },
+        {
+          "slug": "interpreters-of-brazil",
+          "name": "Intérpretes do Brasil: Freyre, Sérgio Buarque e Caio Prado Jr.",
+          "level": "advanced"
+        },
+        {
+          "slug": "oral-history-methodology",
+          "name": "Metodologia da história oral",
+          "level": "advanced"
+        },
+        {
+          "slug": "feudalism-capitalism-transition-debate",
+          "name": "Debate sobre a transição do feudalismo ao capitalismo",
+          "level": "advanced"
+        },
+        {
+          "slug": "italian-microhistory",
+          "name": "Micro-história italiana",
+          "level": "advanced"
+        },
+        {
+          "slug": "colonial-paleography",
+          "name": "Paleografia de manuscritos coloniais luso-brasileiros",
+          "level": "specialist"
+        },
+        {
+          "slug": "colonial-elites-prosopography",
+          "name": "Prosopografia das elites coloniais",
+          "level": "specialist"
+        },
+        {
+          "slug": "digitized-archive-text-mining",
+          "name": "Mineração de texto em acervos históricos digitalizados",
+          "level": "specialist"
+        },
+        {
+          "slug": "parish-records-family-reconstitution",
+          "name": "Reconstituição de famílias com registros paroquiais",
+          "level": "specialist"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "history-c01",
+          "name": "Numismática do Império Romano",
+          "slug": "roman-imperial-numismatics",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c02",
+          "name": "História pessoal e familiar",
+          "slug": "personal-and-family-history",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c03",
+          "name": "Sistemas de informação geográfica aplicados à pesquisa histórica (HGIS)",
+          "slug": "historical-gis",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c04",
+          "name": "História dos conceitos de Reinhart Koselleck",
+          "slug": "koselleck-conceptual-history",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c05",
+          "name": "Regime militar brasileiro (1964-1985)",
+          "slug": "brazilian-military-regime",
+          "expected_level": "intermediate",
+          "duplicate_of": "brazilian-military-dictatorship",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "history-c06",
+          "name": "Dicas para dormir melhor antes da prova",
+          "slug": "sleep-tips-before-exam",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "history-c07",
+          "name": "Descobrimento do Brasil em 1500",
+          "slug": "discovery-of-brazil-1500",
+          "expected_level": "beginner",
+          "duplicate_of": "portuguese-arrival-brazil",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "history-c08",
+          "name": "Paleografia luso-brasileira do período colonial",
+          "slug": "luso-brazilian-colonial-paleography",
+          "expected_level": "specialist",
+          "duplicate_of": "colonial-paleography",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "history-c09",
+          "name": "Patrimônio histórico e cultural",
+          "slug": "historical-cultural-heritage",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c10",
+          "name": "Microstoria de Carlo Ginzburg e Giovanni Levi",
+          "slug": "microstoria-ginzburg-levi",
+          "expected_level": "advanced",
+          "duplicate_of": "italian-microhistory",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "history-c11",
+          "name": "Equações do primeiro grau",
+          "slug": "first-degree-equations",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "history-c12",
+          "name": "Revolução Russa de 1917",
+          "slug": "russian-revolution-1917",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c13",
+          "name": "Gestão de estoques no varejo",
+          "slug": "retail-inventory-management",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "history-c14",
+          "name": "Segunda Guerra Mundial",
+          "slug": "world-war-two",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c15",
+          "name": "Historiografia do Holocausto: intencionalismo e funcionalismo",
+          "slug": "holocaust-historiography-debate",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "history-c16",
+          "name": "Governo de Getúlio Vargas (1930-1945)",
+          "slug": "getulio-vargas-government-1930-1945",
+          "expected_level": "intermediate",
+          "duplicate_of": "vargas-era",
+          "in_scope": true,
+          "kind": "duplicate"
+        }
+      ]
+    },
+    {
+      "slug": "computer-science",
+      "name": "Computação",
+      "existing_topics": [
+        {
+          "slug": "what-is-an-algorithm",
+          "name": "O que é um algoritmo",
+          "level": "beginner"
+        },
+        {
+          "slug": "binary-number-system",
+          "name": "Sistema de numeração binário",
+          "level": "beginner"
+        },
+        {
+          "slug": "hardware-and-software",
+          "name": "Hardware e software",
+          "level": "beginner"
+        },
+        {
+          "slug": "conditionals-and-loops",
+          "name": "Estruturas condicionais e de repetição",
+          "level": "intermediate"
+        },
+        {
+          "slug": "functions-and-parameters",
+          "name": "Funções e parâmetros em programação",
+          "level": "intermediate"
+        },
+        {
+          "slug": "arrays-in-programming",
+          "name": "Vetores (arrays) em programação",
+          "level": "intermediate"
+        },
+        {
+          "slug": "boolean-logic-truth-tables",
+          "name": "Lógica booleana e tabelas-verdade",
+          "level": "intermediate"
+        },
+        {
+          "slug": "html-css-web-pages",
+          "name": "Páginas web com HTML e CSS",
+          "level": "intermediate"
+        },
+        {
+          "slug": "ip-addresses-and-dns",
+          "name": "Endereços IP e DNS",
+          "level": "intermediate"
+        },
+        {
+          "slug": "simple-sorting-algorithms",
+          "name": "Algoritmos de ordenação simples: bubble sort e selection sort",
+          "level": "intermediate"
+        },
+        {
+          "slug": "big-o-notation",
+          "name": "Análise assintótica e notação Big-O",
+          "level": "advanced"
+        },
+        {
+          "slug": "dijkstra-shortest-path",
+          "name": "Algoritmo de Dijkstra para caminhos mínimos",
+          "level": "advanced"
+        },
+        {
+          "slug": "database-normalization",
+          "name": "Normalização de bancos de dados relacionais",
+          "level": "advanced"
+        },
+        {
+          "slug": "process-scheduling",
+          "name": "Escalonamento de processos em sistemas operacionais",
+          "level": "advanced"
+        },
+        {
+          "slug": "compiler-lexical-analysis",
+          "name": "Análise léxica em compiladores",
+          "level": "advanced"
+        },
+        {
+          "slug": "tcp-congestion-control",
+          "name": "Controle de congestionamento no TCP",
+          "level": "advanced"
+        },
+        {
+          "slug": "pbft-byzantine-fault-tolerance",
+          "name": "Tolerância a falhas bizantinas com PBFT",
+          "level": "specialist"
+        },
+        {
+          "slug": "homomorphic-encryption",
+          "name": "Criptografia totalmente homomórfica",
+          "level": "specialist"
+        },
+        {
+          "slug": "coq-formal-verification",
+          "name": "Verificação formal de programas com Coq",
+          "level": "specialist"
+        },
+        {
+          "slug": "differential-privacy",
+          "name": "Privacidade diferencial",
+          "level": "specialist"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "computer-science-c01",
+          "name": "Síntese de programas a partir de exemplos",
+          "slug": "program-synthesis-by-example",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "computer-science-c02",
+          "name": "Formas normais (1FN, 2FN, 3FN) em bancos relacionais",
+          "slug": "relational-normal-forms",
+          "expected_level": "advanced",
+          "duplicate_of": "database-normalization",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "computer-science-c03",
+          "name": "Manipulação de strings em programação",
+          "slug": "string-manipulation",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "computer-science-c04",
+          "name": "Provas de conhecimento zero com zk-SNARKs",
+          "slug": "zk-snarks",
+          "expected_level": "specialist",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "computer-science-c05",
+          "name": "Laços de repetição e condicionais (if, for, while)",
+          "slug": "if-for-while-control-flow",
+          "expected_level": "intermediate",
+          "duplicate_of": "conditionals-and-loops",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "computer-science-c06",
+          "name": "Programação em blocos com Scratch",
+          "slug": "scratch-block-programming",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "computer-science-c07",
+          "name": "Análise sintática em compiladores",
+          "slug": "compiler-syntax-analysis",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "computer-science-c08",
+          "name": "Leitura e escrita de arquivos de texto em programação",
+          "slug": "text-file-read-write",
+          "expected_level": "intermediate",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "computer-science-c09",
+          "name": "Técnicas de sutura em cirurgia ambulatorial",
+          "slug": "ambulatory-surgery-suturing",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "computer-science-c10",
+          "name": "Algoritmo: conceito e exemplos do cotidiano",
+          "slug": "algorithm-concept",
+          "expected_level": "beginner",
+          "duplicate_of": "what-is-an-algorithm",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "computer-science-c11",
+          "name": "Árvores AVL e balanceamento",
+          "slug": "avl-trees",
+          "expected_level": "advanced",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        },
+        {
+          "id": "computer-science-c12",
+          "name": "Ciclo da água",
+          "slug": "water-cycle",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "computer-science-c13",
+          "name": "Big-O e complexidade assintótica de algoritmos",
+          "slug": "asymptotic-complexity-big-o",
+          "expected_level": "advanced",
+          "duplicate_of": "big-o-notation",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "computer-science-c14",
+          "name": "Fully homomorphic encryption (FHE)",
+          "slug": "fully-homomorphic-encryption-fhe",
+          "expected_level": "specialist",
+          "duplicate_of": "homomorphic-encryption",
+          "in_scope": true,
+          "kind": "duplicate"
+        },
+        {
+          "id": "computer-science-c15",
+          "name": "Receitas rápidas para marmita da semana",
+          "slug": "weekly-meal-prep-recipes",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": false,
+          "kind": "out_of_scope"
+        },
+        {
+          "id": "computer-science-c16",
+          "name": "Arquivos e pastas no computador",
+          "slug": "files-and-folders",
+          "expected_level": "beginner",
+          "duplicate_of": null,
+          "in_scope": true,
+          "kind": "new"
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "5b5be322-fdf5-4092-b1a1-43b9dc9dfd87",
     "name": "JustStudy API",
-    "description": "Authentication, billing, knowledge, topic randomization, and focus session requests. Postman keeps the Better Auth session cookie automatically.",
+    "description": "Authentication, billing, knowledge, topic randomization, focus, feedback, and score requests. Postman keeps the Better Auth session cookie automatically.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -199,6 +199,65 @@
             "method": "POST",
             "url": "{{base_url}}/v1/focus/sessions/{{focus_session_id}}/abandon"
           }
+        }
+      ]
+    },
+    {
+      "name": "Feedback",
+      "item": [
+        {
+          "name": "Start feedback session",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"focus_session_id\": \"{{focus_session_id}}\"\n}"
+            },
+            "url": "{{base_url}}/v1/feedback/sessions"
+          }
+        },
+        {
+          "name": "Get feedback session",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/v1/feedback/sessions/{{feedback_session_id}}"
+          }
+        },
+        {
+          "name": "Feedback heartbeat",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/v1/feedback/sessions/{{feedback_session_id}}/heartbeat"
+          }
+        },
+        {
+          "name": "Submit audio explanation",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "audio", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/v1/feedback/sessions/{{feedback_session_id}}/submit",
+            "description": "Select a WebM, Ogg, MP4, MPEG, AAC, or WAV file no larger than 32 MiB. A successful response is pending; poll Get feedback session."
+          }
+        },
+        {
+          "name": "Get feedback history",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/v1/feedback/history?limit=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scores",
+      "item": [
+        {
+          "name": "Get subject scores",
+          "request": { "method": "GET", "url": "{{base_url}}/v1/scores" }
         }
       ]
     }
