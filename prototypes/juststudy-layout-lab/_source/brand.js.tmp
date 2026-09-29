@@ -1,0 +1,19 @@
+const iconPaths = {
+  book: '<path d="M10 16.723c.189 0 .377-.05.549-.149.714-.412 1.924-.941 3.49-.938.999.001 1.852.219 2.522.483.72.283 1.493-.267 1.493-1.041V4.986c0-.393-.201-.756-.54-.956-.599-.353-1.559-.796-2.792-.923M10 16.723c-.189 0-.377-.05-.549-.149-.714-.412-1.924-.941-3.49-.938-.999.001-1.852.219-2.522.483-.72.283-1.493-.263-1.493-1.037V4.982c0-.393.201-.751.54-.951.708-.418 1.918-.959 3.488-.959 2.1 0 3.553.969 4.027 1.314M9.999 16.723c.7-1.469 2.171-2.46 4.012-2.663.41-.452.711-.409.711-.821V2.584c0-.508-.453-.908-.955-.832-1.681.253-3.083 1.178-3.768 2.632v12.339Z"/>',
+  account: '<path d="m10 2 6 3-6 3-6-3 6-3Zm-4 5v2a4 4 0 0 0 8 0V7m-10 11a7 7 0 0 1 12 0M16 5v5"/>',
+  logout: '<path d="M11 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3M7 6l-4 4 4 4M3 10h8"/>',
+  dice: '<rect x="3.056" y="3.056" width="13.889" height="13.889" rx="2"/><g fill="currentColor" stroke="none"><circle cx="13.333" cy="6.667" r=".694"/><circle cx="10" cy="10" r=".694"/><circle cx="6.667" cy="6.667" r=".694"/><circle cx="13.333" cy="13.333" r=".694"/><circle cx="6.667" cy="13.333" r=".694"/></g>',
+  play: '<path d="M5 3.8c0-1.2 1.3-1.9 2.3-1.3l10 6.1c1 .6 1 2.2 0 2.8l-10 6.1c-1 .6-2.3-.1-2.3-1.3Z" fill="currentColor" stroke="none"/>',
+  arrow: '<path d="M4 10h12m-5-5 5 5-5 5"/>',
+  chevron: '<path d="m7 4 6 6-6 6"/>',
+  check: '<path d="m4 10 4 4 8-9"/>',
+  search: '<circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/>',
+};
+const ic = (name) =>
+  `<svg class="icon icon-${name}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconPaths[name]}</svg>`;
+function logo() {
+  return `<button class="brand" type="button" data-action="home" aria-label="Just Study home">Just<svg class="brand-book" viewBox="0 0 28 28" aria-hidden="true"><g transform="rotate(90 14 14)"><path d="M14 23.413c.265 0 .527-.07.769-.209 1-.576 2.694-1.317 4.886-1.314 1.399.001 2.592.307 3.53.677 1.008.397 2.091-.373 2.091-1.457V6.98c0-.551-.281-1.058-.756-1.338-.839-.495-2.183-1.114-3.91-1.293" fill="#AAAAAA" stroke="#AAAAAA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 23.413c-.265 0-.527-.07-.769-.209-1-.576-2.694-1.317-4.886-1.314-1.399.001-2.592.307-3.53.677-1.008.397-2.091-.369-2.091-1.453V6.974c0-.551.281-1.051.756-1.331.992-.586 2.686-1.343 4.884-1.343 2.94 0 4.975 1.357 5.637 1.84" fill="#DBDBDB" stroke="#DBDBDB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.999 23.413C14.979 21.356 17.038 19.969 19.615 19.684C20.189 19.052 20.61 19.111 20.61 18.535V3.618c0-.712-.635-1.272-1.337-1.166C16.92 2.807 15 4 14 5Z" fill="#C6C6C6" stroke="#C6C6C6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>Study</button>`;
+}
+function header() {
+  return `<header class="product-header">${logo()}<nav aria-label="Main navigation"><button type="button" class="pill secondary" data-action="home" aria-current="page">${ic("book")}Home</button><button type="button" class="pill ghost" data-action="account">${ic("account")}Account</button></nav><button type="button" class="logout" data-action="logout" aria-label="Log out">${ic("logout")}</button></header>`;
+}

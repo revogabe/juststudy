@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="description" content="12 propostas interativas para a home JustStudy: score por matéria, sorteio de temas, acesso aos recentes e sessão de foco.">
+    <title>JustStudy · 12 interações para a home</title>
+    <style>/* STYLES */</style>
+  </head>
+  <body>
+    <a class="skip-link" href="#app">Pular para a home</a>
+    <div class="lab-toolbar">
+      <div><strong>Home explorations</strong><span>12 propostas · dados demonstrativos</span></div>
+      <div class="lab-actions"><button type="button" data-action="resume-session" id="resume-session" class="lab-button" hidden>Resume session</button><button type="button" data-action="gallery" class="lab-button">Ver as 12</button><button type="button" data-action="mobile" class="lab-button" aria-pressed="false">Mobile</button><button type="button" data-action="download" class="lab-icon" aria-label="Baixar HTML">↓</button></div>
+    </div>
+    <div class="preview" id="preview"><div class="surface" id="surface"><div id="app" lang="en" tabindex="-1"></div></div></div>
+    <div class="lab-bottom">
+      <p id="variant-caption"></p>
+      <nav class="switcher" aria-label="Variantes da home"><button type="button" data-action="previous" class="lab-icon" aria-label="Variante anterior">←</button><div class="variant-select"><label for="variant">Proposta <span id="counter"></span></label><select id="variant" aria-label="Escolher variante"></select></div><button type="button" data-action="next" class="lab-icon" aria-label="Próxima variante">→</button><span class="divider"></span><button type="button" data-action="inspect" class="lab-button">Como funciona</button></nav>
+      <span class="lab-note">SCORE POR MATÉRIA · SORTEAR TEMA · REVISITAR · INICIAR FOCO</span>
+    </div>
+    <dialog id="gallery" aria-labelledby="gallery-title"><div class="dialog-top"><div><span class="eyebrow">Uma home. Doze formas de interagir.</span><h2 id="gallery-title">Escolha um caminho para estudar.</h2><p>Mesma identidade visual. Diferentes relações entre matéria, tema, histórico e foco.</p></div><button type="button" class="lab-icon" data-close="gallery" aria-label="Fechar galeria">×</button></div><div class="gallery-grid" id="gallery-grid"></div></dialog>
+    <dialog id="inspector" aria-labelledby="inspector-title"></dialog>
+    <dialog id="focus-session" aria-labelledby="focus-title" lang="en"></dialog>
+    <div class="notice" id="notice" role="status" hidden></div>
+    <div class="sr-only" id="announcement" role="status" aria-live="polite" lang="en"></div>
+    <script>/* ASSETS */
+/* SCRIPT */</script>
+  </body>
+</html>

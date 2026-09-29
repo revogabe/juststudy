@@ -1,0 +1,205 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: Independent prototype compositions are followed by their responsive overrides. */
+/* biome-ignore-all lint/complexity/noImportantStyles: Hidden and print rules suppress all prototype chrome. */
+/* Exact visual foundation from the supplied Paper export. No per-variant palette or theme overrides. */
+@font-face {
+  font-family: Inter;
+  src: url("FONT_DATA_URI") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+:root {
+  --paper: #fff;
+  --ink: #212121;
+  --surface: #f9f9f9;
+  --control: #f1f1f1;
+  --muted: #21212199;
+  --muted-dark: #ffffff99;
+  --label: #b3b3b3;
+  --history-ink: #1c1b1b;
+  --history-muted: #5f5e5e;
+  --negative: #ff0543;
+  --negative-bg: #ff05431a;
+  --positive: #07a94a;
+  --positive-bg: #07a94a1a;
+  --radius: 12px;
+  --image-radius: 6px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  touch-action: manipulation;
+  transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+button:active {
+  transform: scale(0.97);
+}
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+button.selected:focus-visible {
+  outline-offset: 5px;
+}
+.keyboard button {
+  transition: none;
+}
+.keyboard button:active {
+  transform: none;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1,
+h2,
+h3 {
+  font-weight: 500;
+  text-wrap: balance;
+  letter-spacing: -0.6px;
+}
+h1 {
+  font-size: 48px;
+  line-height: 1.15;
+}
+h2 {
+  font-size: 28px;
+  line-height: 1.25;
+}
+h3 {
+  font-size: 16px;
+  line-height: 1.4;
+}
+p {
+  color: var(--muted);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+strong {
+  font-weight: 500;
+}
+small,
+.small {
+  font-size: 12px;
+}
+[hidden] {
+  display: none !important;
+}
+.icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+}
+.icon-play {
+  width: 12px;
+  height: 12px;
+}
+.icon-check {
+  width: 16px;
+  height: 16px;
+}
+.eyebrow {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: var(--label);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.6px;
+  white-space: nowrap;
+}
+.pill.secondary {
+  background: var(--control);
+  outline: 1px solid var(--control);
+}
+.pill.primary {
+  background: var(--ink);
+  color: var(--paper);
+  outline: 1px solid var(--ink);
+}
+.pill.ghost {
+  background: transparent;
+}
+.product-header {
+  height: 112px;
+  padding-inline: 38px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+}
+.brand {
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  gap: 6px;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.6px;
+  font-weight: 600;
+  padding: 0;
+  white-space: nowrap;
+}
+.brand-book {
+  width: 28px;
+  height: 28px;
+  flex: none;
+}
+.product-header nav {
+  display: flex;
+  align-items: center;
+}
+.logout {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--surface);
+  justify-self: end;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logout .icon {
+  width: 18px;
+  height: 18px;
+}
