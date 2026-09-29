@@ -92,13 +92,12 @@ starts only the API and Drizzle Studio processes. Langfuse uses its hosted dashb
 
 Anonymous authentication and local email work without external credentials. Google sign-in and
 live billing require the corresponding values in `.env`. Feedback grading uses Jev decisions for the
-score and `gpt-6-luna` for the student-facing text; see
-`docs/benchmarks/decision-models-v1.md`. In production, Jev runs through OpenRouter
-(`OPENROUTER_API_KEY`), `gpt-6-luna` runs through OpenAI (`OPENAI_API_KEY`), and the configured
-OpenAI-compatible local runtime is the text fallback. In development and test, the same stack runs
-through OpenRouter when `OPENROUTER_API_KEY` is set; without it, the local `qwen3.5:9b` model through
-Ollama grades and writes on its own, so no paid API key is required. The transcription sidecar uses the `faster-whisper` Python package and
-downloads model files on first transcription into the named Docker volume
+score and `openai/gpt-6-luna` for the student-facing text, both through OpenRouter with one
+`OPENROUTER_API_KEY`; see `docs/benchmarks/decision-models-v1.md`. The configured
+OpenAI-compatible local runtime is the text fallback. Without `OPENROUTER_API_KEY` outside
+production, the local `qwen3.5:9b` model through Ollama grades and writes on its own, so no paid API
+key is required. The transcription sidecar uses the `faster-whisper` Python package and downloads
+model files on first transcription into the named Docker volume
 `juststudy-whisper-cache`, not into the repository.
 
 For the fastest macOS setup, install Ollama natively and pull the model with `ollama pull
@@ -114,9 +113,9 @@ Docker Desktop on macOS runs this Linux container without Metal acceleration; na
 recommended local option on Apple Silicon. Public deployments can point `AI_BASE_URL` at a
 self-hosted vLLM `/v1` endpoint and set `AI_EVALUATION_MODEL` to its served model identifier.
 
-Production requires `OPENAI_API_KEY` and `OPENROUTER_API_KEY` (or `DECISION_API_KEY`). The text fallback activates for connection/timeout failures,
-OpenAI 5xx/overload responses, rate limits, unavailable models, and exhausted credit, project
-spend, or organization usage limits. Invalid credentials, permission errors, malformed requests,
+Production requires `OPENROUTER_API_KEY`. The text fallback activates for connection/timeout
+failures, provider 5xx/overload responses, rate limits, unavailable models, and exhausted credit
+(including OpenRouter's HTTP 402), project spend, or organization usage limits. Invalid credentials, permission errors, malformed requests,
 and invalid structured output remain visible instead of being masked. A transient failure opens the
 local circuit for 30 seconds; quota failures open it for 15 minutes. Every fallback reason and
 circuit decision is included in Langfuse telemetry. Configure both providers in production—the
@@ -133,9 +132,8 @@ create a text prompt named
 Jev decides scorability, the four rubric scores, and which segments need a correction; the writer
 model explains those fixed decisions. Transient Jev failures fall back to a full `gpt-6-luna` review.
 Manage the writer prompt in Langfuse as `feedback-explanation-writer`, with the review variables plus
-`{{grading_decisions}}`. Decisions use `DECISION_*`; to use a self-hosted Kev server, set
-`DECISION_BASE_URL=http://127.0.0.1:8009/v1`, `DECISION_MODEL=kev-latest`, and
-`DECISION_INPUT_PRICE_PER_MILLION=0`.
+`{{grading_decisions}}`. `DECISION_MODEL` selects the OpenRouter decision model; the self-hosted Kev
+comparison lives only in the benchmark runners.
 
 Two optional settings are off by default:
 
@@ -146,8 +144,7 @@ Two optional settings are off by default:
   `{{level}}`. Keep it off until the prompt is calibrated; see the benchmark report.
 - `FEEDBACK_SHADOW_MODE=decision|llm|hybrid` reviews each completed feedback a second time after the
   student already has the result, and stores the comparison in `feedback_shadow_reviews`. `llm` uses
-  `SHADOW_AI_MODEL` alone, which `SHADOW_AI_API_KEY` or `OPENROUTER_API_KEY` authenticates. Compare a
-  run with SQL such as
+  `SHADOW_AI_MODEL` alone through OpenRouter. Compare a run with SQL such as
   `select mode, count(*), avg((verdict = primary_verdict)::int) from feedback_shadow_reviews group by mode`.
 
 Check the transcription sidecar and run a low-volume live evaluator benchmark:

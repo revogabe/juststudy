@@ -18,7 +18,6 @@
     "benchmark:topic": "bun benchmarks/topic.benchmark.ts"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^4.0.60",
     "@ai-sdk/openai-compatible": "^3.0.44",
     "@elysiajs/openapi": "^2.0.0-exp.0",
     "@langfuse/client": "^5.11.0",

@@ -154,10 +154,10 @@ Feedback owns the post-focus explanation lifecycle, immutable transcript snapsho
 review schema, retryable worker lease, and billing outbox. Versioned prompt fallbacks live under
 `src/prompts/feedback`; the module delegates generic structured generation to the neutral AI contract
 and prompt retrieval to the neutral Prompts contract. AI SDK provider adapters implement OpenAI and
-OpenAI-compatible runtimes behind that contract. Production uses GPT-6 Luna through OpenAI as the
-primary writer and a self-hosted Ollama or vLLM runtime as the allowlisted failure fallback.
-Development and test use GPT-6 Luna through OpenRouter when `OPENROUTER_API_KEY` is set, with the same
-fallback, and Qwen through Ollama alone otherwise. The fallback circuit does not hide
+OpenAI-compatible runtimes behind that contract. Every hosted model runs through OpenRouter with
+one `OPENROUTER_API_KEY`: GPT-6 Luna is the primary writer, and a self-hosted Ollama or vLLM runtime
+is the allowlisted failure fallback. Without that key outside production, Qwen through Ollama works
+alone. The fallback circuit does not hide
 authentication, permission, prompt, or schema defects. Raw audio is sent to the local transcription sidecar and is never persisted by the API or
 sidecar.
 
@@ -175,8 +175,8 @@ worker cycle. Each completed session from the last 24 hours gets at most one `fe
 row per mode, with the shadow result, the primary mastery and verdict, cost, and latency. A failed
 shadow is recorded once and never retried. It never changes the student's result.
 
-The `integrations/decisions` System One adapter serves TypeSafe Jev, directly or through OpenRouter,
-and a self-hosted Kev server through the same API.
+The `integrations/decisions` System One adapter serves TypeSafe Jev through OpenRouter in the app;
+the benchmarks also point it at a self-hosted Kev server, which speaks the same API.
 
 ### Knowledge
 

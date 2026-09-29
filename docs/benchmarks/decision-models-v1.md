@@ -231,12 +231,12 @@ fallback, worker, and prompt are in place, so that is a prompt change and a reru
 
 ### Adopted default
 
-Jev decisions with a GPT-6 Luna writer are now the default feedback path, with no feature flag. In
-production, Jev runs through OpenRouter and GPT-6 Luna through OpenAI (`gpt-6-luna`, US$0.10 / US$0.50
-per million input/output tokens), with the local runtime as the text fallback. Transient Jev failures
-fall back to a full GPT-6 Luna review. Reference generation stays off until its prompt is calibrated.
-`FEEDBACK_SHADOW_MODE` remains available to compare the default against another reviewer on real
-traffic.
+Jev decisions with a GPT-6 Luna writer are now the default feedback path, with no feature flag.
+Both run through OpenRouter with one `OPENROUTER_API_KEY` (`typesafe/jev-1.13` and
+`openai/gpt-6-luna`, US$0.10 / US$0.50 per million input/output tokens), with the local runtime as the
+text fallback. Transient Jev failures fall back to a full GPT-6 Luna review. Reference generation
+stays off until its prompt is calibrated. `FEEDBACK_SHADOW_MODE` remains available to compare the
+default against another reviewer on real traffic.
 
 ## Limitations
 

@@ -17,6 +17,7 @@ describe("fallback AI adapter", () => {
     let fallbackCalls = 0;
     const adapter = createFallbackAiAdapter({
       primary: resultAi("openai", "gpt-5.6-luna"),
+      primary_provider: "openrouter",
       fallback: resultAi("ollama", "qwen3.5:9b", () => fallbackCalls++),
       transient_cooldown_ms: 30_000,
       quota_cooldown_ms: 900_000,
@@ -34,6 +35,7 @@ describe("fallback AI adapter", () => {
     const fallbackTelemetry: Array<Record<string, string | number | boolean>> = [];
     const adapter = createFallbackAiAdapter({
       primary: failingAi(apiError(429, "credit_balance_exhausted"), () => primaryCalls++),
+      primary_provider: "openrouter",
       fallback: resultAi("ollama", "qwen3.5:9b", undefined, fallbackTelemetry),
       transient_cooldown_ms: 30_000,
       quota_cooldown_ms: 900_000,
@@ -50,16 +52,32 @@ describe("fallback AI adapter", () => {
     expect(fallbackTelemetry[1]?.ai_fallback_circuit_open).toBe(true);
   });
 
+  it("treats OpenRouter insufficient credits as quota and names the primary provider", async () => {
+    const fallbackTelemetry: Array<Record<string, string | number | boolean>> = [];
+    const adapter = createFallbackAiAdapter({
+      primary: failingAi(apiError(402, "insufficient_credits")),
+      primary_provider: "openrouter",
+      fallback: resultAi("ollama", "qwen3.5:9b", undefined, fallbackTelemetry),
+      transient_cooldown_ms: 30_000,
+      quota_cooldown_ms: 900_000,
+    });
+
+    expect((await adapter.structured.create(generation)).provider).toBe("ollama");
+    expect(fallbackTelemetry[0]).toMatchObject({ ai_fallback_reason: "quota", ai_primary_provider: "openrouter" });
+  });
+
   it("falls back on unavailable responses and models but not on invalid authentication", async () => {
     const fallback = resultAi("ollama", "qwen3.5:9b");
     const unavailable = createFallbackAiAdapter({
       primary: failingAi(apiError(503, "server_is_overloaded")),
+      primary_provider: "openrouter",
       fallback,
       transient_cooldown_ms: 30_000,
       quota_cooldown_ms: 900_000,
     });
     const unavailableModel = createFallbackAiAdapter({
       primary: failingAi(apiError(404, "model_not_found")),
+      primary_provider: "openrouter",
       fallback,
       transient_cooldown_ms: 30_000,
       quota_cooldown_ms: 900_000,
@@ -67,6 +85,7 @@ describe("fallback AI adapter", () => {
     const unauthorizedError = apiError(401, "invalid_api_key");
     const unauthorized = createFallbackAiAdapter({
       primary: failingAi(unauthorizedError),
+      primary_provider: "openrouter",
       fallback,
       transient_cooldown_ms: 30_000,
       quota_cooldown_ms: 900_000,

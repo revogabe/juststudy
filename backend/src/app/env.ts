@@ -38,28 +38,20 @@ const environmentSchema = z
     AI_FALLBACK_TRANSIENT_COOLDOWN_MS: z.coerce.number().int().positive().default(30_000),
     AI_FALLBACK_QUOTA_COOLDOWN_MS: z.coerce.number().int().positive().default(900_000),
 
-    OPENAI_API_KEY: z.string().default(""),
-    OPENAI_BASE_URL: z.url().default("https://api.openai.com/v1"),
-    OPENAI_EVALUATION_MODEL: z.string().min(1).default("gpt-6-luna"),
-    OPENAI_INPUT_PRICE_PER_MILLION: z.coerce.number().nonnegative().default(0.1),
-    OPENAI_OUTPUT_PRICE_PER_MILLION: z.coerce.number().nonnegative().default(0.5),
-    OPENAI_REASONING_EFFORT: z.enum(["none", "low", "medium", "high", "xhigh", "max"]).default("none"),
-    OPENAI_TIMEOUT_MS: z.coerce.number().int().positive().default(120_000),
-
     OPENROUTER_API_KEY: z.string().default(""),
+    OPENROUTER_BASE_URL: z.url().default("https://openrouter.ai/api/v1"),
+    OPENROUTER_EVALUATION_MODEL: z.string().min(1).default("openai/gpt-6-luna"),
+    OPENROUTER_INPUT_PRICE_PER_MILLION: z.coerce.number().nonnegative().default(0.1),
+    OPENROUTER_OUTPUT_PRICE_PER_MILLION: z.coerce.number().nonnegative().default(0.5),
+    OPENROUTER_REASONING_EFFORT: z.enum(["none", "low", "medium", "high", "xhigh", "max"]).default("none"),
+    OPENROUTER_TIMEOUT_MS: z.coerce.number().int().positive().default(120_000),
 
     FEEDBACK_SHADOW_MODE: z.enum(["none", "decision", "llm", "hybrid"]).default("none"),
 
-    DECISION_PROVIDER_NAME: z.string().min(1).default("openrouter"),
-    DECISION_BASE_URL: z.url().default("https://openrouter.ai/api/v1"),
-    DECISION_API_KEY: z.string().default(""),
     DECISION_MODEL: z.string().min(1).default("typesafe/jev-1.13"),
     DECISION_INPUT_PRICE_PER_MILLION: z.coerce.number().nonnegative().default(0.042),
     DECISION_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
 
-    SHADOW_AI_PROVIDER_NAME: z.string().min(1).default("openrouter"),
-    SHADOW_AI_BASE_URL: z.url().default("https://openrouter.ai/api/v1"),
-    SHADOW_AI_API_KEY: z.string().default(""),
     SHADOW_AI_MODEL: z.string().min(1).default("openai/gpt-6-luna"),
     SHADOW_AI_INPUT_PRICE_PER_MILLION: z.coerce.number().nonnegative().default(0.1),
     SHADOW_AI_OUTPUT_PRICE_PER_MILLION: z.coerce.number().nonnegative().default(0.5),
@@ -96,16 +88,11 @@ const environmentSchema = z
       ["POLAR_PRODUCT_ID", environment.POLAR_PRODUCT_ID],
       ["LANGFUSE_PUBLIC_KEY", environment.LANGFUSE_PUBLIC_KEY],
       ["LANGFUSE_SECRET_KEY", environment.LANGFUSE_SECRET_KEY],
-      ["OPENAI_API_KEY", environment.OPENAI_API_KEY],
-      ["DECISION_API_KEY", environment.DECISION_API_KEY || environment.OPENROUTER_API_KEY],
+      ["OPENROUTER_API_KEY", environment.OPENROUTER_API_KEY],
     ];
 
     if (environment.EMAIL_PROVIDER === "resend") {
       required.push(["RESEND_API_KEY", environment.RESEND_API_KEY]);
-    }
-
-    if (["llm", "hybrid"].includes(environment.FEEDBACK_SHADOW_MODE)) {
-      required.push(["SHADOW_AI_API_KEY", environment.SHADOW_AI_API_KEY || environment.OPENROUTER_API_KEY]);
     }
 
     for (const [key, value] of required) {

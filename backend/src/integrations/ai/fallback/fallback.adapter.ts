@@ -3,6 +3,7 @@ import type { Ai, AiStructuredGeneration } from "../ai.contract";
 
 type FallbackAiAdapterInput = {
   primary: Ai;
+  primary_provider: string;
   fallback: Ai;
   transient_cooldown_ms: number;
   quota_cooldown_ms: number;
@@ -33,7 +34,7 @@ export function createFallbackAiAdapter(input: FallbackAiAdapterInput): Ai {
         const currentTime = now();
 
         if (circuit && circuit.until > currentTime) {
-          return input.fallback.structured.create(withFallbackTelemetry(generation, circuit.reason, true));
+          return input.fallback.structured.create(withFallbackTelemetry(generation, input.primary_provider, circuit.reason, true));
         }
 
         circuit = null;
@@ -56,7 +57,7 @@ export function createFallbackAiAdapter(input: FallbackAiAdapterInput): Ai {
           };
 
           try {
-            return await input.fallback.structured.create(withFallbackTelemetry(generation, reason, false));
+            return await input.fallback.structured.create(withFallbackTelemetry(generation, input.primary_provider, reason, false));
           } catch (fallbackError) {
             throw new AggregateError([primaryError, fallbackError], "Primary and fallback AI providers failed.");
           }
@@ -68,6 +69,7 @@ export function createFallbackAiAdapter(input: FallbackAiAdapterInput): Ai {
 
 function withFallbackTelemetry<Output>(
   generation: AiStructuredGeneration<Output>,
+  primaryProvider: string,
   reason: FallbackReason,
   circuitOpen: boolean,
 ): AiStructuredGeneration<Output> {
@@ -78,7 +80,7 @@ function withFallbackTelemetry<Output>(
       ai_fallback: true,
       ai_fallback_circuit_open: circuitOpen,
       ai_fallback_reason: reason,
-      ai_primary_provider: "openai",
+      ai_primary_provider: primaryProvider,
     },
   };
 }
@@ -88,7 +90,7 @@ function classifyFallbackReason(error: unknown): FallbackReason | null {
 
   if (apiError) {
     const code = readApiErrorCode(apiError);
-    if (code && QUOTA_CODES.has(code)) return "quota";
+    if (apiError.statusCode === 402 || (code && QUOTA_CODES.has(code))) return "quota";
     if (code === "model_not_found") return "model_unavailable";
     if (apiError.statusCode === 408) return "timeout";
     if (apiError.statusCode === 429) return "rate_limit";

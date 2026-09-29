@@ -17,8 +17,8 @@ describe("createEnvironment", () => {
     expect(environment.AI_PROVIDER_NAME).toBe("ollama");
     expect(environment.AI_EVALUATION_MODEL).toBe("qwen3.5:9b");
     expect(environment.AI_INPUT_PRICE_PER_MILLION).toBe(0);
-    expect(environment.OPENAI_EVALUATION_MODEL).toBe("gpt-6-luna");
-    expect(environment.OPENAI_INPUT_PRICE_PER_MILLION).toBe(0.1);
+    expect(environment.OPENROUTER_EVALUATION_MODEL).toBe("openai/gpt-6-luna");
+    expect(environment.OPENROUTER_INPUT_PRICE_PER_MILLION).toBe(0.1);
     expect(environment.DECISION_MODEL).toBe("typesafe/jev-1.13");
     expect(environment.FEEDBACK_SHADOW_MODE).toBe("none");
     expect(environment.KNOWLEDGE_ASSESSMENT_GENERATION).toBe(false);
@@ -35,7 +35,7 @@ describe("createEnvironment", () => {
     ).toThrow();
   });
 
-  it("accepts production when OpenAI, Jev, and the other providers are configured", () => {
+  it("accepts production when OpenRouter and the other providers are configured", () => {
     const environment = createEnvironment({
       APP_ENV: "production",
       DATABASE_URL: "postgres://localhost/juststudy",
@@ -48,15 +48,14 @@ describe("createEnvironment", () => {
       POLAR_PRODUCT_ID: "polar-product",
       LANGFUSE_PUBLIC_KEY: "langfuse-public",
       LANGFUSE_SECRET_KEY: "langfuse-secret",
-      OPENAI_API_KEY: "openai-key",
       OPENROUTER_API_KEY: "openrouter-key",
     });
 
-    expect(environment.OPENAI_EVALUATION_MODEL).toBe("gpt-6-luna");
+    expect(environment.OPENROUTER_EVALUATION_MODEL).toBe("openai/gpt-6-luna");
     expect(environment.AI_EVALUATION_MODEL).toBe("qwen3.5:9b");
   });
 
-  it("requires the Jev decision key in production and the shadow key only when a shadow runs", () => {
+  it("requires the single OpenRouter key in production for every model", () => {
     const production = {
       APP_ENV: "production",
       DATABASE_URL: "postgres://localhost/juststudy",
@@ -69,14 +68,12 @@ describe("createEnvironment", () => {
       POLAR_PRODUCT_ID: "polar-product",
       LANGFUSE_PUBLIC_KEY: "langfuse-public",
       LANGFUSE_SECRET_KEY: "langfuse-secret",
-      OPENAI_API_KEY: "openai-key",
     };
 
-    expect(() => createEnvironment(production)).toThrow("DECISION_API_KEY");
-    expect(createEnvironment({ ...production, DECISION_API_KEY: "typesafe-key" }).FEEDBACK_SHADOW_MODE).toBe("none");
-    expect(() => createEnvironment({ ...production, DECISION_API_KEY: "typesafe-key", FEEDBACK_SHADOW_MODE: "llm" })).toThrow(
-      "SHADOW_AI_API_KEY",
-    );
+    expect(() => createEnvironment(production)).toThrow("OPENROUTER_API_KEY");
+    expect(
+      createEnvironment({ ...production, OPENROUTER_API_KEY: "openrouter-key", FEEDBACK_SHADOW_MODE: "llm" }).FEEDBACK_SHADOW_MODE,
+    ).toBe("llm");
   });
 
   it("never allows the E2E entitlement switch in production", () => {
